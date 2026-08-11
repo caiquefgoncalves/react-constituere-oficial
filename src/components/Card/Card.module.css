@@ -1,0 +1,45 @@
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clear-sans');
+
+.container {
+    background-color: white;
+    width: 20rem;
+    min-height: 18rem;
+    border-radius: 1rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+}
+
+.informacoes {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    max-width: 100%;
+}
+
+.titulo {
+    font-family: 'Glacial Indifference', sans-serif;
+    color: #ffbf00; /* Âmbar */
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.paragrafo {
+    font-family: 'Clear Sans', sans-serif;
+    color: #555555;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 0;
+}
+
+
+.img {
+    display: none;
+}
+

@@ -1,0 +1,208 @@
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clear-sans');
+
+.paginaCompleta {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.containerSection {
+    flex: 1;
+    padding-bottom: 5rem;
+    padding-top: 1rem;
+    font-family: 'Clear Sans', sans-serif;
+}
+
+.topArea {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 5.5rem;
+    padding: 0;
+    position: relative;
+    width: 100%;
+}
+
+.botaoVoltar {
+    position: absolute;
+    left: 3rem;
+    background-color: #0047ab;
+    border: none;
+    border-radius: 50%;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.botaoVoltar:hover {
+    background-color: #003580;
+}
+
+.titulo {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 3.5rem;
+    font-weight: bold;
+    color: #0047ab;
+    text-align: center;
+    margin: 0;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3rem;
+    max-width: 1150px;
+    margin: 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.linha {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    width: 100%;
+    column-gap: 4rem;
+    row-gap: 0;
+}
+
+.campoMetade {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: calc(50% - 2rem);
+    margin-bottom: 1.5rem;
+}
+
+.campoInteiro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+
+.label {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #333333;
+}
+
+.input {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-family: 'Clear Sans', sans-serif;
+    outline: none;
+    transition: border-color 0.3s ease;
+    background-color: #ffffff;
+    box-sizing: border-box;
+}
+
+select.input {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65rem auto;
+    cursor: pointer;
+    color: #333333;
+}
+
+.input:focus {
+    border-color: #0047ab;
+}
+
+.input::placeholder {
+    color: #a0a0a0;
+}
+
+.obsCampos {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    font-family: 'Clear Sans', sans-serif;
+    margin: 0;
+}
+
+.areaUpload {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #dcdcdc;
+    border-radius: 8px;
+    padding: 1rem 2rem;
+    background-color: #ffffff;
+    gap: 1.5rem;
+    flex: 1;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.caixaUpload {
+    background-color: #A9A9A9;
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+    padding: 0.6rem 1.2rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    font-family: 'Clear Sans', sans-serif;
+    transition: background-color 0.3s ease;
+    font-weight: 500;
+}
+
+.caixaUpload:hover {
+    background-color: #8c8c8c;
+}
+
+.textoAjuda {
+    font-size: 1rem;
+    color: #333333;
+    font-weight: 700;
+}
+
+.botaoContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 3rem;
+}
+
+.botaoCadastro {
+    font-family: 'Clear Sans', sans-serif;
+    background-color: #ffbf00;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.botaoCadastro:hover {
+    background-color: #d69f00;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
