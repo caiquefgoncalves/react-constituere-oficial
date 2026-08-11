@@ -1,5 +1,6 @@
 import css from './Beneficios.module.css';
 import Card from '../Card/Card.jsx';
+import {Link} from 'react-router-dom';
 
 export default function Beneficios() {
     return (
@@ -27,9 +28,11 @@ export default function Beneficios() {
                     />
                 </div>
 
-                <div className={css.botaoContainer}>
-                    <button className={css.botaoAmbar}>Seja nosso cliente!</button>
-                </div>
+
+                <Link to='/cadastro' className={css.botaoContainer}>
+                    <p className={css.botaoAmbar}>Seja nosso cliente!</p>
+                </Link>
+
             </div>
         </section>
     );

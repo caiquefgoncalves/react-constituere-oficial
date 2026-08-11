@@ -1,4 +1,5 @@
 import css from './Banner.module.css';
+import {Link} from 'react-router-dom';
 
 export default function Banner() {
     return (
@@ -18,9 +19,9 @@ export default function Banner() {
                     </p>
 
 
-                    <button className={css.botaoBanner}>
+                    <Link to="/cadastro" className={css.botaoBanner}>
                         Utilize no seu escritório!
-                    </button>
+                    </Link>
                 </div>
 
             </div>

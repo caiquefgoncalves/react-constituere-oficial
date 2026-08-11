@@ -33,6 +33,7 @@
 .botaoContainer {
     display: flex;
     justify-content: center;
+    text-decoration: none;
 }
 
 .botaoAmbar {
@@ -46,6 +47,7 @@
     font-weight: 700;
     cursor: pointer;
     transition: background-color 0.3s ease;
+
 }
 
 

@@ -1,4 +1,5 @@
 import css from './Chamada.module.css';
+import {Link} from "react-router-dom";
 
 export default function Chamada() {
     return (
@@ -11,7 +12,9 @@ export default function Chamada() {
                     <p className={css.paragrafo}>
                         Junte-se a nós e tenha um controle de clientes, processos, parcerias e financeiro em um só lugar!
                     </p>
-                    <button className={css.botaoChamada}>Acesse o site</button>
+                    <Link to='/cadastro' className={css.botaoChamada}>
+                        Acesse o site
+                    </Link>
                 </div>
 
 
