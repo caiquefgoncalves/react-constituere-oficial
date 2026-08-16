@@ -3,9 +3,10 @@ import Home from './pages/Home';
 import Cadastro from './pages/Cadastro';
 import Login from './pages/Login';
 import DashboardAdvogado from "./pages/DashboardAdvogado.jsx";
+import EditarPerfilAdvogado from "./pages/EditarPerfilAdvogado.jsx";
 
 
-const API_URL = 'http://127.0.0.1:5000';
+const API_URL = 'http://192.168.0.130:5000';
 
 function App() {
     return (
@@ -15,6 +16,7 @@ function App() {
                 <Route path="/cadastro" element={<Cadastro api={API_URL} />} />
                 <Route path="/login" element={<Login api={API_URL} />} />
                 <Route path="/dashboard_advogado" element={<DashboardAdvogado api={API_URL} />} />
+                <Route path="/editar_perfil_advogado" element={<EditarPerfilAdvogado api={API_URL} />} />
             </Routes>
         </Router>
     );
