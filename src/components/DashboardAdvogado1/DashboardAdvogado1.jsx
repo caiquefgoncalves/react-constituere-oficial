@@ -14,7 +14,7 @@ export default function DashboardAdvogado1({ api }) {
     const [escritorios, setEscritorios] = useState([]);
     const [carregandoEscritorios, setCarregandoEscritorios] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.35:5000';
+    const API_URL = api ;
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');
@@ -103,7 +103,7 @@ export default function DashboardAdvogado1({ api }) {
         navigate(`/escritorio/${id}`);
     }
 
-    // Função para formatar a URL da foto do escritório
+
     function getFotoEscritorio(id) {
         return `${API_URL}/uploads/Escritorios/escritorio_${id}.jpeg`;
     }
@@ -207,7 +207,6 @@ export default function DashboardAdvogado1({ api }) {
                                         </div>
                                         <button
                                             className={css.botaoVerDetalhes}
-                                            onClick={() => irParaDetalhesEscritorio(escritorio.id)}
                                         >
                                             Ver Detalhes →
                                         </button>

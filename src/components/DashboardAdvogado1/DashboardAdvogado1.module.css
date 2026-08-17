@@ -300,6 +300,7 @@
     text-align: left;
     transition: color 0.2s;
     width: fit-content;
+    text-decoration: none;
 }
 
 .botaoVerDetalhes:hover {

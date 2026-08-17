@@ -10,7 +10,7 @@ export default function Header({ api }) {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.35:5000';
+    const API_URL = api || 'http://192.168.0.125:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
