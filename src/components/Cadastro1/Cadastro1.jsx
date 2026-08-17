@@ -28,6 +28,8 @@ export default function Cadastro1({ api }) {
     const [exibirCarregamento, setExibirCarregamento] = useState(false);
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
 
+    const API_URL = api || 'http://10.92.11.35:5000';
+
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
         'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
@@ -232,7 +234,7 @@ export default function Cadastro1({ api }) {
         if (fotoPerfil) formData.append('foto_perfil', fotoPerfil);
 
         try {
-            const resposta = await fetch(`${api}/criar_usuarios`, {
+            const resposta = await fetch(`${API_URL}/criar_usuarios`, {
                 method: 'POST',
                 credentials: 'include',
                 body: formData
@@ -278,7 +280,7 @@ export default function Cadastro1({ api }) {
 
     return (
         <div className={css.paginaCompleta}>
-            <Header />
+            <Header api={API_URL} />
 
             {exibirCarregamento && (
                 <div style={{

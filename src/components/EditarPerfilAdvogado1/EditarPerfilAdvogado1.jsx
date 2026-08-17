@@ -65,6 +65,21 @@ export default function EditarPerfilAdvogado({ api }) {
         return valor.replace(/\D/g, '');
     }
 
+    function formatarCpf(valor) {
+        const numeros = apenasNumeros(valor);
+        if (numeros.length <= 3) return numeros;
+        if (numeros.length <= 6) return `${numeros.slice(0, 3)}.${numeros.slice(3)}`;
+        if (numeros.length <= 9) return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6)}`;
+        return `${numeros.slice(0, 3)}.${numeros.slice(3, 6)}.${numeros.slice(6, 9)}-${numeros.slice(9, 11)}`;
+    }
+
+    function formatarTelefone(valor) {
+        const numeros = apenasNumeros(valor);
+        if (numeros.length <= 2) return numeros.length === 0 ? '' : `(${numeros}`;
+        if (numeros.length <= 7) return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+        return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+    }
+
     function handleNome(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
         if (valor.length <= 254) {
@@ -75,11 +90,7 @@ export default function EditarPerfilAdvogado({ api }) {
     function handleCpf(e) {
         let valor = apenasNumeros(e.target.value);
         if (valor.length > 11) valor = valor.slice(0, 11);
-
-        if (valor.length <= 3) setCpf(valor);
-        else if (valor.length <= 6) setCpf(`${valor.slice(0, 3)}.${valor.slice(3)}`);
-        else if (valor.length <= 9) setCpf(`${valor.slice(0, 3)}.${valor.slice(3, 6)}.${valor.slice(6)}`);
-        else setCpf(`${valor.slice(0, 3)}.${valor.slice(3, 6)}.${valor.slice(6, 9)}-${valor.slice(9, 11)}`);
+        setCpf(formatarCpf(valor));
     }
 
     function handleRg(e) {
@@ -95,10 +106,7 @@ export default function EditarPerfilAdvogado({ api }) {
     function handleTelefone(e) {
         let valor = apenasNumeros(e.target.value);
         if (valor.length > 11) valor = valor.slice(0, 11);
-
-        if (valor.length <= 2) setTelefone(valor.length === 0 ? '' : `(${valor}`);
-        else if (valor.length <= 7) setTelefone(`(${valor.slice(0, 2)}) ${valor.slice(2)}`);
-        else setTelefone(`(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7, 11)}`);
+        setTelefone(formatarTelefone(valor));
     }
 
     function handleEmail(e) {
@@ -121,8 +129,8 @@ export default function EditarPerfilAdvogado({ api }) {
         if (e.target.value.length <= 254) setConfirmarSenha(e.target.value);
     }
 
-    function voltarParaHome() {
-        navigate('/');
+    function voltarParaDashboardAdvogado() {
+        navigate('/dashboard_advogado');
     }
 
     useEffect(() => {
@@ -144,11 +152,18 @@ export default function EditarPerfilAdvogado({ api }) {
     useEffect(() => {
         async function carregarDados() {
             try {
+                const token = localStorage.getItem('token');
+
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
+
                 const resposta = await fetch(`${api}/meus_dados`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                        'X-Access-Token': token
                     }
                 });
 
@@ -157,37 +172,45 @@ export default function EditarPerfilAdvogado({ api }) {
                     const user = dados.usuario;
 
                     setNome(user.nome || '');
-                    setCpf(user.cpf || '');
+                    setCpf(formatarCpf(user.cpf || ''));
                     setRg(user.rg || '');
                     setOrgaoExpeditor(user.orgao_expedidor || '');
                     setOab(user.num_oab || '');
                     setUfOab(user.uf_oab || '');
                     setNacionalidade(user.nacionalidade || '');
                     setEstadoCivil(user.estado_civil || '');
-                    setTelefone(user.telefone || '');
+                    setTelefone(formatarTelefone(user.telefone || ''));
                     setEmail(user.email || '');
 
                     setDadosOriginais({
                         nome: user.nome || '',
-                        cpf: user.cpf || '',
+                        cpf: formatarCpf(user.cpf || ''),
                         rg: user.rg || '',
                         orgao_expedidor: user.orgao_expedidor || '',
                         oab: user.num_oab || '',
                         ufOab: user.uf_oab || '',
                         nacionalidade: user.nacionalidade || '',
                         estadoCivil: user.estado_civil || '',
-                        telefone: user.telefone || '',
+                        telefone: formatarTelefone(user.telefone || ''),
                         email: user.email || '',
                         senha: '',
                         confirmarSenha: ''
                     });
 
                 } else {
+                    if (resposta.status === 401) {
+                        localStorage.removeItem('nome');
+                        localStorage.removeItem('tipo');
+                        localStorage.removeItem('token');
+                        navigate('/login');
+                        return;
+                    }
                     setMensagem('Erro ao carregar seus dados. Tente novamente.');
                     setTipoMensagem('erro');
                     agendarLimpezaMensagem();
                 }
             } catch (erro) {
+                console.error('Erro ao carregar dados:', erro);
                 setMensagem('Erro de conexão ao carregar dados.');
                 setTipoMensagem('erro');
                 agendarLimpezaMensagem();
@@ -197,7 +220,7 @@ export default function EditarPerfilAdvogado({ api }) {
         }
 
         carregarDados();
-    }, [api]);
+    }, [api, navigate]);
 
     async function handleSalvar(e) {
         e.preventDefault();
@@ -233,7 +256,7 @@ export default function EditarPerfilAdvogado({ api }) {
             return;
         }
 
-        const cpfNumeros = cpf.replace(/\D/g, '');
+        const cpfNumeros = apenasNumeros(cpf);
         if (cpfNumeros.length !== 11) {
             setMensagem('CPF incompleto. Digite os 11 números do CPF.');
             setTipoMensagem('erro');
@@ -247,7 +270,7 @@ export default function EditarPerfilAdvogado({ api }) {
             return;
         }
 
-        const telefoneNumeros = telefone.replace(/\D/g, '');
+        const telefoneNumeros = apenasNumeros(telefone);
         if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
             setMensagem('Telefone incompleto. Digite DDD + número (10 ou 11 dígitos).');
             setTipoMensagem('erro');
@@ -303,7 +326,6 @@ export default function EditarPerfilAdvogado({ api }) {
 
             agendarLimpezaMensagem();
 
-            // ✅ Redireciona para o Dashboard após 2 segundos, mesmo sem alterações
             setTimeout(() => {
                 navigate('/dashboard_advogado');
             }, 2000);
@@ -329,11 +351,13 @@ export default function EditarPerfilAdvogado({ api }) {
         if (fotoPerfil) formData.append('foto_perfil', fotoPerfil);
 
         try {
+            const token = localStorage.getItem('token');
+
             const resposta = await fetch(`${api}/editar_perfil`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    'X-Access-Token': token
                 },
                 body: formData
             });
@@ -356,7 +380,29 @@ export default function EditarPerfilAdvogado({ api }) {
                 }, 2000);
 
             } else {
-                setMensagem(dados.error || 'Erro ao atualizar o perfil.');
+                if (resposta.status === 401) {
+                    localStorage.removeItem('nome');
+                    localStorage.removeItem('tipo');
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                    return;
+                }
+                const erro = dados.error || 'Erro ao atualizar o perfil.';
+                let mensagemErro = erro;
+
+                if (erro.includes('já está cadastrado para outro usuário')) {
+                    mensagemErro = erro;
+                } else if (erro.includes('não encontrada no cadastro da OAB')) {
+                    mensagemErro = erro;
+                } else if (erro.includes('Sua situação é')) {
+                    mensagemErro = erro;
+                } else if (erro.includes('CPF já cadastrado')) {
+                    mensagemErro = erro;
+                } else if (erro.includes('E-mail já cadastrado')) {
+                    mensagemErro = erro;
+                }
+
+                setMensagem(mensagemErro);
                 setTipoMensagem('erro');
 
                 if (topoRef.current) {
@@ -366,6 +412,7 @@ export default function EditarPerfilAdvogado({ api }) {
                 agendarLimpezaMensagem();
             }
         } catch (erro) {
+            console.error('Erro ao salvar:', erro);
             setExibirCarregamento(false);
             setMensagem('Erro de conexão com o servidor. Verifique o back-end.');
             setTipoMensagem('erro');
@@ -452,7 +499,7 @@ export default function EditarPerfilAdvogado({ api }) {
                                 marginTop: '10px',
                                 maxWidth: '400px'
                             }}>
-                                ⚠️ Sua internet pode estar lenta ou a OAB está demorando para responder.
+                                Sua internet pode estar lenta ou a OAB está demorando para responder.
                                 Por favor, aguarde mais alguns segundos...
                             </p>
                         )}
@@ -462,7 +509,7 @@ export default function EditarPerfilAdvogado({ api }) {
 
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
-                    <button className={css.botaoVoltar} onClick={voltarParaHome} tabIndex={-1}>
+                    <button className={css.botaoVoltar} onClick={voltarParaDashboardAdvogado} tabIndex={-1}>
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>

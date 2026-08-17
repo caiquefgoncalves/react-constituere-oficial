@@ -10,6 +10,7 @@ export default function Header({ api }) {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
 
+    const API_URL = api || 'http://10.92.11.35:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -33,7 +34,7 @@ export default function Header({ api }) {
 
     function getFotoPerfil() {
         if (idUsuario) {
-            return `${api}/uploads/Usuarios/${idUsuario}.jpeg`;
+            return `${API_URL}/uploads/Usuarios/${idUsuario}.jpeg`;
         }
         return '/perfil-padrao.png';
     }
@@ -42,6 +43,7 @@ export default function Header({ api }) {
         localStorage.removeItem('token');
         localStorage.removeItem('nome');
         localStorage.removeItem('tipo');
+        localStorage.removeItem('id_usuario');
         setToken(null);
         setTipoUsuario(null);
         setIdUsuario(null);
@@ -82,7 +84,6 @@ export default function Header({ api }) {
                 <div className={css.divbotoes}>
                     {token ? (
                         <>
-
                             <button className={css.iconeBtn} type="button">
                                 <img src="/sino.png" alt="Notificações" className={css.iconeImg} />
                             </button>

@@ -202,3 +202,122 @@
     font-size: 0.9rem;
 }
 
+.gridEscritorios {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.cardEscritorio {
+    background: #ffffff;
+    border: 1px solid #e8edf2;
+    border-radius: 12px;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+}
+
+.cardEscritorio:hover {
+    border-color: #0047ab;
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.08);
+}
+
+.cardEscritorioHeader {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.fotoEscritorio {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #e8edf2;
+}
+
+.fotoEscritorioPlaceholder {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #0047ab;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: 700;
+    font-family: 'Glacial Indifference', sans-serif;
+    flex-shrink: 0;
+}
+
+.cardEscritorioInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.nomeEscritorio {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #222;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.razaoEscritorio {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #777;
+    margin: 2px 0 4px 0;
+}
+
+.tipoEscritorio {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #0047ab;
+    background-color: #eef4fb;
+    padding: 2px 12px;
+    border-radius: 20px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+.botaoVerDetalhes {
+    background: transparent;
+    border: none;
+    color: #0047ab;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.5rem 0;
+    text-align: left;
+    transition: color 0.2s;
+    width: fit-content;
+}
+
+.botaoVerDetalhes:hover {
+    color: #003580;
+    text-decoration: underline;
+}
+
+
+.areaEscritorios {
+    padding: 0.5rem 0 1rem 0;
+    text-align: center;
+    font-family: 'Clear Sans', sans-serif;
+    min-height: 100px;
+}
+
+.areaEscritorios p {
+    color: #888;
+    font-size: 0.95rem;
+}
+
+

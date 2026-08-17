@@ -11,21 +11,28 @@ export default function DashboardAdvogado1({ api }) {
     const [nome, setNome] = useState('Carregando...');
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
+    const [escritorios, setEscritorios] = useState([]);
+    const [carregandoEscritorios, setCarregandoEscritorios] = useState(true);
+
+    const API_URL = api || 'http://10.92.11.35:5000';
 
     useEffect(() => {
+        const tipo = localStorage.getItem('tipo');
         const token = localStorage.getItem('token');
 
-        if (!token) {
+        if (!tipo || !token) {
             navigate('/login');
             return;
         }
 
         async function buscarDados() {
             try {
-                const response = await fetch(`${api}/meus_dados`, {
+                const response = await fetch(`${API_URL}/meus_dados`, {
                     method: 'GET',
                     credentials: 'include',
-                    headers: { 'Authorization': `Bearer ${token}` }
+                    headers: {
+                        'X-Access-Token': token
+                    }
                 });
 
                 const data = await response.json();
@@ -34,9 +41,10 @@ export default function DashboardAdvogado1({ api }) {
                     setNome(data.usuario.nome || 'Advogado');
                 } else {
                     if (response.status === 401) {
-                        localStorage.removeItem('token');
                         localStorage.removeItem('nome');
                         localStorage.removeItem('tipo');
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('id_usuario');
                         navigate('/login');
                         return;
                     }
@@ -49,21 +57,64 @@ export default function DashboardAdvogado1({ api }) {
             }
         }
 
+        async function buscarEscritorios() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/meus_escritorios`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setEscritorios(data.escritorios || []);
+                } else if (response.status === 401) {
+                    localStorage.removeItem('nome');
+                    localStorage.removeItem('tipo');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('id_usuario');
+                    navigate('/login');
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar escritórios:', error);
+            } finally {
+                setCarregandoEscritorios(false);
+            }
+        }
+
         buscarDados();
-    }, [navigate, api]);
+        buscarEscritorios();
+    }, [navigate, API_URL]);
 
 
     function irParaEditarPerfil() {
         navigate('/editar_perfil_advogado');
     }
 
+    function irParaCadastroEscritorio() {
+        navigate('/cadastro_escritorio');
+    }
+
+    function irParaDetalhesEscritorio(id) {
+        navigate(`/escritorio/${id}`);
+    }
+
+    // Função para formatar a URL da foto do escritório
+    function getFotoEscritorio(id) {
+        return `${API_URL}/uploads/Escritorios/escritorio_${id}.jpeg`;
+    }
+
     return (
         <div className={css.paginaCompleta}>
-            <Header api={api} />
+            <Header api={API_URL} />
 
             <div className={css.layoutDashboard}>
                 <div className={css.menuLateralContainer}>
-                    <MenuLateralAdvogado api={api} />
+                    <MenuLateralAdvogado api={API_URL} />
                 </div>
 
                 <div className={css.conteudoPrincipal}>
@@ -118,12 +169,52 @@ export default function DashboardAdvogado1({ api }) {
 
                     <div className={css.areaTitulo}>
                         <h2 className={css.tituloSecao}>Meus escritórios</h2>
-                        <button className={css.botaoAdicionarEscritorio} type="button">+</button>
+                        <button
+                            className={css.botaoAdicionarEscritorio}
+                            type="button"
+                            onClick={irParaCadastroEscritorio}
+                        >
+                            +
+                        </button>
                     </div>
+
                     <div className={css.areaEscritorios}>
-                        <div>
+                        {carregandoEscritorios ? (
+                            <p>Carregando escritórios...</p>
+                        ) : escritorios.length === 0 ? (
                             <p>Nenhum escritório cadastrado ainda.</p>
-                        </div>
+                        ) : (
+                            <div className={css.gridEscritorios}>
+                                {escritorios.map((escritorio) => (
+                                    <div key={escritorio.id} className={css.cardEscritorio}>
+                                        <div className={css.cardEscritorioHeader}>
+                                            <img
+                                                src={getFotoEscritorio(escritorio.id)}
+                                                alt={escritorio.nome_fantasia}
+                                                className={css.fotoEscritorio}
+                                                onError={(e) => {
+                                                    e.target.onerror = null;
+                                                    e.target.src = '/perfil-padrao.png';
+                                                }}
+                                            />
+                                            <div className={css.cardEscritorioInfo}>
+                                                <h3 className={css.nomeEscritorio}>{escritorio.nome_fantasia}</h3>
+                                                <p className={css.razaoEscritorio}>{escritorio.razao_social}</p>
+                                                <span className={css.tipoEscritorio}>
+                                                    {escritorio.status === 'PROPRIETARIO' ? 'Proprietário' : 'Parceiro'}
+                                                </span>
+                                            </div>
+                                        </div>
+                                        <button
+                                            className={css.botaoVerDetalhes}
+                                            onClick={() => irParaDetalhesEscritorio(escritorio.id)}
+                                        >
+                                            Ver Detalhes →
+                                        </button>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     <div className={css.gradeDupla}>

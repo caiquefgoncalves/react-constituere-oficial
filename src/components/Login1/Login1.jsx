@@ -73,6 +73,7 @@ export default function Login1({ api }) {
                 localStorage.setItem('token', dados.token);
                 localStorage.setItem('nome', dados.nome);
                 localStorage.setItem('tipo', dados.tipo);
+                localStorage.setItem('id_usuario', dados.id_usuario);
 
                 setMensagem('Login realizado com sucesso! Redirecionando...');
                 setTipoMensagem('sucesso');

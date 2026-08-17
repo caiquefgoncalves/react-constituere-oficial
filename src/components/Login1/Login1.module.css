@@ -19,8 +19,8 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin-top: 3rem;
-    margin-bottom: 5.5rem;
+    margin-top: 2.5rem;
+    margin-bottom: 2.5rem;
     padding: 0;
     position: relative;
     width: 100%;
@@ -169,4 +169,3 @@
 .linkCadastro:hover {
     color: #d69f00;
 }
-
