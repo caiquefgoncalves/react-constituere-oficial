@@ -14,6 +14,7 @@ export default function Login1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
 
+    const API_URL = api || 'http://localhost:5000';
 
     function handleCpfCnpj(e) {
         let valor = e.target.value.replace(/\D/g, '');
@@ -47,7 +48,6 @@ export default function Login1({ api }) {
         setMensagem('');
         setTipoMensagem('');
 
-
         const cpfLimpo = cpfCnpj.replace(/\D/g, '');
 
         if (!cpfLimpo || !senha) {
@@ -58,7 +58,9 @@ export default function Login1({ api }) {
         }
 
         try {
-            const resposta = await fetch(`${api}/login`, {
+            console.log('🔍 Tentando login com:', { cpf: cpfLimpo });
+
+            const resposta = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
@@ -67,13 +69,21 @@ export default function Login1({ api }) {
                     senha: senha
                 })
             });
+
+            console.log('Status da resposta:', resposta.status);
+
             const dados = await resposta.json();
+            console.log('Dados recebidos:', dados);
 
             if (resposta.ok) {
                 localStorage.setItem('token', dados.token);
                 localStorage.setItem('nome', dados.nome);
                 localStorage.setItem('tipo', dados.tipo);
                 localStorage.setItem('id_usuario', dados.id_usuario);
+
+                console.log('Login realizado com sucesso!');
+                console.log('Tipo:', dados.tipo);
+                console.log('ID:', dados.id_usuario);
 
                 setMensagem('Login realizado com sucesso! Redirecionando...');
                 setTipoMensagem('sucesso');
@@ -85,13 +95,16 @@ export default function Login1({ api }) {
                     else navigate('/');
                 }, 2000);
             } else {
-
+                console.log('Erro no login:', dados.error);
                 setMensagem(dados.error || 'Erro ao fazer login. Verifique CPF e senha.');
                 setTipoMensagem('erro');
+                setCarregando(false);
             }
         } catch (erro) {
+            console.error('Erro de conexão:', erro);
             setMensagem('Erro de conexão com o servidor.');
             setTipoMensagem('erro');
+            setCarregando(false);
         } finally {
             setCarregando(false);
         }
@@ -99,7 +112,7 @@ export default function Login1({ api }) {
 
     return (
         <div className={css.paginaCompleta}>
-            <Header api={api} />
+            <Header api={API_URL} />
 
             <section className={css.containerSection}>
                 <div className={css.topArea}>
@@ -128,7 +141,7 @@ export default function Login1({ api }) {
                 <form className={css.formulario} onSubmit={handleLogin}>
                     <div className={css.linha}>
                         <div className={css.campoInteiro}>
-                            <label className={css.label}>CPF/CNPJ</label>
+                            <label className={css.label}>CPF</label>
                             <input
                                 type="text"
                                 className={css.input}

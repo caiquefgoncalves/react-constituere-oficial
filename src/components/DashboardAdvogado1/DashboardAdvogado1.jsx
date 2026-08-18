@@ -199,7 +199,6 @@ export default function DashboardAdvogado1({ api }) {
                                             />
                                             <div className={css.cardEscritorioInfo}>
                                                 <h3 className={css.nomeEscritorio}>{escritorio.nome_fantasia}</h3>
-                                                <p className={css.razaoEscritorio}>{escritorio.razao_social}</p>
                                                 <span className={css.tipoEscritorio}>
                                                     {escritorio.status === 'PROPRIETARIO' ? 'Proprietário' : 'Parceiro'}
                                                 </span>

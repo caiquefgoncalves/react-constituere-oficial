@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clear-sans');
+
+.paginaCompleta {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.layoutDashboard {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    padding: 0 1rem;
+    box-sizing: border-box;
+}
+
+.menuLateralContainer {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 0.5rem;
+}
+
+.conteudoPrincipal {
+    flex: 1;
+    padding: 2.5rem 2.5rem 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    min-width: 0;
+}
+
+.topoSaudacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.tituloSaudacao {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0047ab;
+    margin: 0;
+}
+
+.nomeDestaque {
+    color: #333;
+}
+
+.btnConfiguracoes {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.btnConfiguracoes:hover { background-color: #f0f0f0; }
+
+.imgEngrenagem {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
+
+.acoesRapidas {
+    background: transparent;
+    border: none;
+    padding: 1rem 0;
+    width: 100%;
+}
+
+.tituloAcoes {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #000000;
+    margin: 0 0 1.5rem 0;
+}
+
+
+.carrosselContainer {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+}
+
+
+.botaoSeta {
+    background: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #0047ab;
+    box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    flex-shrink: 0;
+    transition: all 0.2s ease;
+}
+
+.botaoSeta:hover {
+    background: #0047ab;
+    color: #ffffff;
+    transform: scale(1.05);
+}
+
+
+.botoesAcoes {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    padding: 0.8rem 0.2rem;
+    flex: 1;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.botoesAcoes::-webkit-scrollbar {
+    display: none;
+}
+
+.botaoAcao {
+    flex: 0 0 calc((100% - 3rem) / 3);
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    padding: 0.8rem 1rem 0.8rem 0.8rem;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.08);
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.botaoAcao:hover {
+    box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.12);
+}
+
+.iconeAcao {
+    background-color: #0047ab;
+    color: transparent;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0;
+    flex-shrink: 0;
+}
+
+
+.gradeEstatisticas {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+}
+
+.cardNovo {
+    background: #ffffff;
+    border: 1px solid #8bb4d9;
+    border-radius: 14px;
+    padding: 1.8rem 1.5rem 1.5rem 1.5rem;
+    min-width: 160px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+}
+
+.labelCardNovo {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+    color: #222;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.bolinhaVerde {
+    background-color: #ddf6d6;
+    border-radius: 100px;
+    padding: 0.4rem 1.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 60px;
+}
+
+.numeroCardNovo {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #222;
+}
+
+.gradeDupla {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.cardDuplo {
+    background: #fff;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    border: 1px solid #eee;
+    min-height: 180px;
+}
+
+.tituloCardDuplo {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+    margin: 0 0 1rem 0;
+}
+
+.placeholderGrafico {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100px;
+    background: #fafafa;
+    border-radius: 8px;
+}
+
+.textoPlaceholder {
+    font-family: 'Clear Sans', sans-serif;
+    color: #aaa;
+    font-size: 0.9rem;
+}
+
