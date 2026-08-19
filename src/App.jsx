@@ -8,7 +8,7 @@ import CadastroEscritorio from "./pages/CadastroEscritorio.jsx";
 import DashboardEscritorio from "./pages/DashboardEscritorio.jsx";
 
 
-const API_URL = 'http://10.92.11.35:5000';
+const API_URL = 'http://192.168.0.129:5000';
 
 function App() {
     return (
@@ -20,7 +20,7 @@ function App() {
                 <Route path="/dashboard_advogado" element={<DashboardAdvogado api={API_URL} />} />
                 <Route path="/editar_perfil_advogado" element={<EditarPerfilAdvogado api={API_URL} />} />
                 <Route path="/cadastro_escritorio" element={<CadastroEscritorio api={API_URL} />} />
-                <Route path="/dashboard_escritorio" element={<DashboardEscritorio api={API_URL} />} />
+                <Route path="/escritorio/:id" element={<DashboardEscritorio api={API_URL} />} />
             </Routes>
         </Router>
     );
