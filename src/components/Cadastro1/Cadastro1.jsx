@@ -28,7 +28,7 @@ export default function Cadastro1({ api }) {
     const [exibirCarregamento, setExibirCarregamento] = useState(false);
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.35:5000';
+    const API_URL = api || 'http://192.168.0.129:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -341,7 +341,7 @@ export default function Cadastro1({ api }) {
 
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
-                    <button className={css.botaoVoltar} onClick={voltarParaHome} tabIndex={-1}>
+                    <button className={css.botaoVoltar} onClick={voltarParaHome} tabIndex={-1} name="btn-voltar">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
@@ -380,6 +380,7 @@ export default function Cadastro1({ api }) {
                                 onChange={handleNome}
                                 maxLength={254}
                                 tabIndex={1}
+                                name="nome"
                             />
                         </div>
                         <div className={css.campoMetade}>
@@ -392,6 +393,7 @@ export default function Cadastro1({ api }) {
                                 onChange={handleCpf}
                                 maxLength={14}
                                 tabIndex={2}
+                                name="cpf"
                             />
                         </div>
 
@@ -405,6 +407,7 @@ export default function Cadastro1({ api }) {
                                 onChange={handleRg}
                                 maxLength={20}
                                 tabIndex={3}
+                                name="rg"
                             />
                         </div>
                         <div className={css.campoMetade}>
@@ -417,6 +420,7 @@ export default function Cadastro1({ api }) {
                                 onChange={handleOrgaoExpedidor}
                                 maxLength={20}
                                 tabIndex={4}
+                                name="orgao_expedidor"
                             />
                         </div>
 
@@ -429,6 +433,7 @@ export default function Cadastro1({ api }) {
                                 value={oab}
                                 onChange={(e) => setOab(e.target.value)}
                                 tabIndex={5}
+                                name="num_oab"
                             />
                         </div>
                         <div className={css.campoMetade}>
@@ -438,6 +443,7 @@ export default function Cadastro1({ api }) {
                                 value={ufOab}
                                 onChange={(e) => setUfOab(e.target.value)}
                                 tabIndex={6}
+                                name="uf_oab"
                             >
                                 <option value="" disabled>Selecione a UF</option>
                                 {ufs.map(uf => (
@@ -456,11 +462,12 @@ export default function Cadastro1({ api }) {
                                 onChange={handleNacionalidade}
                                 maxLength={50}
                                 tabIndex={7}
+                                name="nacionalidade"
                             />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>Estado civil *</label>
-                            <select className={css.input} value={estadoCivil} onChange={(e) => setEstadoCivil(e.target.value)} tabIndex={8}>
+                            <select className={css.input} value={estadoCivil} onChange={(e) => setEstadoCivil(e.target.value)} tabIndex={8} name="estado_civil">
                                 <option value="" disabled>Selecione o estado civil</option>
                                 <option value="Solteiro(a)">Solteiro(a)</option>
                                 <option value="Casado(a)">Casado(a)</option>
@@ -480,6 +487,7 @@ export default function Cadastro1({ api }) {
                                 onChange={handleTelefone}
                                 maxLength={15}
                                 tabIndex={9}
+                                name="telefone"
                             />
                         </div>
                         <div className={css.campoMetade}>
@@ -492,6 +500,7 @@ export default function Cadastro1({ api }) {
                                 onChange={handleEmail}
                                 maxLength={254}
                                 tabIndex={10}
+                                name="email"
                             />
                         </div>
 
@@ -506,6 +515,7 @@ export default function Cadastro1({ api }) {
                                     onChange={handleSenha}
                                     maxLength={254}
                                     tabIndex={11}
+                                    name="senha"
                                 />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -518,6 +528,7 @@ export default function Cadastro1({ api }) {
                                     onChange={handleConfirmarSenha}
                                     maxLength={254}
                                     tabIndex={13}
+                                    name="confirmar_senha"
                                 />
                             </div>
                         </div>
@@ -540,6 +551,7 @@ export default function Cadastro1({ api }) {
                                     className={css.inputFile}
                                     onChange={(e) => setFotoPerfil(e.target.files[0])}
                                     tabIndex={12}
+                                    name="foto_perfil"
                                     style={{
                                         width: '100%',
                                         border: 'none',
@@ -558,7 +570,7 @@ export default function Cadastro1({ api }) {
                     </div>
 
                     <div className={css.botaoContainer}>
-                        <button className={css.botaoCadastro} type="submit" disabled={carregando} tabIndex={14}>
+                        <button className={css.botaoCadastro} type="submit" disabled={carregando} tabIndex={14} name="btn-cadastrar">
                             {carregando ? 'Cadastrando...' : 'Cadastre-se'}
                         </button>
                     </div>

@@ -38,10 +38,6 @@ export default function Login1({ api }) {
         setSenha(e.target.value);
     }
 
-    function voltarParaHome() {
-        navigate('/');
-    }
-
     async function handleLogin(e) {
         e.preventDefault();
         setCarregando(true);
@@ -58,8 +54,6 @@ export default function Login1({ api }) {
         }
 
         try {
-            console.log('🔍 Tentando login com:', { cpf: cpfLimpo });
-
             const resposta = await fetch(`${API_URL}/login`, {
                 method: 'POST',
                 credentials: 'include',
@@ -70,20 +64,13 @@ export default function Login1({ api }) {
                 })
             });
 
-            console.log('Status da resposta:', resposta.status);
-
             const dados = await resposta.json();
-            console.log('Dados recebidos:', dados);
 
             if (resposta.ok) {
                 localStorage.setItem('token', dados.token);
                 localStorage.setItem('nome', dados.nome);
                 localStorage.setItem('tipo', dados.tipo);
                 localStorage.setItem('id_usuario', dados.id_usuario);
-
-                console.log('Login realizado com sucesso!');
-                console.log('Tipo:', dados.tipo);
-                console.log('ID:', dados.id_usuario);
 
                 setMensagem('Login realizado com sucesso! Redirecionando...');
                 setTipoMensagem('sucesso');
@@ -95,13 +82,12 @@ export default function Login1({ api }) {
                     else navigate('/');
                 }, 2000);
             } else {
-                console.log('Erro no login:', dados.error);
+                // Exibe a mensagem exata que veio do back-end
                 setMensagem(dados.error || 'Erro ao fazer login. Verifique CPF e senha.');
                 setTipoMensagem('erro');
                 setCarregando(false);
             }
         } catch (erro) {
-            console.error('Erro de conexão:', erro);
             setMensagem('Erro de conexão com o servidor.');
             setTipoMensagem('erro');
             setCarregando(false);
@@ -141,7 +127,7 @@ export default function Login1({ api }) {
                 <form className={css.formulario} onSubmit={handleLogin}>
                     <div className={css.linha}>
                         <div className={css.campoInteiro}>
-                            <label className={css.label}>CPF</label>
+                            <label className={css.label}>CPF/CNPJ</label>
                             <input
                                 type="text"
                                 className={css.input}
@@ -150,6 +136,7 @@ export default function Login1({ api }) {
                                 onChange={handleCpfCnpj}
                                 maxLength={18}
                                 tabIndex={1}
+                                name="cpf_cnpj"
                             />
                         </div>
 
@@ -163,12 +150,13 @@ export default function Login1({ api }) {
                                 onChange={handleSenha}
                                 maxLength={254}
                                 tabIndex={2}
+                                name="senha"
                             />
                         </div>
                     </div>
 
                     <div className={css.botaoContainer}>
-                        <button className={css.botaoLogin} type="submit" disabled={carregando} tabIndex={3}>
+                        <button className={css.botaoLogin} type="submit" disabled={carregando} tabIndex={3} name="btn-login">
                             {carregando ? 'Entrando...' : 'Login'}
                         </button>
                     </div>

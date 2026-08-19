@@ -3,14 +3,14 @@ import css from './Header.module.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 
-export default function Header({ api }) {
+export default function Header({ api, fotoPerfil }) {
     const navigate = useNavigate();
     const location = useLocation();
     const [token, setToken] = useState(null);
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.35:5000';
+    const API_URL = api || 'http://192.168.0.129:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -33,6 +33,11 @@ export default function Header({ api }) {
     }, [location]);
 
     function getFotoPerfil() {
+        // Se recebeu uma foto por prop (escritório), usa ela
+        if (fotoPerfil) {
+            return fotoPerfil;
+        }
+        // Senão usa a foto do usuário logado
         if (idUsuario) {
             return `${API_URL}/uploads/Usuarios/${idUsuario}.jpeg`;
         }
@@ -52,8 +57,8 @@ export default function Header({ api }) {
 
     function irParaPerfil() {
         if (tipoUsuario === 0) navigate('/dashboard_advogado');
-        else if (tipoUsuario === 1) navigate('/dashboardEscritorio');
-        else if (tipoUsuario === 2) navigate('/dashboardCliente');
+        else if (tipoUsuario === 1) navigate('/dashboard_escritorio');
+        else if (tipoUsuario === 2) navigate('/dashboard_cliente');
         else navigate('/dashboard');
     }
 
@@ -84,11 +89,11 @@ export default function Header({ api }) {
                 <div className={css.divbotoes}>
                     {token ? (
                         <>
-                            <button className={css.iconeBtn} type="button">
+                            <button className={css.iconeBtn} type="button" name="btn-notificacoes">
                                 <img src="/sino.png" alt="Notificações" className={css.iconeImg} />
                             </button>
 
-                            <button className={css.iconeBtn} onClick={irParaPerfil} type="button">
+                            <button className={css.iconeBtn} onClick={irParaPerfil} type="button" name="btn-perfil">
                                 <img
                                     src={getFotoPerfil()}
                                     alt="Perfil"
@@ -99,14 +104,15 @@ export default function Header({ api }) {
                                     }}
                                 />
                             </button>
+
                         </>
                     ) : (
                         <>
                             <Link to="/cadastro">
-                                <button className={css.cadastro}>Cadastro</button>
+                                <button className={css.cadastro} name="btn-cadastro">Cadastro</button>
                             </Link>
                             <Link to="/login">
-                                <button className={css.login}>Login</button>
+                                <button className={css.login} name="btn-login">Login</button>
                             </Link>
                         </>
                     )}

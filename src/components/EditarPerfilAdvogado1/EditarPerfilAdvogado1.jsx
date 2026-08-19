@@ -31,6 +31,8 @@ export default function EditarPerfilAdvogado({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [carregandoDados, setCarregandoDados] = useState(true);
 
+    const API_URL = api || 'http://192.168.0.129:5000';
+
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
         'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
@@ -135,7 +137,6 @@ export default function EditarPerfilAdvogado({ api }) {
 
     useEffect(() => {
         let timerAviso = null;
-
         if (exibirCarregamento) {
             timerAviso = setTimeout(() => {
                 setAvisoInternetLenta(true);
@@ -143,7 +144,6 @@ export default function EditarPerfilAdvogado({ api }) {
         } else {
             setAvisoInternetLenta(false);
         }
-
         return () => {
             if (timerAviso) clearTimeout(timerAviso);
         };
@@ -153,13 +153,12 @@ export default function EditarPerfilAdvogado({ api }) {
         async function carregarDados() {
             try {
                 const token = localStorage.getItem('token');
-
                 if (!token) {
                     navigate('/login');
                     return;
                 }
 
-                const resposta = await fetch(`${api}/meus_dados`, {
+                const resposta = await fetch(`${API_URL}/meus_dados`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: {
@@ -170,7 +169,6 @@ export default function EditarPerfilAdvogado({ api }) {
                 if (resposta.ok) {
                     const dados = await resposta.json();
                     const user = dados.usuario;
-
                     setNome(user.nome || '');
                     setCpf(formatarCpf(user.cpf || ''));
                     setRg(user.rg || '');
@@ -196,7 +194,6 @@ export default function EditarPerfilAdvogado({ api }) {
                         senha: '',
                         confirmarSenha: ''
                     });
-
                 } else {
                     if (resposta.status === 401) {
                         localStorage.removeItem('nome');
@@ -218,9 +215,8 @@ export default function EditarPerfilAdvogado({ api }) {
                 setCarregandoDados(false);
             }
         }
-
         carregarDados();
-    }, [api, navigate]);
+    }, [API_URL, navigate]);
 
     async function handleSalvar(e) {
         e.preventDefault();
@@ -248,10 +244,7 @@ export default function EditarPerfilAdvogado({ api }) {
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
-
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
             return;
         }
@@ -262,10 +255,7 @@ export default function EditarPerfilAdvogado({ api }) {
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
-
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
             return;
         }
@@ -276,10 +266,7 @@ export default function EditarPerfilAdvogado({ api }) {
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
-
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
             return;
         }
@@ -290,10 +277,7 @@ export default function EditarPerfilAdvogado({ api }) {
                 setTipoMensagem('erro');
                 setCarregando(false);
                 setExibirCarregamento(false);
-
-                if (topoRef.current) {
-                    topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
+                if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
                 return;
             }
@@ -319,17 +303,9 @@ export default function EditarPerfilAdvogado({ api }) {
             setTipoMensagem('sucesso');
             setCarregando(false);
             setExibirCarregamento(false);
-
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
-
-            setTimeout(() => {
-                navigate('/dashboard_advogado');
-            }, 2000);
-
+            setTimeout(() => navigate('/dashboard_advogado'), 2000);
             return;
         }
 
@@ -352,8 +328,7 @@ export default function EditarPerfilAdvogado({ api }) {
 
         try {
             const token = localStorage.getItem('token');
-
-            const resposta = await fetch(`${api}/editar_perfil`, {
+            const resposta = await fetch(`${API_URL}/editar_perfil`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: {
@@ -368,17 +343,9 @@ export default function EditarPerfilAdvogado({ api }) {
             if (resposta.ok) {
                 setMensagem('Perfil atualizado com sucesso!');
                 setTipoMensagem('sucesso');
-
-                if (topoRef.current) {
-                    topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-
+                if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
-
-                setTimeout(() => {
-                    navigate('/dashboard_advogado');
-                }, 2000);
-
+                setTimeout(() => navigate('/dashboard_advogado'), 2000);
             } else {
                 if (resposta.status === 401) {
                     localStorage.removeItem('nome');
@@ -389,7 +356,6 @@ export default function EditarPerfilAdvogado({ api }) {
                 }
                 const erro = dados.error || 'Erro ao atualizar o perfil.';
                 let mensagemErro = erro;
-
                 if (erro.includes('já está cadastrado para outro usuário')) {
                     mensagemErro = erro;
                 } else if (erro.includes('não encontrada no cadastro da OAB')) {
@@ -401,14 +367,9 @@ export default function EditarPerfilAdvogado({ api }) {
                 } else if (erro.includes('E-mail já cadastrado')) {
                     mensagemErro = erro;
                 }
-
                 setMensagem(mensagemErro);
                 setTipoMensagem('erro');
-
-                if (topoRef.current) {
-                    topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-
+                if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
             }
         } catch (erro) {
@@ -416,11 +377,7 @@ export default function EditarPerfilAdvogado({ api }) {
             setExibirCarregamento(false);
             setMensagem('Erro de conexão com o servidor. Verifique o back-end.');
             setTipoMensagem('erro');
-
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
         } finally {
             setCarregando(false);
@@ -472,15 +429,11 @@ export default function EditarPerfilAdvogado({ api }) {
                         textAlign: 'center',
                         padding: '30px'
                     }}>
-                        <img
-                            src={'./public/Martelinho.png'}
-                            alt="Carregando"
-                            style={{
-                                width: '100px',
-                                height: '100px',
-                                animation: 'spin 1.2s linear infinite'
-                            }}
-                        />
+                        <img src={'./public/Martelinho.png'} alt="Carregando" style={{
+                            width: '100px',
+                            height: '100px',
+                            animation: 'spin 1.2s linear infinite'
+                        }} />
                         <p style={{
                             color: 'white',
                             fontSize: '1.2rem',
@@ -489,7 +442,6 @@ export default function EditarPerfilAdvogado({ api }) {
                         }}>
                             Validando seus dados com a OAB...
                         </p>
-
                         {avisoInternetLenta && (
                             <p style={{
                                 color: '#ffc107',
@@ -509,8 +461,8 @@ export default function EditarPerfilAdvogado({ api }) {
 
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
-                    <button className={css.botaoVoltar} onClick={voltarParaDashboardAdvogado} tabIndex={-1}>
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <button className={css.botaoVoltar} onClick={voltarParaDashboardAdvogado} tabIndex={-1} name="btn-voltar">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
@@ -540,95 +492,41 @@ export default function EditarPerfilAdvogado({ api }) {
                     <div className={css.linha}>
                         <div className={css.campoMetade}>
                             <label className={css.label}>Nome completo *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Digite seu nome"
-                                value={nome}
-                                onChange={handleNome}
-                                maxLength={254}
-                                tabIndex={1}
-                            />
+                            <input type="text" className={css.input} placeholder="Digite seu nome" value={nome} onChange={handleNome} maxLength={254} tabIndex={1} name="nome" />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>CPF *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Digite seu CPF"
-                                value={cpf}
-                                onChange={handleCpf}
-                                maxLength={14}
-                                tabIndex={2}
-                            />
+                            <input type="text" className={css.input} placeholder="Digite seu CPF" value={cpf} onChange={handleCpf} maxLength={14} tabIndex={2} name="cpf" />
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>RG *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Digite seu RG"
-                                value={rg}
-                                onChange={handleRg}
-                                maxLength={20}
-                                tabIndex={3}
-                            />
+                            <input type="text" className={css.input} placeholder="Digite seu RG" value={rg} onChange={handleRg} maxLength={20} tabIndex={3} name="rg" />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>Órgão expedidor *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Ex: SSP/SP"
-                                value={orgaoExpeditor}
-                                onChange={handleOrgaoExpedidor}
-                                maxLength={20}
-                                tabIndex={4}
-                            />
+                            <input type="text" className={css.input} placeholder="Ex: SSP/SP" value={orgaoExpeditor} onChange={handleOrgaoExpedidor} maxLength={20} tabIndex={4} name="orgao_expedidor" />
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Número da OAB *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Digite sua OAB"
-                                value={oab}
-                                onChange={(e) => setOab(e.target.value)}
-                                tabIndex={5}
-                            />
+                            <input type="text" className={css.input} placeholder="Digite sua OAB" value={oab} onChange={(e) => setOab(e.target.value)} tabIndex={5} name="num_oab" />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>UF da OAB *</label>
-                            <select
-                                className={css.input}
-                                value={ufOab}
-                                onChange={(e) => setUfOab(e.target.value)}
-                                tabIndex={6}
-                            >
+                            <select className={css.input} value={ufOab} onChange={(e) => setUfOab(e.target.value)} tabIndex={6} name="uf_oab">
                                 <option value="" disabled>Selecione a UF</option>
-                                {ufs.map(uf => (
-                                    <option key={uf} value={uf}>{uf}</option>
-                                ))}
+                                {ufs.map(uf => <option key={uf} value={uf}>{uf}</option>)}
                             </select>
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Nacionalidade *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Ex: Brasileira"
-                                value={nacionalidade}
-                                onChange={handleNacionalidade}
-                                maxLength={50}
-                                tabIndex={7}
-                            />
+                            <input type="text" className={css.input} placeholder="Ex: Brasileira" value={nacionalidade} onChange={handleNacionalidade} maxLength={50} tabIndex={7} name="nacionalidade" />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>Estado civil *</label>
-                            <select className={css.input} value={estadoCivil} onChange={(e) => setEstadoCivil(e.target.value)} tabIndex={8}>
+                            <select className={css.input} value={estadoCivil} onChange={(e) => setEstadoCivil(e.target.value)} tabIndex={8} name="estado_civil">
                                 <option value="" disabled>Selecione o estado civil</option>
                                 <option value="Solteiro(a)">Solteiro(a)</option>
                                 <option value="Casado(a)">Casado(a)</option>
@@ -640,53 +538,21 @@ export default function EditarPerfilAdvogado({ api }) {
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Telefone *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Digite seu telefone"
-                                value={telefone}
-                                onChange={handleTelefone}
-                                maxLength={15}
-                                tabIndex={9}
-                            />
+                            <input type="text" className={css.input} placeholder="Digite seu telefone" value={telefone} onChange={handleTelefone} maxLength={15} tabIndex={9} name="telefone" />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>E-mail *</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="Digite seu e-mail"
-                                value={email}
-                                onChange={handleEmail}
-                                maxLength={254}
-                                tabIndex={10}
-                            />
+                            <input type="text" className={css.input} placeholder="Digite seu e-mail" value={email} onChange={handleEmail} maxLength={254} tabIndex={10} name="email" />
                         </div>
 
                         <div className={css.campoMetade} style={{ gap: '1.5rem', marginBottom: 0 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label className={css.label}>Nova senha</label>
-                                <input
-                                    type="password"
-                                    className={css.input}
-                                    placeholder="Deixe em branco para não alterar"
-                                    value={senha}
-                                    onChange={handleSenha}
-                                    maxLength={254}
-                                    tabIndex={11}
-                                />
+                                <input type="password" className={css.input} placeholder="Deixe em branco para não alterar" value={senha} onChange={handleSenha} maxLength={254} tabIndex={11} name="senha" />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label className={css.label}>Confirmar nova senha</label>
-                                <input
-                                    type="password"
-                                    className={css.input}
-                                    placeholder="Confirme a nova senha"
-                                    value={confirmarSenha}
-                                    onChange={handleConfirmarSenha}
-                                    maxLength={254}
-                                    tabIndex={13}
-                                />
+                                <input type="password" className={css.input} placeholder="Confirme a nova senha" value={confirmarSenha} onChange={handleConfirmarSenha} maxLength={254} tabIndex={13} name="confirmar_senha" />
                             </div>
                         </div>
 
@@ -708,6 +574,7 @@ export default function EditarPerfilAdvogado({ api }) {
                                     className={css.inputFile}
                                     onChange={(e) => setFotoPerfil(e.target.files[0])}
                                     tabIndex={12}
+                                    name="foto_perfil"
                                     style={{
                                         width: '100%',
                                         border: 'none',
@@ -726,7 +593,7 @@ export default function EditarPerfilAdvogado({ api }) {
                     </div>
 
                     <div className={css.botaoContainer}>
-                        <button className={css.botaoSalvar} type="submit" disabled={carregando} tabIndex={14}>
+                        <button className={css.botaoSalvar} type="submit" disabled={carregando} tabIndex={14} name="btn-salvar">
                             {carregando ? 'Salvando...' : 'Salvar Alterações'}
                         </button>
                     </div>

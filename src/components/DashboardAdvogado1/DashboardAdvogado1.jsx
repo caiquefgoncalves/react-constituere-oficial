@@ -14,7 +14,7 @@ export default function DashboardAdvogado1({ api }) {
     const [escritorios, setEscritorios] = useState([]);
     const [carregandoEscritorios, setCarregandoEscritorios] = useState(true);
 
-    const API_URL = api ;
+    const API_URL = api || 'http://192.168.0.129:5000';
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');
@@ -90,7 +90,6 @@ export default function DashboardAdvogado1({ api }) {
         buscarEscritorios();
     }, [navigate, API_URL]);
 
-
     function irParaEditarPerfil() {
         navigate('/editar_perfil_advogado');
     }
@@ -102,7 +101,6 @@ export default function DashboardAdvogado1({ api }) {
     function irParaDetalhesEscritorio(id) {
         navigate(`/escritorio/${id}`);
     }
-
 
     function getFotoEscritorio(id) {
         return `${API_URL}/uploads/Escritorios/escritorio_${id}.jpeg`;
@@ -141,6 +139,7 @@ export default function DashboardAdvogado1({ api }) {
                             className={css.btnConfiguracoes}
                             type="button"
                             onClick={irParaEditarPerfil}
+                            name="btn-configuracoes"
                         >
                             <img src="/engrenagem_1.png" alt="Configurações" className={css.imgEngrenagem} />
                         </button>
@@ -173,6 +172,7 @@ export default function DashboardAdvogado1({ api }) {
                             className={css.botaoAdicionarEscritorio}
                             type="button"
                             onClick={irParaCadastroEscritorio}
+                            name="btn-adicionar-escritorio"
                         >
                             +
                         </button>
@@ -206,6 +206,8 @@ export default function DashboardAdvogado1({ api }) {
                                         </div>
                                         <button
                                             className={css.botaoVerDetalhes}
+                                            onClick={() => irParaDetalhesEscritorio(escritorio.id)}
+                                            name={`btn-detalhes-${escritorio.id}`}
                                         >
                                             Ver Detalhes →
                                         </button>

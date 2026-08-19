@@ -256,3 +256,89 @@
     font-size: 0.9rem;
 }
 
+.topArea {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.botaoVoltar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+}
+
+.botaoVoltar:hover {
+    background-color: #f0f0f0;
+}
+
+.botaoVoltar svg {
+    width: 20px;
+    height: 20px;
+}
+
+.botaoVoltar svg path {
+    stroke: #0047ab;
+    stroke-width: 3;
+}
+
+.topoSaudacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+}
+
+.saudacaoTexto {
+    display: flex;
+    flex-direction: column;
+}
+
+.tituloSaudacao {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #0047ab;
+    margin: 0;
+}
+
+.nomeDestaque {
+    color: #333;
+}
+
+.subtituloSaudacao {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.2rem 0 0 0;
+}
+
+.btnConfiguracoes {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.btnConfiguracoes:hover {
+    background-color: #f0f0f0;
+}
+
+.imgEngrenagem {
+    width: 28px;
+    height: 28px;
+    display: block;
+}
+
