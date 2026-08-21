@@ -14,7 +14,7 @@ export default function Login1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
 
-    const API_URL = api || 'http://localhost:5000';
+    const API_URL = api || ' http://192.168.0.133:5000';
 
     function handleCpfCnpj(e) {
         let valor = e.target.value.replace(/\D/g, '');

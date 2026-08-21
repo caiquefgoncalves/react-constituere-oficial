@@ -9,14 +9,14 @@ export default function EditarPerfilAdvogado({ api }) {
     const topoRef = useRef(null);
 
     const [nome, setNome] = useState('');
-    const [cpf, setCpf] = useState('');
+    const [cpf, setCpf] = useState(''); // Guarda apenas números
     const [rg, setRg] = useState('');
     const [orgaoExpeditor, setOrgaoExpeditor] = useState('');
     const [oab, setOab] = useState('');
     const [ufOab, setUfOab] = useState('');
     const [nacionalidade, setNacionalidade] = useState('');
     const [estadoCivil, setEstadoCivil] = useState('');
-    const [telefone, setTelefone] = useState('');
+    const [telefone, setTelefone] = useState(''); // Guarda apenas números
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -31,7 +31,7 @@ export default function EditarPerfilAdvogado({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [carregandoDados, setCarregandoDados] = useState(true);
 
-    const API_URL = api || 'http://192.168.0.129:5000';
+    const API_URL = api || ' http://192.168.0.133:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -90,9 +90,10 @@ export default function EditarPerfilAdvogado({ api }) {
     }
 
     function handleCpf(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 11) valor = valor.slice(0, 11);
-        setCpf(formatarCpf(valor));
+        const numeros = e.target.value.replace(/\D/g, '');
+        if (numeros.length <= 11) {
+            setCpf(numeros);
+        }
     }
 
     function handleRg(e) {
@@ -106,9 +107,10 @@ export default function EditarPerfilAdvogado({ api }) {
     }
 
     function handleTelefone(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 11) valor = valor.slice(0, 11);
-        setTelefone(formatarTelefone(valor));
+        const numeros = e.target.value.replace(/\D/g, '');
+        if (numeros.length <= 11) {
+            setTelefone(numeros);
+        }
     }
 
     function handleEmail(e) {
@@ -170,26 +172,26 @@ export default function EditarPerfilAdvogado({ api }) {
                     const dados = await resposta.json();
                     const user = dados.usuario;
                     setNome(user.nome || '');
-                    setCpf(formatarCpf(user.cpf || ''));
+                    setCpf(apenasNumeros(user.cpf || ''));
                     setRg(user.rg || '');
                     setOrgaoExpeditor(user.orgao_expedidor || '');
                     setOab(user.num_oab || '');
                     setUfOab(user.uf_oab || '');
                     setNacionalidade(user.nacionalidade || '');
                     setEstadoCivil(user.estado_civil || '');
-                    setTelefone(formatarTelefone(user.telefone || ''));
+                    setTelefone(apenasNumeros(user.telefone || ''));
                     setEmail(user.email || '');
 
                     setDadosOriginais({
                         nome: user.nome || '',
-                        cpf: formatarCpf(user.cpf || ''),
+                        cpf: apenasNumeros(user.cpf || ''),
                         rg: user.rg || '',
                         orgao_expedidor: user.orgao_expedidor || '',
                         oab: user.num_oab || '',
                         ufOab: user.uf_oab || '',
                         nacionalidade: user.nacionalidade || '',
                         estadoCivil: user.estado_civil || '',
-                        telefone: formatarTelefone(user.telefone || ''),
+                        telefone: apenasNumeros(user.telefone || ''),
                         email: user.email || '',
                         senha: '',
                         confirmarSenha: ''
@@ -249,8 +251,7 @@ export default function EditarPerfilAdvogado({ api }) {
             return;
         }
 
-        const cpfNumeros = apenasNumeros(cpf);
-        if (cpfNumeros.length !== 11) {
+        if (cpf.length !== 11) {
             setMensagem('CPF incompleto. Digite os 11 números do CPF.');
             setTipoMensagem('erro');
             setCarregando(false);
@@ -260,8 +261,7 @@ export default function EditarPerfilAdvogado({ api }) {
             return;
         }
 
-        const telefoneNumeros = apenasNumeros(telefone);
-        if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+        if (telefone.length < 10 || telefone.length > 11) {
             setMensagem('Telefone incompleto. Digite DDD + número (10 ou 11 dígitos).');
             setTipoMensagem('erro');
             setCarregando(false);
@@ -311,13 +311,13 @@ export default function EditarPerfilAdvogado({ api }) {
 
         const formData = new FormData();
         formData.append('nome', nome);
-        formData.append('cpf_cnpj', cpfNumeros);
+        formData.append('cpf_cnpj', cpf);
         formData.append('email', email);
         if (senha && senha.trim() !== '') {
             formData.append('senha', senha);
             formData.append('confirmar_senha', confirmarSenha);
         }
-        formData.append('telefone', telefoneNumeros);
+        formData.append('telefone', telefone);
         formData.append('rg', rg);
         formData.append('orgao_expedidor', orgaoExpeditor);
         formData.append('num_oab', oab);
@@ -354,20 +354,27 @@ export default function EditarPerfilAdvogado({ api }) {
                     navigate('/login');
                     return;
                 }
+
+                // 🔥 EXIBE A MENSAGEM EXATA QUE VEIO DO BACK-END
                 const erro = dados.error || 'Erro ao atualizar o perfil.';
-                let mensagemErro = erro;
-                if (erro.includes('já está cadastrado para outro usuário')) {
-                    mensagemErro = erro;
+
+                // 🔥 VERIFICA SE É A MENSAGEM DE SITUAÇÃO DA OAB
+                if (erro.includes('Sua situação é')) {
+                    setMensagem(erro);
                 } else if (erro.includes('não encontrada no cadastro da OAB')) {
-                    mensagemErro = erro;
-                } else if (erro.includes('Sua situação é')) {
-                    mensagemErro = erro;
+                    setMensagem(erro);
+                } else if (erro.includes('já está cadastrado para outro usuário')) {
+                    setMensagem(erro);
                 } else if (erro.includes('CPF já cadastrado')) {
-                    mensagemErro = erro;
+                    setMensagem(erro);
                 } else if (erro.includes('E-mail já cadastrado')) {
-                    mensagemErro = erro;
+                    setMensagem(erro);
+                } else if (erro.includes('CPF inválido')) {
+                    setMensagem(erro);
+                } else {
+                    setMensagem(erro);
                 }
-                setMensagem(mensagemErro);
+
                 setTipoMensagem('erro');
                 if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
@@ -462,7 +469,7 @@ export default function EditarPerfilAdvogado({ api }) {
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
                     <button className={css.botaoVoltar} onClick={voltarParaDashboardAdvogado} tabIndex={-1} name="btn-voltar">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
@@ -490,39 +497,103 @@ export default function EditarPerfilAdvogado({ api }) {
 
                 <form className={css.formulario} onSubmit={handleSalvar}>
                     <div className={css.linha}>
+                        {/* ... todos os campos ... */}
+
                         <div className={css.campoMetade}>
                             <label className={css.label}>Nome completo *</label>
-                            <input type="text" className={css.input} placeholder="Digite seu nome" value={nome} onChange={handleNome} maxLength={254} tabIndex={1} name="nome" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Digite seu nome"
+                                value={nome}
+                                onChange={handleNome}
+                                maxLength={254}
+                                tabIndex={1}
+                                name="nome"
+                            />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>CPF *</label>
-                            <input type="text" className={css.input} placeholder="Digite seu CPF" value={cpf} onChange={handleCpf} maxLength={14} tabIndex={2} name="cpf" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Digite seu CPF"
+                                value={formatarCpf(cpf)}
+                                onChange={handleCpf}
+                                maxLength={14}
+                                tabIndex={2}
+                                name="cpf"
+                                data-testid="cpf-input"
+                            />
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>RG *</label>
-                            <input type="text" className={css.input} placeholder="Digite seu RG" value={rg} onChange={handleRg} maxLength={20} tabIndex={3} name="rg" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Digite seu RG"
+                                value={rg}
+                                onChange={handleRg}
+                                maxLength={20}
+                                tabIndex={3}
+                                name="rg"
+                            />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>Órgão expedidor *</label>
-                            <input type="text" className={css.input} placeholder="Ex: SSP/SP" value={orgaoExpeditor} onChange={handleOrgaoExpedidor} maxLength={20} tabIndex={4} name="orgao_expedidor" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Ex: SSP/SP"
+                                value={orgaoExpeditor}
+                                onChange={handleOrgaoExpedidor}
+                                maxLength={20}
+                                tabIndex={4}
+                                name="orgao_expedidor"
+                            />
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Número da OAB *</label>
-                            <input type="text" className={css.input} placeholder="Digite sua OAB" value={oab} onChange={(e) => setOab(e.target.value)} tabIndex={5} name="num_oab" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Digite sua OAB"
+                                value={oab}
+                                onChange={(e) => setOab(e.target.value)}
+                                tabIndex={5}
+                                name="num_oab"
+                            />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>UF da OAB *</label>
-                            <select className={css.input} value={ufOab} onChange={(e) => setUfOab(e.target.value)} tabIndex={6} name="uf_oab">
+                            <select
+                                className={css.input}
+                                value={ufOab}
+                                onChange={(e) => setUfOab(e.target.value)}
+                                tabIndex={6}
+                                name="uf_oab"
+                            >
                                 <option value="" disabled>Selecione a UF</option>
-                                {ufs.map(uf => <option key={uf} value={uf}>{uf}</option>)}
+                                {ufs.map(uf => (
+                                    <option key={uf} value={uf}>{uf}</option>
+                                ))}
                             </select>
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Nacionalidade *</label>
-                            <input type="text" className={css.input} placeholder="Ex: Brasileira" value={nacionalidade} onChange={handleNacionalidade} maxLength={50} tabIndex={7} name="nacionalidade" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Ex: Brasileira"
+                                value={nacionalidade}
+                                onChange={handleNacionalidade}
+                                maxLength={50}
+                                tabIndex={7}
+                                name="nacionalidade"
+                            />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>Estado civil *</label>
@@ -538,21 +609,57 @@ export default function EditarPerfilAdvogado({ api }) {
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Telefone *</label>
-                            <input type="text" className={css.input} placeholder="Digite seu telefone" value={telefone} onChange={handleTelefone} maxLength={15} tabIndex={9} name="telefone" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Digite seu telefone"
+                                value={formatarTelefone(telefone)}
+                                onChange={handleTelefone}
+                                maxLength={15}
+                                tabIndex={9}
+                                name="telefone"
+                            />
                         </div>
                         <div className={css.campoMetade}>
                             <label className={css.label}>E-mail *</label>
-                            <input type="text" className={css.input} placeholder="Digite seu e-mail" value={email} onChange={handleEmail} maxLength={254} tabIndex={10} name="email" />
+                            <input
+                                type="text"
+                                className={css.input}
+                                placeholder="Digite seu e-mail"
+                                value={email}
+                                onChange={handleEmail}
+                                maxLength={254}
+                                tabIndex={10}
+                                name="email"
+                            />
                         </div>
 
                         <div className={css.campoMetade} style={{ gap: '1.5rem', marginBottom: 0 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label className={css.label}>Nova senha</label>
-                                <input type="password" className={css.input} placeholder="Deixe em branco para não alterar" value={senha} onChange={handleSenha} maxLength={254} tabIndex={11} name="senha" />
+                                <input
+                                    type="password"
+                                    className={css.input}
+                                    placeholder="Deixe em branco para não alterar"
+                                    value={senha}
+                                    onChange={handleSenha}
+                                    maxLength={254}
+                                    tabIndex={11}
+                                    name="senha"
+                                />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label className={css.label}>Confirmar nova senha</label>
-                                <input type="password" className={css.input} placeholder="Confirme a nova senha" value={confirmarSenha} onChange={handleConfirmarSenha} maxLength={254} tabIndex={13} name="confirmar_senha" />
+                                <input
+                                    type="password"
+                                    className={css.input}
+                                    placeholder="Confirme a nova senha"
+                                    value={confirmarSenha}
+                                    onChange={handleConfirmarSenha}
+                                    maxLength={254}
+                                    tabIndex={13}
+                                    name="confirmar_senha"
+                                />
                             </div>
                         </div>
 

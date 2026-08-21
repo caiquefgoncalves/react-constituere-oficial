@@ -20,7 +20,7 @@
     justify-content: center;
     align-items: center;
     margin-top: 3rem;
-    margin-bottom: 5.5rem;
+    margin-bottom: 2.5rem;
     padding: 0;
     position: relative;
     width: 100%;
@@ -159,15 +159,6 @@ select.input {
     background-color: #003580;
 }
 
-/* ===== CORREÇÃO DO CAMPO DE FOTO ===== */
-.campoFotoContainer {
-    display: flex;
-    flex-direction: column;
-    flex: 1; /* Faz o container preencher todo o espaço restante verticalmente */
-    width: 100%;
-    box-sizing: border-box;
-}
-
 .inputFile {
     width: 100%;
     padding: 0.8rem 1rem;
@@ -180,10 +171,9 @@ select.input {
     background-color: #ffffff;
     box-sizing: border-box;
     cursor: pointer;
-    flex: 1; /* Substitui o height permitindo que a caixa estique junto com o container */
+    height: 50px;
     display: flex;
-    align-items: center; /* Centraliza verticalmente */
-    justify-content: center; /* Centraliza horizontalmente o botão e o texto */
+    align-items: center;
 }
 
 .inputFile::-webkit-file-upload-button {

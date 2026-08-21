@@ -31,7 +31,7 @@ export default function CadastroEscritorio1({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.129:5000';
+    const API_URL = api || ' http://192.168.0.133:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -69,13 +69,33 @@ export default function CadastroEscritorio1({ api }) {
         setTipoMensagem('erro');
         setCarregando(false);
         setExibirCarregamento(false);
-        if (topoRef.current) {
-            topoRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
         agendarLimpezaMensagem();
+
+        setTimeout(() => {
+            if (topoRef.current) {
+                topoRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }, 200);
+    }
+
+    function mostrarSucesso(texto) {
+        setMensagem(texto);
+        setTipoMensagem('sucesso');
+        setCarregando(false);
+        setExibirCarregamento(false);
+        agendarLimpezaMensagem();
+
+        setTimeout(() => {
+            if (topoRef.current) {
+                topoRef.current.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
+        }, 200);
     }
 
     function handleRazaoSocial(e) {
@@ -279,6 +299,9 @@ export default function CadastroEscritorio1({ api }) {
             formData.append('estado', uf);
             if (fotoPerfil) formData.append('foto_perfil', fotoPerfil);
 
+            // 🔥 FORÇA O OVERLAY A SER EXIBIDO ANTES DA REQUISIÇÃO
+            setExibirCarregamento(true);
+
             const resposta = await fetch(`${API_URL}/criar_escritorio`, {
                 method: 'POST',
                 credentials: 'include',
@@ -303,6 +326,16 @@ export default function CadastroEscritorio1({ api }) {
                 setCarregando(false);
                 setAvisoInternetLenta(false);
                 agendarLimpezaMensagem();
+
+                setTimeout(() => {
+                    if (topoRef.current) {
+                        topoRef.current.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }, 200);
+
                 setTimeout(() => navigate('/dashboard_advogado'), 2000);
             } else {
                 if (resposta.status === 401) {
@@ -313,11 +346,38 @@ export default function CadastroEscritorio1({ api }) {
                     navigate('/login');
                     return;
                 }
-                throw new Error(dados.error || 'Não foi possível cadastrar o escritório.');
+                const erroMsg = dados.error || 'Não foi possível cadastrar o escritório.';
+                setMensagem(erroMsg);
+                setTipoMensagem('erro');
+                setCarregando(false);
+                setExibirCarregamento(false);
+                agendarLimpezaMensagem();
+
+                setTimeout(() => {
+                    if (topoRef.current) {
+                        topoRef.current.scrollIntoView({
+                            behavior: 'smooth',
+                            block: 'start'
+                        });
+                    }
+                }, 200);
             }
         } catch (erro) {
             console.error('Erro ao cadastrar escritório:', erro);
-            mostrarErro(erro.message || 'Erro ao cadastrar escritório. Tente novamente.');
+            setMensagem(erro.message || 'Erro ao cadastrar escritório. Tente novamente.');
+            setTipoMensagem('erro');
+            setCarregando(false);
+            setExibirCarregamento(false);
+            agendarLimpezaMensagem();
+
+            setTimeout(() => {
+                if (topoRef.current) {
+                    topoRef.current.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            }, 200);
         }
     }
 
@@ -326,19 +386,22 @@ export default function CadastroEscritorio1({ api }) {
             <Header api={API_URL} />
 
             {exibirCarregamento && (
-                <div style={{
-                    position: 'fixed',
-                    top: 0,
-                    left: 0,
-                    width: '100vw',
-                    height: '100vh',
-                    backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    zIndex: 9999,
-                    backdropFilter: 'blur(4px)'
-                }}>
+                <div
+                    data-testid="loading-overlay"
+                    style={{
+                        position: 'fixed',
+                        top: 0,
+                        left: 0,
+                        width: '100vw',
+                        height: '100vh',
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        zIndex: 9999,
+                        backdropFilter: 'blur(4px)'
+                    }}
+                >
                     <div style={{
                         display: 'flex',
                         flexDirection: 'column',
@@ -388,20 +451,23 @@ export default function CadastroEscritorio1({ api }) {
                 </div>
 
                 {mensagem && (
-                    <div style={{
-                        padding: '16px 24px',
-                        margin: '0 auto 2.5rem auto',
-                        maxWidth: '700px',
-                        borderRadius: '10px',
-                        textAlign: 'center',
-                        fontFamily: 'Clear Sans, sans-serif',
-                        fontWeight: '700',
-                        fontSize: '1.05rem',
-                        backgroundColor: tipoMensagem === 'sucesso' ? '#d4edda' : '#fce8e6',
-                        color: tipoMensagem === 'sucesso' ? '#155724' : '#a94442',
-                        border: tipoMensagem === 'sucesso' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
-                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-                    }}>
+                    <div
+                        data-testid="mensagem"
+                        style={{
+                            padding: '16px 24px',
+                            margin: '0 auto 2.5rem auto',
+                            maxWidth: '700px',
+                            borderRadius: '10px',
+                            textAlign: 'center',
+                            fontFamily: 'Clear Sans, sans-serif',
+                            fontWeight: '700',
+                            fontSize: '1.05rem',
+                            backgroundColor: tipoMensagem === 'sucesso' ? '#d4edda' : '#fce8e6',
+                            color: tipoMensagem === 'sucesso' ? '#155724' : '#a94442',
+                            border: tipoMensagem === 'sucesso' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+                        }}
+                    >
                         {mensagem}
                     </div>
                 )}
