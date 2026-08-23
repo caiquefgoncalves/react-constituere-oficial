@@ -19,7 +19,7 @@ export default function DashboardEscritorio1({ api }) {
     const [nomeFantasia, setNomeFantasia] = useState('Carregando...');
     const [fotoPerfil, setFotoPerfil] = useState('');
 
-    const API_URL = api || ' http://192.168.0.133:5000';
+    const API_URL = api || '  http://192.168.0.126:5000';
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -32,7 +32,6 @@ export default function DashboardEscritorio1({ api }) {
 
         async function buscarDadosEscritorio() {
             try {
-                // Busca os dados do escritório específico
                 const response = await fetch(`${API_URL}/escritorio/${id}`, {
                     method: 'GET',
                     credentials: 'include',
@@ -46,7 +45,6 @@ export default function DashboardEscritorio1({ api }) {
                     const escritorio = data.escritorio;
                     setNomeFantasia(escritorio.nome_fantasia || 'Escritório');
 
-                    // Define a foto de perfil do escritório
                     if (escritorio.id) {
                         setFotoPerfil(`${API_URL}/uploads/Escritorios/escritorio_${escritorio.id}.jpeg`);
                     }

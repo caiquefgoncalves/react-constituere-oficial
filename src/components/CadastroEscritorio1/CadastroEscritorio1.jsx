@@ -31,7 +31,7 @@ export default function CadastroEscritorio1({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || ' http://192.168.0.133:5000';
+    const API_URL = api || '  http://192.168.0.126:5000';
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');
@@ -311,7 +311,6 @@ export default function CadastroEscritorio1({ api }) {
             formData.append('estado', uf);
             if (fotoPerfil) formData.append('foto_perfil', fotoPerfil);
 
-            // 🔥 FORÇA O OVERLAY A SER EXIBIDO ANTES DA REQUISIÇÃO
             setExibirCarregamento(true);
 
             const resposta = await fetch(`${API_URL}/criar_escritorio`, {

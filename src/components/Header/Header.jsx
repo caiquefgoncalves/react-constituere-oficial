@@ -10,7 +10,7 @@ export default function Header({ api, fotoPerfil }) {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
 
-    const API_URL = api || ' http://192.168.0.133:5000';
+    const API_URL = api || '  http://192.168.0.126:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -33,11 +33,11 @@ export default function Header({ api, fotoPerfil }) {
     }, [location]);
 
     function getFotoPerfil() {
-        // Se recebeu uma foto por prop (escritório), usa ela
+
         if (fotoPerfil) {
             return fotoPerfil;
         }
-        // Senão usa a foto do usuário logado
+
         if (idUsuario) {
             return `${API_URL}/uploads/Usuarios/${idUsuario}.jpeg`;
         }

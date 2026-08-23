@@ -14,7 +14,7 @@ export default function DashboardAdvogado1({ api }) {
     const [escritorios, setEscritorios] = useState([]);
     const [carregandoEscritorios, setCarregandoEscritorios] = useState(true);
 
-    const API_URL = api || ' http://192.168.0.133:5000';
+    const API_URL = api || '  http://192.168.0.126:5000';
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');

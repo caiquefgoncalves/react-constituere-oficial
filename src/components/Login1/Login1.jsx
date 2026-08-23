@@ -12,7 +12,7 @@ export default function Login1({ api }) {
 
     const [carregando, setCarregando] = useState(false);
 
-    const API_URL = api || ' http://192.168.0.133:5000';
+    const API_URL = api || '  http://192.168.0.126:5000';
 
     const [mensagem, setMensagem] = useState(() => {
         return localStorage.getItem("erroMensagem") || "";
@@ -92,7 +92,6 @@ export default function Login1({ api }) {
                     else navigate('/');
                 }, 2000);
             } else {
-                // Exibe a mensagem exata que veio do back-end
                 setMensagem(dados.error || 'Erro ao fazer login. Verifique CPF e senha.');
                 setTipoMensagem('erro');
                 setCarregando(false);

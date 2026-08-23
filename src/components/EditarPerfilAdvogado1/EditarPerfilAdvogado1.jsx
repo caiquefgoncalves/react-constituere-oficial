@@ -9,14 +9,14 @@ export default function EditarPerfilAdvogado({ api }) {
     const topoRef = useRef(null);
 
     const [nome, setNome] = useState('');
-    const [cpf, setCpf] = useState(''); // Guarda apenas números
+    const [cpf, setCpf] = useState('');
     const [rg, setRg] = useState('');
     const [orgaoExpeditor, setOrgaoExpeditor] = useState('');
     const [oab, setOab] = useState('');
     const [ufOab, setUfOab] = useState('');
     const [nacionalidade, setNacionalidade] = useState('');
     const [estadoCivil, setEstadoCivil] = useState('');
-    const [telefone, setTelefone] = useState(''); // Guarda apenas números
+    const [telefone, setTelefone] = useState('');
     const [email, setEmail] = useState('');
     const [senha, setSenha] = useState('');
     const [confirmarSenha, setConfirmarSenha] = useState('');
@@ -355,10 +355,8 @@ export default function EditarPerfilAdvogado({ api }) {
                     return;
                 }
 
-                // 🔥 EXIBE A MENSAGEM EXATA QUE VEIO DO BACK-END
                 const erro = dados.error || 'Erro ao atualizar o perfil.';
 
-                // 🔥 VERIFICA SE É A MENSAGEM DE SITUAÇÃO DA OAB
                 if (erro.includes('Sua situação é')) {
                     setMensagem(erro);
                 } else if (erro.includes('não encontrada no cadastro da OAB')) {
