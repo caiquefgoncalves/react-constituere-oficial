@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import css from './Login1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
@@ -10,11 +10,21 @@ export default function Login1({ api }) {
     const [cpfCnpj, setCpfCnpj] = useState('');
     const [senha, setSenha] = useState('');
 
-    const [mensagem, setMensagem] = useState('');
-    const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
 
     const API_URL = api || ' http://192.168.0.133:5000';
+
+    const [mensagem, setMensagem] = useState(() => {
+        return localStorage.getItem("erroMensagem") || "";
+    });
+
+    const [tipoMensagem, setTipoMensagem] = useState(() => {
+        return localStorage.getItem("erroMensagem") ? "erro" : "";
+    });
+
+    useEffect(() => {
+        localStorage.removeItem("erroMensagem");
+    }, []);
 
     function handleCpfCnpj(e) {
         let valor = e.target.value.replace(/\D/g, '');
