@@ -33,7 +33,19 @@ export default function CadastroEscritorio1({ api }) {
 
     const API_URL = api || ' http://192.168.0.133:5000';
 
-    const ufs = [
+    useEffect(() => {
+        const tipo = localStorage.getItem('tipo');
+        const token = localStorage.getItem('token');
+
+        if (!tipo || !token) {
+            navigate('/login');
+            localStorage.setItem('erroMensagem', "Você precisa estar logado para cadastrar um escritório");
+            return;
+        }
+    }, [])
+
+
+        const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
         'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
         'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
