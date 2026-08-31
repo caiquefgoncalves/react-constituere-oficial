@@ -10,9 +10,13 @@ import ClientesLista from "./pages/ClientesLista.jsx";
 import CadastroClienteFisico from "./pages/CadastroClienteFisico.jsx";
 import CadastroClienteJuridico from "./pages/CadastroClienteJuridico.jsx";
 import CadastroRepresentante from "./pages/CadastroRepresentante.jsx";
+import EditarPerfilEscritorio from "./pages/EditarPerfilEscritorio.jsx";
+import AdvogadosLista from "./pages/AdvogadosLista";
+import CadastroProcesso from "./pages/CadastroProcesso.jsx";
 
 
-const API_URL = 'http://192.168.0.123:5000';
+
+const API_URL = 'http://10.92.11.4:5000';
 
 function App() {
     return (
@@ -29,9 +33,12 @@ function App() {
                 <Route path="/cadastro_cliente_fisico" element={<CadastroClienteFisico api={API_URL} />} />
                 <Route path="/cadastro_cliente_juridico" element={<CadastroClienteJuridico api={API_URL} />} />
                 <Route path="/cadastro-representante/:idCliente?" element={<CadastroRepresentante api={API_URL} />} />
+                <Route path="/editar_perfil_escritorio" element={<EditarPerfilEscritorio api={API_URL} />} />
+                <Route path="/advogados" element={<AdvogadosLista api={API_URL} />} />
+                <Route path="/cadastro_processo" element={<CadastroProcesso api={API_URL} />} />
             </Routes>
         </Router>
-    );
+    )
 }
 
 export default App;
