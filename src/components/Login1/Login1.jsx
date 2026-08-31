@@ -12,7 +12,7 @@ export default function Login1({ api }) {
 
     const [carregando, setCarregando] = useState(false);
 
-    const API_URL = api || '  http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.4:5000';
 
     const [mensagem, setMensagem] = useState(() => {
         return localStorage.getItem("erroMensagem") || "";

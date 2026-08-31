@@ -18,8 +18,9 @@ export default function DashboardEscritorio1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [nomeFantasia, setNomeFantasia] = useState('Carregando...');
     const [fotoPerfil, setFotoPerfil] = useState('');
+    const [totalAdvogadosAtivos, setTotalAdvogadosAtivos] = useState(0);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.4:5000';
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -66,7 +67,30 @@ export default function DashboardEscritorio1({ api }) {
             }
         }
 
+        async function buscarAdvogadosAtivos() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/escritorio/${id}/advogados`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setTotalAdvogadosAtivos(data.total_ativos || data.advogados?.length || 0);
+                } else {
+                    console.warn('Não foi possível buscar advogados ativos');
+                }
+            } catch (error) {
+                console.error('Erro ao buscar advogados ativos:', error);
+            }
+        }
+
         buscarDadosEscritorio();
+        buscarAdvogadosAtivos();
     }, [API_URL, navigate, id]);
 
     function voltarParaDashboardAdvogado() {
@@ -78,7 +102,7 @@ export default function DashboardEscritorio1({ api }) {
     }
 
     function irParaNovoCliente() {
-        navigate('/cadastro_cliente');
+        navigate('/cadastro_cliente_fisico');
     }
 
     function irParaNovoProcesso() {
@@ -94,7 +118,7 @@ export default function DashboardEscritorio1({ api }) {
     }
 
     function irParaEditarEscritorio() {
-        navigate('/editar_escritorio');
+        navigate('/editar_perfil_escritorio');
     }
 
     function fecharModal() {
@@ -119,7 +143,8 @@ export default function DashboardEscritorio1({ api }) {
                 },
                 body: JSON.stringify({
                     email: dados.email,
-                    status: dados.posicao
+                    status: dados.posicao,
+                    id_escritorio: id
                 })
             });
 
@@ -129,6 +154,7 @@ export default function DashboardEscritorio1({ api }) {
                 setMensagem(result.mensagem || 'Advogado adicionado com sucesso!');
                 setTipoMensagem('sucesso');
                 setModalAberto(false);
+                setTotalAdvogadosAtivos(prev => prev + 1);
                 setTimeout(() => {
                     setMensagem('');
                     setTipoMensagem('');
@@ -295,7 +321,7 @@ export default function DashboardEscritorio1({ api }) {
                         <div className={css.cardNovo}>
                             <span className={css.labelCardNovo}>Advogados ativos</span>
                             <div className={css.bolinhaVerde}>
-                                <span className={css.numeroCardNovo}>0</span>
+                                <span className={css.numeroCardNovo}>{totalAdvogadosAtivos}</span>
                             </div>
                         </div>
                         <div className={css.cardNovo}>
@@ -350,6 +376,8 @@ export default function DashboardEscritorio1({ api }) {
                 onClose={fecharModal}
                 onAdicionar={adicionarAdvogado}
                 carregando={carregando}
+                mensagem={mensagem}
+                tipoMensagem={tipoMensagem}
             />
 
             <Footer />

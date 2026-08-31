@@ -28,7 +28,7 @@ export default function Cadastro1({ api }) {
     const [exibirCarregamento, setExibirCarregamento] = useState(false);
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.4:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',

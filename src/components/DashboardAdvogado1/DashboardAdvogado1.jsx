@@ -14,14 +14,12 @@ export default function DashboardAdvogado1({ api }) {
     const [escritorios, setEscritorios] = useState([]);
     const [carregandoEscritorios, setCarregandoEscritorios] = useState(true);
 
-
     const [totalClientes, setTotalClientes] = useState(0);
     const [clientesMes, setClientesMes] = useState(0);
     const [clientesAtivos, setClientesAtivos] = useState(0);
     const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(true);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
-
+    const API_URL = api || 'http://10.92.11.4:5000';
 
     function contarClientesMes(clientes) {
         const dataAtual = new Date();
@@ -30,9 +28,17 @@ export default function DashboardAdvogado1({ api }) {
 
         return clientes.filter(cliente => {
             if (!cliente.data_cadastro) return false;
-            const partes = cliente.data_cadastro.split('-');
-            const data = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
-            return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+            try {
+                const partes = cliente.data_cadastro.split('/');
+                if (partes.length !== 3) return false;
+                const dia = parseInt(partes[0]);
+                const mes = parseInt(partes[1]) - 1;
+                const ano = parseInt(partes[2]);
+                const data = new Date(ano, mes, dia);
+                return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+            } catch (e) {
+                return false;
+            }
         }).length;
     }
 

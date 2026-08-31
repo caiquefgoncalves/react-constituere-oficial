@@ -1,16 +1,16 @@
 import React, { useState, useRef, useEffect } from 'react';
-import css from './CadastroEscritorio1.module.css';
+import css from './EditarPerfilEscritorio1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import { useNavigate } from 'react-router-dom';
 
-export default function CadastroEscritorio1({ api }) {
+export default function EditarPerfilEscritorio1({ api }) {
     const navigate = useNavigate();
     const topoRef = useRef(null);
 
     const [razaoSocial, setRazaoSocial] = useState('');
     const [nomeFantasia, setNomeFantasia] = useState('');
-    const [oab, setOab] = useState('');
+    const [registroOab, setRegistroOab] = useState('');
     const [ufOab, setUfOab] = useState('');
     const [telefone, setTelefone] = useState('');
     const [email, setEmail] = useState('');
@@ -23,38 +23,27 @@ export default function CadastroEscritorio1({ api }) {
     const [cidade, setCidade] = useState('');
     const [uf, setUf] = useState('');
     const [fotoPerfil, setFotoPerfil] = useState(null);
+    const [idEscritorio, setIdEscritorio] = useState(null);
 
+    const [dadosOriginais, setDadosOriginais] = useState({});
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
     const [exibirCarregamento, setExibirCarregamento] = useState(false);
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
+    const [carregandoDados, setCarregandoDados] = useState(true);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
     const API_URL = api || 'http://10.92.11.4:5000';
 
-    useEffect(() => {
-        const tipo = localStorage.getItem('tipo');
-        const token = localStorage.getItem('token');
-
-        if (!tipo || !token) {
-            navigate('/login');
-            localStorage.setItem('erroMensagem', "Você precisa estar logado para cadastrar um escritório");
-            return;
-        }
-    }, [])
-
-
-        const ufs = [
+    const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
         'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
         'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
     ];
 
     function agendarLimpezaMensagem() {
-        if (window.timeoutMensagem) {
-            clearTimeout(window.timeoutMensagem);
-        }
+        if (window.timeoutMensagem) clearTimeout(window.timeoutMensagem);
         window.timeoutMensagem = setTimeout(() => {
             setMensagem('');
             setTipoMensagem('');
@@ -63,132 +52,72 @@ export default function CadastroEscritorio1({ api }) {
 
     function capitalizarNome(texto) {
         if (!texto) return '';
-        return texto
-            .split(' ')
-            .map(palavra =>
-                palavra.charAt(0).toUpperCase() +
-                palavra.slice(1).toLowerCase()
-            )
-            .join(' ');
+        return texto.split(' ').map(palavra =>
+            palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase()
+        ).join(' ');
     }
 
     function apenasNumeros(valor) {
         return valor.replace(/\D/g, '');
     }
 
-    function mostrarErro(texto) {
-        setMensagem(texto);
-        setTipoMensagem('erro');
-        setCarregando(false);
-        setExibirCarregamento(false);
-        agendarLimpezaMensagem();
-
-        setTimeout(() => {
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }, 200);
+    function formatarCnpj(valor) {
+        const numeros = apenasNumeros(valor);
+        if (numeros.length === 0) return '';
+        if (numeros.length <= 2) return numeros;
+        if (numeros.length <= 5) return `${numeros.slice(0, 2)}.${numeros.slice(2)}`;
+        if (numeros.length <= 8) return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5)}`;
+        if (numeros.length <= 12) return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8)}`;
+        return `${numeros.slice(0, 2)}.${numeros.slice(2, 5)}.${numeros.slice(5, 8)}/${numeros.slice(8, 12)}-${numeros.slice(12, 14)}`;
     }
 
-    function mostrarSucesso(texto) {
-        setMensagem(texto);
-        setTipoMensagem('sucesso');
-        setCarregando(false);
-        setExibirCarregamento(false);
-        agendarLimpezaMensagem();
+    function formatarTelefone(valor) {
+        const numeros = apenasNumeros(valor);
+        if (numeros.length === 0) return '';
+        if (numeros.length <= 2) return `(${numeros}`;
+        if (numeros.length <= 7) return `(${numeros.slice(0, 2)}) ${numeros.slice(2)}`;
+        return `(${numeros.slice(0, 2)}) ${numeros.slice(2, 7)}-${numeros.slice(7, 11)}`;
+    }
 
-        setTimeout(() => {
-            if (topoRef.current) {
-                topoRef.current.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
-                });
-            }
-        }, 200);
+    function formatarCep(valor) {
+        const numeros = apenasNumeros(valor);
+        if (numeros.length === 0) return '';
+        if (numeros.length <= 5) return numeros;
+        return `${numeros.slice(0, 5)}-${numeros.slice(5, 8)}`;
     }
 
     function handleRazaoSocial(e) {
-        const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
-        if (valor.length <= 254) {
-            setRazaoSocial(capitalizarNome(valor));
-        }
+        const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s0-9]/g, '');
+        if (valor.length <= 254) setRazaoSocial(capitalizarNome(valor));
     }
 
     function handleNomeFantasia(e) {
-        const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
-        if (valor.length <= 254) {
-            setNomeFantasia(capitalizarNome(valor));
-        }
+        const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s0-9]/g, '');
+        if (valor.length <= 254) setNomeFantasia(capitalizarNome(valor));
     }
 
     function handleCnpj(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 14) {
-            valor = valor.slice(0, 14);
-        }
-        if (valor.length <= 2) {
-            setCnpj(valor);
-        } else if (valor.length <= 5) {
-            setCnpj(`${valor.slice(0, 2)}.${valor.slice(2)}`);
-        } else if (valor.length <= 8) {
-            setCnpj(`${valor.slice(0, 2)}.${valor.slice(2, 5)}.${valor.slice(5)}`);
-        } else if (valor.length <= 12) {
-            setCnpj(`${valor.slice(0, 2)}.${valor.slice(2, 5)}.${valor.slice(5, 8)}/${valor.slice(8)}`);
-        } else {
-            setCnpj(`${valor.slice(0, 2)}.${valor.slice(2, 5)}.${valor.slice(5, 8)}/${valor.slice(8, 12)}-${valor.slice(12, 14)}`);
-        }
+        const valor = e.target.value;
+        setCnpj(formatarCnpj(valor));
     }
 
-    async function buscarCep(cepInformado) {
-        const cepNumeros = apenasNumeros(cepInformado);
-        if (cepNumeros.length !== 8) return;
+    function handleTelefone(e) {
+        const valor = e.target.value;
+        setTelefone(formatarTelefone(valor));
+    }
 
-        setBuscandoCep(true);
-        try {
-            const resposta = await fetch(`https://viacep.com.br/ws/${cepNumeros}/json/`);
-            if (!resposta.ok) throw new Error('Não foi possível consultar o CEP.');
-
-            const dados = await resposta.json();
-            if (dados.erro) {
-                setLogradouro('');
-                setBairro('');
-                setCidade('');
-                setUf('');
-                mostrarErro('CEP não encontrado. Verifique o número informado.');
-                return;
-            }
-
-            setLogradouro(dados.logradouro || '');
-            setBairro(dados.bairro || '');
-            setCidade(dados.localidade || '');
-            setUf(dados.uf || '');
-            setMensagem('');
-            setTipoMensagem('');
-        } catch (erro) {
-            console.error('Erro ao consultar CEP:', erro);
-            mostrarErro('Não foi possível consultar o CEP. Verifique sua conexão com a internet.');
-        } finally {
-            setBuscandoCep(false);
-        }
+    function handleEmail(e) {
+        const valor = e.target.value.replace(/\s/g, '');
+        if (valor.length <= 254) setEmail(valor);
     }
 
     function handleCep(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 8) valor = valor.slice(0, 8);
-
-        if (valor.length <= 5) {
-            setCep(valor);
-        } else {
-            setCep(`${valor.slice(0, 5)}-${valor.slice(5, 8)}`);
-        }
-
-        if (valor.length === 8) {
-            buscarCep(valor);
-        }
-        if (valor.length < 8) {
+        const valor = e.target.value;
+        const cepFormatado = formatarCep(valor);
+        setCep(cepFormatado);
+        const cepNumeros = apenasNumeros(valor);
+        if (cepNumeros.length === 8) buscarCep(cepNumeros);
+        if (cepNumeros.length < 8) {
             setLogradouro('');
             setBairro('');
             setCidade('');
@@ -196,23 +125,37 @@ export default function CadastroEscritorio1({ api }) {
         }
     }
 
-    function handleTelefone(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 11) valor = valor.slice(0, 11);
-        if (valor.length === 0) {
-            setTelefone('');
-        } else if (valor.length <= 2) {
-            setTelefone(`(${valor}`);
-        } else if (valor.length <= 7) {
-            setTelefone(`(${valor.slice(0, 2)}) ${valor.slice(2)}`);
-        } else {
-            setTelefone(`(${valor.slice(0, 2)}) ${valor.slice(2, 7)}-${valor.slice(7, 11)}`);
+    async function buscarCep(cepInformado) {
+        const cepNumeros = apenasNumeros(cepInformado);
+        if (cepNumeros.length !== 8) return;
+        setBuscandoCep(true);
+        try {
+            const resposta = await fetch(`https://viacep.com.br/ws/${cepNumeros}/json/`);
+            if (!resposta.ok) throw new Error('Não foi possível consultar o CEP.');
+            const dados = await resposta.json();
+            if (dados.erro) {
+                setLogradouro('');
+                setBairro('');
+                setCidade('');
+                setUf('');
+                setMensagem('CEP não encontrado.');
+                setTipoMensagem('erro');
+                return;
+            }
+            setLogradouro(dados.logradouro || '');
+            setBairro(dados.bairro || '');
+            setCidade(dados.localidade || '');
+            setUf(dados.uf || '');
+            setMensagem('CEP encontrado! Endereço preenchido.');
+            setTipoMensagem('sucesso');
+            setTimeout(() => setMensagem(''), 3000);
+        } catch (erro) {
+            console.error('Erro ao consultar CEP:', erro);
+            setMensagem('Não foi possível consultar o CEP.');
+            setTipoMensagem('erro');
+        } finally {
+            setBuscandoCep(false);
         }
-    }
-
-    function handleEmail(e) {
-        const valor = e.target.value.replace(/\s/g, '');
-        if (valor.length <= 254) setEmail(valor);
     }
 
     function handleNumero(e) {
@@ -227,21 +170,91 @@ export default function CadastroEscritorio1({ api }) {
     useEffect(() => {
         let timerAviso = null;
         if (exibirCarregamento) {
-            timerAviso = setTimeout(() => {
-                setAvisoInternetLenta(true);
-            }, 15000);
+            timerAviso = setTimeout(() => setAvisoInternetLenta(true), 15000);
         } else {
             setAvisoInternetLenta(false);
         }
-        return () => {
-            if (timerAviso) clearTimeout(timerAviso);
-        };
+        return () => { if (timerAviso) clearTimeout(timerAviso); };
     }, [exibirCarregamento]);
 
-    async function handleCadastro(e) {
-        e.preventDefault();
-        if (carregando) return;
+    useEffect(() => {
+        async function carregarDados() {
+            try {
+                const token = localStorage.getItem('token');
+                if (!token) {
+                    navigate('/login');
+                    return;
+                }
 
+                // Busca os dados do escritório do advogado logado
+                const resposta = await fetch(`${API_URL}/meu_escritorio`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
+
+                if (resposta.ok) {
+                    const dados = await resposta.json();
+                    const escritorio = dados.escritorio;
+                    setIdEscritorio(escritorio.id);
+
+                    setRazaoSocial(escritorio.razao_social || '');
+                    setNomeFantasia(escritorio.nome_fantasia || '');
+                    setRegistroOab(escritorio.registro_oab || '');
+                    setUfOab(escritorio.uf_oab || '');
+                    setTelefone(formatarTelefone(escritorio.telefone || ''));
+                    setEmail(escritorio.email || '');
+                    setCnpj(formatarCnpj(escritorio.cnpj || ''));
+                    setCep(formatarCep(escritorio.cep || ''));
+                    setLogradouro(escritorio.logradouro || '');
+                    setNumero(escritorio.numero || '');
+                    setComplemento(escritorio.complemento || '');
+                    setBairro(escritorio.bairro || '');
+                    setCidade(escritorio.cidade || '');
+                    setUf(escritorio.estado || '');
+
+                    setDadosOriginais({
+                        razaoSocial: escritorio.razao_social || '',
+                        nomeFantasia: escritorio.nome_fantasia || '',
+                        registroOab: escritorio.registro_oab || '',
+                        ufOab: escritorio.uf_oab || '',
+                        telefone: escritorio.telefone || '',
+                        email: escritorio.email || '',
+                        cnpj: escritorio.cnpj || '',
+                        cep: escritorio.cep || '',
+                        logradouro: escritorio.logradouro || '',
+                        numero: escritorio.numero || '',
+                        complemento: escritorio.complemento || '',
+                        bairro: escritorio.bairro || '',
+                        cidade: escritorio.cidade || '',
+                        uf: escritorio.estado || ''
+                    });
+                } else if (resposta.status === 401) {
+                    localStorage.removeItem('nome');
+                    localStorage.removeItem('tipo');
+                    localStorage.removeItem('token');
+                    navigate('/login');
+                    return;
+                } else {
+                    const data = await resposta.json();
+                    setMensagem(data.error || 'Erro ao carregar dados do escritório.');
+                    setTipoMensagem('erro');
+                    agendarLimpezaMensagem();
+                }
+            } catch (erro) {
+                console.error('Erro ao carregar dados:', erro);
+                setMensagem('Erro de conexão ao carregar dados.');
+                setTipoMensagem('erro');
+                agendarLimpezaMensagem();
+            } finally {
+                setCarregandoDados(false);
+            }
+        }
+        carregarDados();
+    }, [API_URL, navigate]);
+
+    async function handleSalvar(e) {
+        e.preventDefault();
         setCarregando(true);
         setExibirCarregamento(true);
         setAvisoInternetLenta(false);
@@ -251,11 +264,11 @@ export default function CadastroEscritorio1({ api }) {
         let camposFaltando = [];
         if (!razaoSocial.trim()) camposFaltando.push('Razão social');
         if (!nomeFantasia.trim()) camposFaltando.push('Nome fantasia');
-        if (!cnpj.trim()) camposFaltando.push('CNPJ');
-        if (!oab.trim()) camposFaltando.push('Registro na OAB');
+        if (!registroOab.trim()) camposFaltando.push('Registro OAB');
         if (!ufOab.trim()) camposFaltando.push('UF da OAB');
         if (!telefone.trim()) camposFaltando.push('Telefone');
         if (!email.trim()) camposFaltando.push('E-mail');
+        if (!cnpj.trim()) camposFaltando.push('CNPJ');
         if (!cep.trim()) camposFaltando.push('CEP');
         if (!logradouro.trim()) camposFaltando.push('Logradouro');
         if (!numero.trim()) camposFaltando.push('Número');
@@ -264,187 +277,161 @@ export default function CadastroEscritorio1({ api }) {
         if (!uf.trim()) camposFaltando.push('Estado');
 
         if (camposFaltando.length > 0) {
-            mostrarErro(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
+            setMensagem(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
+            setTipoMensagem('erro');
+            setCarregando(false);
+            setExibirCarregamento(false);
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            agendarLimpezaMensagem();
             return;
         }
 
-        const cnpjNumeros = cnpj.replace(/\D/g, '');
+        const cnpjNumeros = apenasNumeros(cnpj);
         if (cnpjNumeros.length !== 14) {
-            mostrarErro('CNPJ incompleto. Digite os 14 números do CNPJ.');
+            setMensagem('CNPJ inválido. Digite os 14 números.');
+            setTipoMensagem('erro');
+            setCarregando(false);
+            setExibirCarregamento(false);
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            agendarLimpezaMensagem();
             return;
         }
 
-        const cepNumeros = cep.replace(/\D/g, '');
+        const cepNumeros = apenasNumeros(cep);
         if (cepNumeros.length !== 8) {
-            mostrarErro('CEP incompleto. Digite os 8 números do CEP.');
+            setMensagem('CEP inválido. Digite os 8 números.');
+            setTipoMensagem('erro');
+            setCarregando(false);
+            setExibirCarregamento(false);
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            agendarLimpezaMensagem();
             return;
         }
 
-        const telefoneNumeros = telefone.replace(/\D/g, '');
+        const telefoneNumeros = apenasNumeros(telefone);
         if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
-            mostrarErro('Telefone incompleto. Digite DDD + número (10 ou 11 dígitos).');
+            setMensagem('Telefone inválido.');
+            setTipoMensagem('erro');
+            setCarregando(false);
+            setExibirCarregamento(false);
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            agendarLimpezaMensagem();
             return;
         }
+
+        const houveAlteracao = (
+            razaoSocial !== dadosOriginais.razaoSocial ||
+            nomeFantasia !== dadosOriginais.nomeFantasia ||
+            registroOab !== dadosOriginais.registroOab ||
+            ufOab !== dadosOriginais.ufOab ||
+            telefone !== dadosOriginais.telefone ||
+            email !== dadosOriginais.email ||
+            cnpj !== dadosOriginais.cnpj ||
+            cep !== dadosOriginais.cep ||
+            logradouro !== dadosOriginais.logradouro ||
+            numero !== dadosOriginais.numero ||
+            complemento !== dadosOriginais.complemento ||
+            bairro !== dadosOriginais.bairro ||
+            cidade !== dadosOriginais.cidade ||
+            uf !== dadosOriginais.uf ||
+            fotoPerfil !== null
+        );
+
+        if (!houveAlteracao) {
+            setMensagem('Nenhuma alteração foi feita.');
+            setTipoMensagem('sucesso');
+            setCarregando(false);
+            setExibirCarregamento(false);
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            agendarLimpezaMensagem();
+            setTimeout(() => navigate('/dashboard_advogado'), 2000);
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('razao_social', razaoSocial.trim());
+        formData.append('nome_fantasia', nomeFantasia.trim());
+        formData.append('registro_oab', registroOab.trim());
+        formData.append('uf_oab', ufOab.trim().toUpperCase());
+        formData.append('telefone', telefoneNumeros);
+        formData.append('email', email.trim());
+        formData.append('cnpj', cnpjNumeros);
+        formData.append('cep', cepNumeros);
+        formData.append('logradouro', logradouro.trim());
+        formData.append('numero', numero.trim());
+        formData.append('complemento', complemento.trim());
+        formData.append('bairro', bairro.trim());
+        formData.append('cidade', cidade.trim());
+        formData.append('estado', uf);
+        if (fotoPerfil) formData.append('foto_perfil', fotoPerfil);
 
         try {
             const token = localStorage.getItem('token');
-            if (!token) {
-                mostrarErro('Você precisa estar logado para cadastrar um escritório.');
-                navigate('/login');
-                return;
-            }
-
-            const formData = new FormData();
-            formData.append('razao_social', razaoSocial.trim());
-            formData.append('nome_fantasia', nomeFantasia.trim());
-            formData.append('registro_oab', oab.trim());
-            formData.append('uf_oab', ufOab.trim().toUpperCase());
-            formData.append('telefone', telefoneNumeros);
-            formData.append('email', email.trim());
-            formData.append('cnpj', cnpjNumeros);
-            formData.append('cep', cepNumeros);
-            formData.append('logradouro', logradouro.trim());
-            formData.append('numero', numero.trim());
-            formData.append('complemento', complemento.trim());
-            formData.append('bairro', bairro.trim());
-            formData.append('cidade', cidade.trim());
-            formData.append('estado', uf);
-            if (fotoPerfil) formData.append('foto_perfil', fotoPerfil);
-
-            setExibirCarregamento(true);
-
-            const resposta = await fetch(`${API_URL}/criar_escritorio`, {
-                method: 'POST',
+            const resposta = await fetch(`${API_URL}/editar_escritorio`, {
+                method: 'PUT',
                 credentials: 'include',
-                headers: {
-                    'X-Access-Token': token
-                },
+                headers: { 'X-Access-Token': token },
                 body: formData
             });
-
-            let dados;
-            try {
-                dados = await resposta.json();
-            } catch (erro) {
-                dados = {};
-            }
+            const dados = await resposta.json();
 
             setExibirCarregamento(false);
 
             if (resposta.ok) {
-                setMensagem(dados.message || 'Escritório cadastrado com sucesso!');
+                setMensagem('Perfil atualizado com sucesso!');
                 setTipoMensagem('sucesso');
-                setCarregando(false);
-                setAvisoInternetLenta(false);
+                if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
-
-                setTimeout(() => {
-                    if (topoRef.current) {
-                        topoRef.current.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }, 200);
-
                 setTimeout(() => navigate('/dashboard_advogado'), 2000);
             } else {
                 if (resposta.status === 401) {
                     localStorage.removeItem('nome');
                     localStorage.removeItem('tipo');
                     localStorage.removeItem('token');
-                    localStorage.removeItem('id_usuario');
                     navigate('/login');
                     return;
                 }
-                const erroMsg = dados.error || 'Não foi possível cadastrar o escritório.';
-                setMensagem(erroMsg);
+                setMensagem(dados.error || 'Erro ao atualizar perfil.');
                 setTipoMensagem('erro');
-                setCarregando(false);
-                setExibirCarregamento(false);
+                if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
-
-                setTimeout(() => {
-                    if (topoRef.current) {
-                        topoRef.current.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                }, 200);
             }
         } catch (erro) {
-            console.error('Erro ao cadastrar escritório:', erro);
-            setMensagem(erro.message || 'Erro ao cadastrar escritório. Tente novamente.');
-            setTipoMensagem('erro');
-            setCarregando(false);
+            console.error('Erro ao salvar:', erro);
             setExibirCarregamento(false);
+            setMensagem('Erro de conexão com o servidor.');
+            setTipoMensagem('erro');
+            if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
-
-            setTimeout(() => {
-                if (topoRef.current) {
-                    topoRef.current.scrollIntoView({
-                        behavior: 'smooth',
-                        block: 'start'
-                    });
-                }
-            }, 200);
+        } finally {
+            setCarregando(false);
         }
+    }
+
+    if (carregandoDados) {
+        return (
+            <div className={css.paginaCompleta}>
+                <Header />
+                <div className={css.loadingContainer}>
+                    Carregando dados do escritório...
+                </div>
+                <Footer />
+            </div>
+        );
     }
 
     return (
         <div className={css.paginaCompleta}>
-            <Header api={API_URL} />
+            <Header />
 
             {exibirCarregamento && (
-                <div
-                    data-testid="loading-overlay"
-                    style={{
-                        position: 'fixed',
-                        top: 0,
-                        left: 0,
-                        width: '100vw',
-                        height: '100vh',
-                        backgroundColor: 'rgba(0, 0, 0, 0.7)',
-                        display: 'flex',
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        zIndex: 9999,
-                        backdropFilter: 'blur(4px)'
-                    }}
-                >
-                    <div style={{
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                        gap: '20px',
-                        textAlign: 'center',
-                        padding: '30px'
-                    }}>
-                        <img src="/Martelinho.png" alt="Carregando" style={{
-                            width: '100px',
-                            height: '100px',
-                            animation: 'spin 1.2s linear infinite'
-                        }} />
-                        <p style={{
-                            color: 'white',
-                            fontSize: '1.2rem',
-                            fontFamily: 'Clear Sans, sans-serif',
-                            fontWeight: 'bold'
-                        }}>
-                            Validando os dados da OAB...
-                        </p>
+                <div className={css.loadingOverlay}>
+                    <div className={css.loadingContent}>
+                        <img src="/Martelinho.png" alt="Carregando" className={css.loadingImage} />
+                        <p className={css.loadingText}>Validando dados da OAB...</p>
                         {avisoInternetLenta && (
-                            <p style={{
-                                color: '#ffc107',
-                                fontSize: '1rem',
-                                fontFamily: 'Clear Sans, sans-serif',
-                                fontWeight: 'bold',
-                                marginTop: '10px',
-                                maxWidth: '400px'
-                            }}>
-                                Sua internet pode estar lenta ou a OAB está demorando para responder.
-                                Por favor, aguarde mais alguns segundos...
+                            <p className={css.loadingAviso}>
+                                Sua internet pode estar lenta. Aguarde...
                             </p>
                         )}
                     </div>
@@ -458,34 +445,17 @@ export default function CadastroEscritorio1({ api }) {
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"/>
                         </svg>
                     </button>
-                    <h1 className={css.titulo}>Cadastre seu escritório</h1>
+                    <h1 className={css.titulo}>Editar Perfil do Escritório</h1>
                 </div>
 
                 {mensagem && (
-                    <div
-                        data-testid="mensagem"
-                        style={{
-                            padding: '16px 24px',
-                            margin: '0 auto 2.5rem auto',
-                            maxWidth: '700px',
-                            borderRadius: '10px',
-                            textAlign: 'center',
-                            fontFamily: 'Clear Sans, sans-serif',
-                            fontWeight: '700',
-                            fontSize: '1.05rem',
-                            backgroundColor: tipoMensagem === 'sucesso' ? '#d4edda' : '#fce8e6',
-                            color: tipoMensagem === 'sucesso' ? '#155724' : '#a94442',
-                            border: tipoMensagem === 'sucesso' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-                        }}
-                    >
+                    <div className={`${css.mensagemContainer} ${tipoMensagem === 'sucesso' ? css.sucesso : css.erro}`}>
                         {mensagem}
                     </div>
                 )}
 
-                <form className={css.formulario} onSubmit={handleCadastro}>
+                <form className={css.formulario} onSubmit={handleSalvar}>
                     <div className={css.linha}>
-                        {/* Todos os campos com name */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Razão social *</label>
                             <input type="text" className={css.input} placeholder="Digite a razão social" value={razaoSocial} onChange={handleRazaoSocial} maxLength={254} tabIndex={1} name="razao_social" />
@@ -498,7 +468,7 @@ export default function CadastroEscritorio1({ api }) {
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Registro na OAB *</label>
-                            <input type="text" className={css.input} placeholder="Digite a OAB" value={oab} onChange={(e) => setOab(e.target.value)} maxLength={30} tabIndex={3} name="registro_oab" />
+                            <input type="text" className={css.input} placeholder="Digite a OAB" value={registroOab} onChange={(e) => setRegistroOab(e.target.value)} maxLength={30} tabIndex={3} name="registro_oab" />
                         </div>
 
                         <div className={css.campoMetade}>
@@ -529,16 +499,7 @@ export default function CadastroEscritorio1({ api }) {
                             <div style={{ position: 'relative' }}>
                                 <input type="text" className={css.input} value={cep} onChange={handleCep} placeholder="Digite seu CEP" maxLength={9} tabIndex={8} name="cep" />
                                 {buscandoCep && (
-                                    <span style={{
-                                        position: 'absolute',
-                                        right: '15px',
-                                        top: '50%',
-                                        transform: 'translateY(-50%)',
-                                        fontSize: '0.9rem',
-                                        color: '#666'
-                                    }}>
-                                        Buscando...
-                                    </span>
+                                    <span className={css.buscandoCep}>Buscando...</span>
                                 )}
                             </div>
                         </div>
@@ -579,17 +540,7 @@ export default function CadastroEscritorio1({ api }) {
 
                         <div className={css.campoMetade} style={{ marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
                             <label className={css.label}>Foto de perfil</label>
-                            <div style={{
-                                flex: 1,
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                border: '1px solid #dcdcdc',
-                                borderRadius: '8px',
-                                backgroundColor: '#ffffff',
-                                boxSizing: 'border-box',
-                                padding: '0 1rem'
-                            }}>
+                            <div className={css.fotoContainer}>
                                 <input
                                     type="file"
                                     className={css.inputFile}
@@ -597,14 +548,6 @@ export default function CadastroEscritorio1({ api }) {
                                     onChange={(e) => setFotoPerfil(e.target.files[0] || null)}
                                     tabIndex={15}
                                     name="foto_perfil"
-                                    style={{
-                                        width: '100%',
-                                        border: 'none',
-                                        padding: 0,
-                                        margin: 0,
-                                        backgroundColor: 'transparent',
-                                        display: 'block'
-                                    }}
                                 />
                             </div>
                         </div>
@@ -615,8 +558,8 @@ export default function CadastroEscritorio1({ api }) {
                     </div>
 
                     <div className={css.botaoContainer}>
-                        <button className={css.botaoCadastro} type="submit" disabled={carregando} tabIndex={16} name="btn-cadastrar-escritorio">
-                            {carregando ? 'Cadastrando...' : 'Cadastrar Escritório'}
+                        <button className={css.botaoSalvar} type="submit" disabled={carregando} tabIndex={16} name="btn-salvar">
+                            {carregando ? 'Salvando...' : 'Salvar Alterações'}
                         </button>
                     </div>
                 </form>

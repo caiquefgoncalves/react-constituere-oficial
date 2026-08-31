@@ -1,7 +1,14 @@
 import React, { useState } from 'react';
 import css from './ModalAdvogadoAdicionar1.module.css';
 
-export default function ModalAdvogadoAdicionar1({ isOpen, onClose, onAdicionar, carregando }) {
+export default function ModalAdvogadoAdicionar1({
+                                                    isOpen,
+                                                    onClose,
+                                                    onAdicionar,
+                                                    carregando,
+                                                    mensagem,
+                                                    tipoMensagem
+                                                }) {
     const [email, setEmail] = useState('');
     const [posicao, setPosicao] = useState('');
 
@@ -32,6 +39,23 @@ export default function ModalAdvogadoAdicionar1({ isOpen, onClose, onAdicionar, 
                 </button>
 
                 <h1 className={css.titulo}>Adicionar advogado</h1>
+
+                {/* MENSAGEM DENTRO DA MODAL */}
+                {mensagem && (
+                    <div className={css.mensagemModal} style={{
+                        padding: '10px 16px',
+                        borderRadius: '8px',
+                        backgroundColor: tipoMensagem === 'erro' ? '#f8d7da' : '#d4edda',
+                        color: tipoMensagem === 'erro' ? '#721c24' : '#155724',
+                        marginBottom: '16px',
+                        textAlign: 'center',
+                        fontFamily: 'Clear Sans, sans-serif',
+                        fontSize: '14px',
+                        border: tipoMensagem === 'erro' ? '1px solid #f5c6cb' : '1px solid #c3e6cb'
+                    }}>
+                        {mensagem}
+                    </div>
+                )}
 
                 <form onSubmit={handleSubmit}>
                     <div className={css.formFields}>

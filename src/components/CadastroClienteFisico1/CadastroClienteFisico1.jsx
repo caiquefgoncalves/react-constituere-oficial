@@ -42,7 +42,7 @@ export default function CadastroClienteFisico1({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.4:5000';
     const ufs = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
     function agendarLimpezaMensagem() {
@@ -74,6 +74,44 @@ export default function CadastroClienteFisico1({ api }) {
         }
         agendarLimpezaMensagem();
     }
+
+
+    function converterDataParaBanco(data) {
+        if (!data) return '';
+        const dataLimpa = data.replace(/[\/\-]/g, '/');
+        const partes = dataLimpa.split('/');
+        if (partes.length === 3) {
+            return `${partes[2]}-${partes[1]}-${partes[0]}`;
+        }
+        return '';
+    }
+
+
+    function calcularIdade(dataNascimento) {
+        if (!dataNascimento) return null;
+
+        const dataLimpa = dataNascimento.replace(/[\/\-]/g, '/');
+        const partes = dataLimpa.split('/');
+        if (partes.length !== 3) return null;
+
+        const dia = parseInt(partes[0]);
+        const mes = parseInt(partes[1]) - 1;
+        const ano = parseInt(partes[2]);
+
+        const dataNasc = new Date(ano, mes, dia);
+        const dataAtual = new Date();
+
+        let idade = dataAtual.getFullYear() - dataNasc.getFullYear();
+        const mesAtual = dataAtual.getMonth();
+        const diaAtual = dataAtual.getDate();
+
+        if (mesAtual < mes || (mesAtual === mes && diaAtual < dia)) {
+            idade--;
+        }
+
+        return idade;
+    }
+
 
     function handleNome(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
@@ -208,7 +246,7 @@ export default function CadastroClienteFisico1({ api }) {
     }
 
     function voltar() {
-        navigate('/clientes');
+        navigate('/dashboard_advogado');
     }
 
     useEffect(() => {
@@ -251,6 +289,21 @@ export default function CadastroClienteFisico1({ api }) {
             return;
         }
 
+
+        const idade = calcularIdade(dataNascimento);
+        if (idade === null) {
+            mostrarErro('Data de nascimento inválida. Use o formato DD/MM/AAAA.');
+            return;
+        }
+        if (idade < 18) {
+            mostrarErro('O cliente deve ter no mínimo 18 anos para ser cadastrado.');
+            return;
+        }
+        if (idade > 120) {
+            mostrarErro('A idade do cliente não pode ser superior a 120 anos.');
+            return;
+        }
+
         const cpfNumeros = apenasNumeros(cpf);
         if (cpfNumeros.length !== 11) {
             mostrarErro('CPF incompleto. Digite os 11 números do CPF.');
@@ -274,17 +327,6 @@ export default function CadastroClienteFisico1({ api }) {
             return;
         }
 
-
-        function converterDataParaBanco(data) {
-            if (!data) return null;
-            const dataLimpa = data.replace(/[\/\-]/g, '/');
-            const partes = dataLimpa.split('/');
-            if (partes.length === 3) {
-                return `${partes[2]}-${partes[1]}-${partes[0]}`;
-            }
-            return data;
-        }
-
         try {
             const token = localStorage.getItem('token');
             if (!token) {
@@ -301,7 +343,12 @@ export default function CadastroClienteFisico1({ api }) {
             formData.append('senha', senha);
             formData.append('confirmar_senha', confirmarSenha);
             formData.append('tipo', 2);
-            formData.append('data_nascimento', converterDataParaBanco(dataNascimento));
+
+            const dataBanco = converterDataParaBanco(dataNascimento);
+            if (dataBanco) {
+                formData.append('data_nascimento', dataBanco);
+            }
+
             formData.append('sexo', sexo);
             formData.append('rg', rg);
             formData.append('orgao_expedidor', orgaoExpedidor);
@@ -434,7 +481,9 @@ export default function CadastroClienteFisico1({ api }) {
                 <form className={css.formulario} onSubmit={handleCadastro}>
                     <div className={css.linha}>
 
-
+                        {/* ============================================
+                            LINHA 1: Nome completo
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Nome completo *</label>
                             <input
@@ -449,7 +498,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 2: Data de nascimento
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Data de nascimento *</label>
                             <input
@@ -462,9 +513,12 @@ export default function CadastroClienteFisico1({ api }) {
                                 tabIndex={2}
                                 name="data_nascimento"
                             />
+                            <small style={{ color: '#888', fontSize: '0.8rem' }}>Idade mínima: 18 anos | Máxima: 120 anos</small>
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 3: CPF
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>CPF *</label>
                             <input
@@ -479,7 +533,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 4: Sexo
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Sexo *</label>
                             <select
@@ -496,7 +552,9 @@ export default function CadastroClienteFisico1({ api }) {
                             </select>
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 5: RG
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>RG</label>
                             <input
@@ -511,7 +569,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 6: Órgão expedidor
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Órgão expedidor</label>
                             <input
@@ -526,7 +586,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 7: Número da carteira de trabalho
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Número da carteira de trabalho</label>
                             <input
@@ -541,7 +603,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 8: Série da carteira de trabalho
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Série da carteira de trabalho</label>
                             <input
@@ -556,7 +620,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 9: Profissão
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Profissão</label>
                             <input
@@ -571,7 +637,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 10: Estado civil
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Estado civil</label>
                             <select
@@ -590,7 +658,9 @@ export default function CadastroClienteFisico1({ api }) {
                             </select>
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 11: Nacionalidade
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Nacionalidade</label>
                             <input
@@ -605,7 +675,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 12: CEP
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>CEP *</label>
                             <div style={{ position: 'relative' }}>
@@ -634,7 +706,9 @@ export default function CadastroClienteFisico1({ api }) {
                             </div>
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 13: Logradouro
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Logradouro *</label>
                             <input
@@ -649,7 +723,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 14: Número
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Número *</label>
                             <input
@@ -664,6 +740,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
+                        {/* ============================================
+                            LINHA 15: Complemento
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Complemento</label>
                             <input
@@ -678,7 +757,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 16: Bairro
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Bairro *</label>
                             <input
@@ -693,7 +774,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 17: Cidade
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Cidade *</label>
                             <input
@@ -708,7 +791,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 18: Estado
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Estado *</label>
                             <select
@@ -723,7 +808,9 @@ export default function CadastroClienteFisico1({ api }) {
                             </select>
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 19: Telefone
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Telefone *</label>
                             <input
@@ -738,7 +825,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            LINHA 20: E-mail
+                        ============================================ */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>E-mail *</label>
                             <input
@@ -753,7 +842,9 @@ export default function CadastroClienteFisico1({ api }) {
                             />
                         </div>
 
-
+                        {/* ============================================
+                            SENHA + CONFIRMAR SENHA + FOTO
+                        ============================================ */}
                         <div className={css.campoMetade} style={{ gap: '1.5rem', marginBottom: 0 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
                                 <label className={css.label}>Senha *</label>
@@ -783,7 +874,9 @@ export default function CadastroClienteFisico1({ api }) {
                             </div>
                         </div>
 
-
+                        {/* ============================================
+                            FOTO DE PERFIL
+                        ============================================ */}
                         <div className={css.campoMetade} style={{ marginBottom: 0, display: 'flex', flexDirection: 'column' }}>
                             <label className={css.label}>Foto de perfil</label>
                             <div style={{
