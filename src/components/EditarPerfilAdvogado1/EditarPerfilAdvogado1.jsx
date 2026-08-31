@@ -31,7 +31,7 @@ export default function EditarPerfilAdvogado({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [carregandoDados, setCarregandoDados] = useState(true);
 
-    const API_URL = api || ' http://192.168.0.133:5000';
+    const API_URL = api || ' http://192.168.0.123:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',

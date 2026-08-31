@@ -16,7 +16,7 @@ export default function MenuLateralAdvogado({ api }) {
         <div className={css.container}>
             <div
                 className={css.funcoes}
-                onClick={() => navigate('/dashboardAdvogado')}
+                onClick={() => navigate('/dashboard_advogado')}
                 name="menu-perfil"
             >
                 <img src={'/perfil.png'} alt="Perfil"/>

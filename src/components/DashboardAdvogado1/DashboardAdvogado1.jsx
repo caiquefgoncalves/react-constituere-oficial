@@ -14,7 +14,27 @@ export default function DashboardAdvogado1({ api }) {
     const [escritorios, setEscritorios] = useState([]);
     const [carregandoEscritorios, setCarregandoEscritorios] = useState(true);
 
-    const API_URL = api || '  http://192.168.0.126:5000';
+
+    const [totalClientes, setTotalClientes] = useState(0);
+    const [clientesMes, setClientesMes] = useState(0);
+    const [clientesAtivos, setClientesAtivos] = useState(0);
+    const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(true);
+
+    const API_URL = api || 'http://192.168.0.123:5000';
+
+
+    function contarClientesMes(clientes) {
+        const dataAtual = new Date();
+        const mesAtual = dataAtual.getMonth();
+        const anoAtual = dataAtual.getFullYear();
+
+        return clientes.filter(cliente => {
+            if (!cliente.data_cadastro) return false;
+            const partes = cliente.data_cadastro.split('-');
+            const data = new Date(parseInt(partes[0]), parseInt(partes[1]) - 1, parseInt(partes[2]));
+            return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+        }).length;
+    }
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');
@@ -86,8 +106,41 @@ export default function DashboardAdvogado1({ api }) {
             }
         }
 
+        async function buscarClientes() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch(`${API_URL}/clientes`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const clientes = data.clientes || [];
+                    setTotalClientes(clientes.length);
+                    setClientesMes(contarClientesMes(clientes));
+                    setClientesAtivos(clientes.filter(c => c.status === 'ativo').length);
+                } else if (response.status === 401) {
+                    localStorage.removeItem('nome');
+                    localStorage.removeItem('tipo');
+                    localStorage.removeItem('token');
+                    localStorage.removeItem('id_usuario');
+                    navigate('/login');
+                    return;
+                }
+            } catch (error) {
+                console.error('Erro ao buscar clientes:', error);
+            } finally {
+                setCarregandoEstatisticas(false);
+            }
+        }
+
         buscarDados();
         buscarEscritorios();
+        buscarClientes();
     }, [navigate, API_URL]);
 
     function irParaEditarPerfil() {
@@ -147,21 +200,27 @@ export default function DashboardAdvogado1({ api }) {
 
                     <div className={css.gradeEstatisticas}>
                         <div className={css.cardNovo}>
-                            <span className={css.labelCardNovo}>Processos ativos</span>
-                            <div className={css.bolinhaVerde}>
-                                <span className={css.numeroCardNovo}>0</span>
-                            </div>
-                        </div>
-                        <div className={css.cardNovo}>
                             <span className={css.labelCardNovo}>Clientes cadastrados</span>
                             <div className={css.bolinhaVerde}>
-                                <span className={css.numeroCardNovo}>0</span>
+                                <span className={css.numeroCardNovo}>
+                                    {carregandoEstatisticas ? '...' : totalClientes}
+                                </span>
                             </div>
                         </div>
                         <div className={css.cardNovo}>
-                            <span className={css.labelCardNovo}>Parcelas atrasadas</span>
+                            <span className={css.labelCardNovo}>Novos clientes (este mês)</span>
                             <div className={css.bolinhaVerde}>
-                                <span className={css.numeroCardNovo}>0</span>
+                                <span className={css.numeroCardNovo}>
+                                    {carregandoEstatisticas ? '...' : clientesMes}
+                                </span>
+                            </div>
+                        </div>
+                        <div className={css.cardNovo}>
+                            <span className={css.labelCardNovo}>Clientes ativos</span>
+                            <div className={css.bolinhaVerde}>
+                                <span className={css.numeroCardNovo}>
+                                    {carregandoEstatisticas ? '...' : clientesAtivos}
+                                </span>
                             </div>
                         </div>
                     </div>

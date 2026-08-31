@@ -322,4 +322,22 @@
     font-size: 0.95rem;
 }
 
+.bolinhaAzul {
+    width: 80px;
+    height: 80px;
+    background-color: #0047ab;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 10px auto 0;
+}
+
+.bolinhaAzul .numeroCardNovo {
+    color: white;
+    font-size: 2rem;
+    font-weight: 700;
+    font-family: 'Glacial Indifference', sans-serif;
+}
+
 

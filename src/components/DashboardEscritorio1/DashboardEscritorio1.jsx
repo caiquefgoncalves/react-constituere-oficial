@@ -19,7 +19,7 @@ export default function DashboardEscritorio1({ api }) {
     const [nomeFantasia, setNomeFantasia] = useState('Carregando...');
     const [fotoPerfil, setFotoPerfil] = useState('');
 
-    const API_URL = api || '  http://192.168.0.126:5000';
+    const API_URL = api || 'http://192.168.0.123:5000';
 
     useEffect(() => {
         const token = localStorage.getItem('token');
