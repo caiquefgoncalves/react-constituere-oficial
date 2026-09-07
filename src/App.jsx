@@ -17,11 +17,13 @@ import ProcessosLista from "./pages/ProcessosLista.jsx";
 import CadastroProcessoPagamento from "./pages/CadastroProcessoPagamento.jsx";
 import CadastroParteContrariaFisica from "./pages/CadastroParteContrariaFisica.jsx";
 import CadastroParteContrariaJuridica from "./pages/CadastroParteContrariaJuridica.jsx";
+import PagamentosLista from "./pages/PagamentosLista.jsx";
 
 
 
 
-const API_URL = 'http://10.92.11.4:5000'
+
+const API_URL = ' http://192.168.0.130:5000'
 
 function App() {
     return (
@@ -45,6 +47,7 @@ function App() {
                 <Route path="/cadastro_processo_pagamento" element={<CadastroProcessoPagamento api={API_URL} />} />
                 <Route path="/cadastro_parte_contraria_fisica" element={<CadastroParteContrariaFisica api={API_URL} />} />
                 <Route path="/cadastro_parte_contraria_juridica" element={<CadastroParteContrariaJuridica api={API_URL} />} />
+                <Route path="/pagamentos_lista" element={<PagamentosLista api={API_URL} />} />
             </Routes>
         </Router>
     )
