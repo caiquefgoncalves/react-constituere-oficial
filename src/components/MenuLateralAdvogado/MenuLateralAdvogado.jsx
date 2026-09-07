@@ -61,7 +61,7 @@ export default function MenuLateralAdvogado({ api }) {
 
             <div
                 className={css.funcoes}
-                onClick={() => navigate('/pagamentos')}
+                onClick={() => navigate('/pagamentos_lista')}
                 name="menu-pagamentos"
             >
                 <img src={'/pagamento.png'} alt="Pagamentos"/>

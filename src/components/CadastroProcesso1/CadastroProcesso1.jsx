@@ -54,14 +54,9 @@ export default function CadastroProcesso1({ api }) {
 
     function capitalizar(texto) {
         if (!texto) return '';
-
         return texto
             .split(' ')
-            .map(
-                palavra =>
-                    palavra.charAt(0).toUpperCase() +
-                    palavra.slice(1).toLowerCase()
-            )
+            .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase())
             .join(' ');
     }
 
@@ -71,81 +66,48 @@ export default function CadastroProcesso1({ api }) {
 
     function handleNumProcesso(e) {
         let valor = apenasNumeros(e.target.value);
-
         if (valor.length > 20) {
             valor = valor.slice(0, 20);
         }
 
         if (valor.length <= 7) {
             setNumProcesso(valor);
-
         } else if (valor.length <= 9) {
-            setNumProcesso(
-                `${valor.slice(0, 7)}-${valor.slice(7)}`
-            );
-
+            setNumProcesso(`${valor.slice(0, 7)}-${valor.slice(7)}`);
         } else if (valor.length <= 13) {
-            setNumProcesso(
-                `${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9)}`
-            );
-
+            setNumProcesso(`${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9)}`);
         } else if (valor.length <= 14) {
-            setNumProcesso(
-                `${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9, 13)}.${valor.slice(13)}`
-            );
-
+            setNumProcesso(`${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9, 13)}.${valor.slice(13)}`);
         } else if (valor.length <= 16) {
-            setNumProcesso(
-                `${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9, 13)}.${valor.slice(13, 14)}.${valor.slice(14)}`
-            );
-
+            setNumProcesso(`${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9, 13)}.${valor.slice(13, 14)}.${valor.slice(14)}`);
         } else {
-            setNumProcesso(
-                `${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9, 13)}.${valor.slice(13, 14)}.${valor.slice(14, 16)}.${valor.slice(16)}`
-            );
+            setNumProcesso(`${valor.slice(0, 7)}-${valor.slice(7, 9)}.${valor.slice(9, 13)}.${valor.slice(13, 14)}.${valor.slice(14, 16)}.${valor.slice(16)}`);
         }
     }
 
     function handleAssunto(e) {
-        const valor = e.target.value.replace(
-            /[^a-zA-ZÀ-ÿ\s]/g,
-            ''
-        );
-
+        const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
         if (valor.length <= 256) {
-            setAssunto(
-                capitalizar(valor)
-            );
+            setAssunto(capitalizar(valor));
         }
     }
 
     function handleVara(e) {
-        setVara(
-            capitalizar(e.target.value)
-        );
+        setVara(capitalizar(e.target.value));
     }
 
     function handleData(e) {
-        let valor = apenasNumeros(
-            e.target.value
-        );
-
+        let valor = apenasNumeros(e.target.value);
         if (valor.length > 8) {
             valor = valor.slice(0, 8);
         }
 
         if (valor.length <= 2) {
             setData(valor);
-
         } else if (valor.length <= 4) {
-            setData(
-                `${valor.slice(0, 2)}/${valor.slice(2)}`
-            );
-
+            setData(`${valor.slice(0, 2)}/${valor.slice(2)}`);
         } else {
-            setData(
-                `${valor.slice(0, 2)}/${valor.slice(2, 4)}/${valor.slice(4, 8)}`
-            );
+            setData(`${valor.slice(0, 2)}/${valor.slice(2, 4)}/${valor.slice(4, 8)}`);
         }
     }
 
@@ -153,32 +115,13 @@ export default function CadastroProcesso1({ api }) {
         if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
             return false;
         }
-
-        const [
-            dia,
-            mes,
-            ano
-        ] = dataTexto
-            .split('/')
-            .map(Number);
-
-        const dataObjeto = new Date(
-            ano,
-            mes - 1,
-            dia
-        );
-
-        return (
-            dataObjeto.getFullYear() === ano &&
-            dataObjeto.getMonth() === mes - 1 &&
-            dataObjeto.getDate() === dia
-        );
+        const [dia, mes, ano] = dataTexto.split('/').map(Number);
+        const dataObjeto = new Date(ano, mes - 1, dia);
+        return dataObjeto.getFullYear() === ano && dataObjeto.getMonth() === mes - 1 && dataObjeto.getDate() === dia;
     }
 
     function validarNumeroProcesso(numero) {
-        const padrao =
-            /^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/;
-
+        const padrao = /^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/;
         return padrao.test(numero);
     }
 
@@ -191,7 +134,6 @@ export default function CadastroProcesso1({ api }) {
         localStorage.removeItem('tipo');
         localStorage.removeItem('token');
         localStorage.removeItem('id_usuario');
-
         navigate('/login');
     }
 
@@ -199,22 +141,16 @@ export default function CadastroProcesso1({ api }) {
         setCarregandoClientes(true);
 
         try {
-            const token =
-                localStorage.getItem('token');
-
-            const response = await fetch(
-                `${API_URL}/clientes`,
-                {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/clientes`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'X-Access-Token': token
                 }
-            );
+            });
 
-            const dados =
-                await response.json();
+            const dados = await response.json();
 
             if (response.status === 401) {
                 deslogar();
@@ -222,50 +158,32 @@ export default function CadastroProcesso1({ api }) {
             }
 
             if (!response.ok) {
-                mostrarMensagem(
-                    dados.error ||
-                    'Erro ao carregar clientes.'
-                );
-
+                mostrarMensagem(dados.error || 'Erro ao carregar clientes.');
                 return;
             }
 
-            const lista =
-                dados.clientes || [];
-
-            const clientesAtivos =
-                lista.filter(
-                    clienteItem =>
-                        clienteItem.status === 'ativo'
-                );
-
-            setClientes(
-                clientesAtivos
-            );
+            const lista = dados.clientes || [];
+            const clientesAtivos = lista.filter(clienteItem => clienteItem.status === 'ativo');
+            setClientes(clientesAtivos);
 
         } catch (erro) {
-            console.error(
-                'Erro ao carregar clientes:',
-                erro
-            );
-
-            mostrarMensagem(
-                'Erro de conexão ao carregar clientes.'
-            );
-
+            console.error('Erro ao carregar clientes:', erro);
+            mostrarMensagem('Erro de conexão ao carregar clientes.');
         } finally {
             setCarregandoClientes(false);
         }
     }
 
     useEffect(() => {
-        const token =
-            localStorage.getItem('token');
-
+        const token = localStorage.getItem('token');
         if (!token) {
             navigate('/login');
             return;
         }
+
+        sessionStorage.removeItem('processo_temp');
+        sessionStorage.removeItem('parte_contraria_temp');
+        sessionStorage.removeItem('honorarios_temp');
 
         buscarClientes();
     }, [API_URL]);
@@ -280,128 +198,70 @@ export default function CadastroProcesso1({ api }) {
         const camposFaltando = [];
 
         if (!numProcesso.trim()) {
-            camposFaltando.push(
-                'Número do processo'
-            );
+            camposFaltando.push('Número do processo');
         }
-
         if (!tipoProcesso.trim()) {
-            camposFaltando.push(
-                'Tipo do processo'
-            );
+            camposFaltando.push('Tipo do processo');
         }
-
         if (!assunto.trim()) {
-            camposFaltando.push(
-                'Assunto'
-            );
+            camposFaltando.push('Assunto');
         }
-
         if (!area.trim()) {
-            camposFaltando.push(
-                'Área'
-            );
+            camposFaltando.push('Área');
         }
-
         if (!comarca.trim()) {
-            camposFaltando.push(
-                'Comarca'
-            );
+            camposFaltando.push('Comarca');
         }
-
         if (!vara.trim()) {
-            camposFaltando.push(
-                'Vara'
-            );
+            camposFaltando.push('Vara');
         }
-
         if (!instancia) {
-            camposFaltando.push(
-                'Instância'
-            );
+            camposFaltando.push('Instância');
         }
-
         if (!data.trim()) {
-            camposFaltando.push(
-                'Data de início'
-            );
+            camposFaltando.push('Data de início');
         }
-
         if (!cliente) {
-            camposFaltando.push(
-                'Cliente'
-            );
+            camposFaltando.push('Cliente');
         }
 
         if (camposFaltando.length > 0) {
-            mostrarMensagem(
-                `Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`
-            );
-
+            mostrarMensagem(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
             setCarregando(false);
             return;
         }
 
-        if (
-            !validarNumeroProcesso(
-                numProcesso
-            )
-        ) {
-            mostrarMensagem(
-                'Número do processo inválido. Use o formato 0000000-00.0000.0.00.0000.'
-            );
-
+        if (!validarNumeroProcesso(numProcesso)) {
+            mostrarMensagem('Número do processo inválido. Use o formato 0000000-00.0000.0.00.0000.');
             setCarregando(false);
             return;
         }
 
         if (!validarData(data)) {
-            mostrarMensagem(
-                'Data de início inválida.'
-            );
-
+            mostrarMensagem('Data de início inválida.');
             setCarregando(false);
             return;
         }
 
         const dadosProcesso = {
-            numero_processo:
-                numProcesso.trim(),
-
-            tipo_processo:
-                tipoProcesso.trim(),
-
-            assunto:
-                assunto.trim(),
-
-            area:
-                area.trim(),
-
-            comarca:
-                comarca.trim(),
-
-            vara:
-                vara.trim(),
-
-            instancia:
-                Number(instancia),
-
-            data_inicio:
-            data,
-
-            id_cliente:
-                Number(cliente)
+            numero_processo: numProcesso.trim(),
+            tipo_processo: tipoProcesso.trim(),
+            assunto: assunto.trim(),
+            area: area.trim(),
+            comarca: comarca.trim(),
+            vara: vara.trim(),
+            instancia: Number(instancia),
+            data_inicio: data,
+            id_cliente: Number(cliente)
         };
 
-        navigate(
-            '/cadastro_parte_contraria_fisica',
-            {
-                state: {
-                    processo:
-                    dadosProcesso
-                }
+        sessionStorage.setItem('processo_temp', JSON.stringify(dadosProcesso));
+
+        navigate('/cadastro_parte_contraria_fisica', {
+            state: {
+                processo: dadosProcesso
             }
-        );
+        });
 
         setCarregando(false);
     }
@@ -410,10 +270,7 @@ export default function CadastroProcesso1({ api }) {
         <div className={css.paginaCompleta}>
             <Header api={API_URL} />
 
-            <section
-                className={css.containerSection}
-                ref={topoRef}
-            >
+            <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
                     <button
                         className={css.botaoVoltar}
@@ -422,20 +279,8 @@ export default function CadastroProcesso1({ api }) {
                         name="btn-voltar"
                         type="button"
                     >
-                        <svg
-                            width="20"
-                            height="20"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            xmlns="http://www.w3.org/2000/svg"
-                        >
-                            <path
-                                d="M15 18L9 12L15 6"
-                                stroke="white"
-                                strokeWidth="3"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+                            <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </button>
 
@@ -447,399 +292,177 @@ export default function CadastroProcesso1({ api }) {
                 {mensagem && (
                     <div
                         style={{
-                            padding:
-                                '16px 24px',
-
-                            margin:
-                                '0 auto 25px auto',
-
-                            maxWidth:
-                                '700px',
-
-                            borderRadius:
-                                '10px',
-
-                            textAlign:
-                                'center',
-
-                            fontFamily:
-                                'Clear Sans, sans-serif',
-
-                            fontWeight:
-                                '700',
-
-                            fontSize:
-                                '1.05rem',
-
-                            backgroundColor:
-                                tipoMensagem === 'sucesso'
-                                    ? '#d4edda'
-                                    : '#fce8e6',
-
-                            color:
-                                tipoMensagem === 'sucesso'
-                                    ? '#155724'
-                                    : '#a94442',
-
-                            border:
-                                tipoMensagem === 'sucesso'
-                                    ? '1px solid #c3e6cb'
-                                    : '1px solid #f5c6cb',
-
-                            boxShadow:
-                                '0 4px 12px rgba(0,0,0,0.08)'
+                            padding: '16px 24px',
+                            margin: '0 auto 25px auto',
+                            maxWidth: '700px',
+                            borderRadius: '10px',
+                            textAlign: 'center',
+                            fontFamily: 'Clear Sans, sans-serif',
+                            fontWeight: '700',
+                            fontSize: '1.05rem',
+                            backgroundColor: tipoMensagem === 'sucesso' ? '#d4edda' : '#fce8e6',
+                            color: tipoMensagem === 'sucesso' ? '#155724' : '#a94442',
+                            border: tipoMensagem === 'sucesso' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
+                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
                         }}
                     >
                         {mensagem}
                     </div>
                 )}
 
-                <form
-                    className={css.formulario}
-                    onSubmit={handleCadastro}
-                >
+                <form className={css.formulario} onSubmit={handleCadastro}>
                     <div className={css.linha}>
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Número do processo *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Número do processo *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="0000000-00.0000.0.00.0000"
                                 value={numProcesso}
-                                onChange={
-                                    handleNumProcesso
-                                }
+                                onChange={handleNumProcesso}
                                 maxLength={25}
                                 tabIndex={1}
                                 name="numProcesso"
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Tipo do processo *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Tipo do processo *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="Digite o tipo do processo"
                                 value={tipoProcesso}
-                                onChange={(e) =>
-                                    setTipoProcesso(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setTipoProcesso(e.target.value)}
                                 maxLength={256}
                                 tabIndex={2}
                                 name="tipoProcesso"
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Assunto *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Assunto *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="Digite o assunto"
                                 value={assunto}
-                                onChange={
-                                    handleAssunto
-                                }
+                                onChange={handleAssunto}
                                 maxLength={256}
                                 tabIndex={3}
                                 name="assunto"
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Área *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Área *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="Digite a área do processo"
                                 value={area}
-                                onChange={(e) =>
-                                    setArea(
-                                        capitalizar(
-                                            e.target.value
-                                        )
-                                    )
-                                }
+                                onChange={(e) => setArea(capitalizar(e.target.value))}
                                 maxLength={256}
                                 tabIndex={4}
                                 name="area"
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Comarca *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Comarca *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="Digite a comarca"
                                 value={comarca}
-                                onChange={(e) =>
-                                    setComarca(
-                                        capitalizar(
-                                            e.target.value
-                                        )
-                                    )
-                                }
+                                onChange={(e) => setComarca(capitalizar(e.target.value))}
                                 maxLength={256}
                                 tabIndex={5}
                                 name="comarca"
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Vara *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Vara *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="Ex: 3ª Vara Cível"
                                 value={vara}
-                                onChange={
-                                    handleVara
-                                }
+                                onChange={handleVara}
                                 maxLength={256}
                                 tabIndex={6}
                                 name="vara"
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Instância *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Instância *</label>
                             <select
                                 className={css.input}
                                 value={instancia}
-                                onChange={(e) =>
-                                    setInstancia(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setInstancia(e.target.value)}
                                 tabIndex={7}
                                 name="instancia"
                             >
-                                <option
-                                    value=""
-                                    disabled
-                                >
-                                    Selecionar instância
-                                </option>
-
-                                <option value="1">
-                                    1ª instância
-                                </option>
-
-                                <option value="2">
-                                    2ª instância
-                                </option>
+                                <option value="" disabled>Selecionar instância</option>
+                                <option value="1">1ª instância</option>
+                                <option value="2">2ª instância</option>
                             </select>
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Data de início *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Data de início *</label>
                             <input
                                 type="text"
                                 className={css.input}
                                 placeholder="dd/mm/aaaa"
                                 value={data}
-                                onChange={
-                                    handleData
-                                }
+                                onChange={handleData}
                                 tabIndex={8}
                                 name="data"
                                 maxLength={10}
                             />
                         </div>
 
-                        <div
-                            className={
-                                css.campoMetade
-                            }
-                        >
-                            <label
-                                className={
-                                    css.label
-                                }
-                            >
-                                Cliente *
-                            </label>
-
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Cliente *</label>
                             <select
                                 className={css.input}
                                 value={cliente}
-                                onChange={(e) =>
-                                    setCliente(
-                                        e.target.value
-                                    )
-                                }
+                                onChange={(e) => setCliente(e.target.value)}
                                 tabIndex={9}
                                 name="cliente"
-                                disabled={
-                                    carregandoClientes
-                                }
+                                disabled={carregandoClientes}
                             >
-                                <option
-                                    value=""
-                                    disabled
-                                >
-                                    {carregandoClientes
-                                        ? 'Carregando clientes...'
-                                        : 'Selecione o cliente'}
+                                <option value="" disabled>
+                                    {carregandoClientes ? 'Carregando clientes...' : 'Selecione o cliente'}
                                 </option>
-
-                                {clientes.map(
-                                    clienteItem => (
-                                        <option
-                                            key={
-                                                clienteItem.id
-                                            }
-                                            value={
-                                                clienteItem.id
-                                            }
-                                        >
-                                            {
-                                                clienteItem.nome
-                                            }
-                                        </option>
-                                    )
-                                )}
+                                {clientes.map(clienteItem => (
+                                    <option key={clienteItem.id} value={clienteItem.id}>
+                                        {clienteItem.nome}
+                                    </option>
+                                ))}
                             </select>
-
-                            {!carregandoClientes &&
-                                clientes.length === 0 && (
-                                    <small>
-                                        Nenhum cliente ativo encontrado.
-                                    </small>
-                                )}
+                            {!carregandoClientes && clientes.length === 0 && (
+                                <small>Nenhum cliente ativo encontrado.</small>
+                            )}
                         </div>
 
-                        <div
-                            className={
-                                css.campoInteiro
-                            }
-                            style={{
-                                marginTop:
-                                    '0.5rem'
-                            }}
-                        >
-                            <p
-                                className={
-                                    css.obsCampos
-                                }
-                            >
-                                * Campos obrigatórios
-                            </p>
+                        <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>
+                            <p className={css.obsCampos}>* Campos obrigatórios</p>
                         </div>
                     </div>
 
-                    <div
-                        className={
-                            css.botaoContainer
-                        }
-                    >
+                    <div className={css.botaoContainer}>
                         <button
-                            className={
-                                css.botaoCadastro
-                            }
+                            className={css.botaoCadastro}
                             type="submit"
-                            disabled={
-                                carregando ||
-                                carregandoClientes
-                            }
+                            disabled={carregando || carregandoClientes}
                             tabIndex={10}
                             name="btn-cadastrar"
                         >
-                            {carregando
-                                ? 'Carregando...'
-                                : 'Parte Contrária ➝'}
+                            {carregando ? 'Carregando...' : 'Parte Contrária ➝'}
                         </button>
                     </div>
                 </form>

@@ -19,7 +19,7 @@ export default function DashboardAdvogado1({ api }) {
     const [clientesAtivos, setClientesAtivos] = useState(0);
     const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.4:5000';
+    const API_URL = api || 'http://192.168.0.130:5000';
 
     function contarClientesMes(clientes) {
         const dataAtual = new Date();

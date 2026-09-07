@@ -34,7 +34,7 @@ export default function EditarPerfilEscritorio1({ api }) {
     const [carregandoDados, setCarregandoDados] = useState(true);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.4:5000';
+    const API_URL = api || 'http://192.168.0.130:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',

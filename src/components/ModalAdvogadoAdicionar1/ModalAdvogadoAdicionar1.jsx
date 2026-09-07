@@ -40,7 +40,6 @@ export default function ModalAdvogadoAdicionar1({
 
                 <h1 className={css.titulo}>Adicionar advogado</h1>
 
-                {/* MENSAGEM DENTRO DA MODAL */}
                 {mensagem && (
                     <div className={css.mensagemModal} style={{
                         padding: '10px 16px',

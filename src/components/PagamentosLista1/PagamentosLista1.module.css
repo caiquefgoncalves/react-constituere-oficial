@@ -35,7 +35,6 @@
     min-width: 0;
 }
 
-
 .topoSaudacao {
     display: flex;
     justify-content: space-between;
@@ -50,27 +49,36 @@
     margin: 0;
 }
 
-.botaoAdicionar {
-    background-color: #0047ab;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 35px;
-    height: 35px;
-    font-family: 'Clear Sans', sans-serif;
-    font-weight: 700;
-    font-size: 1.5rem;
+.gradeEstatisticas {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    line-height: 1;
-    padding-bottom: 3px;
+    gap: 1.5rem;
+    flex-wrap: wrap;
 }
 
-.botaoAdicionar:hover {
-    background-color: #003580;
+.cardEstatistica {
+    background: #ffffff;
+    border: 1px solid #8eb4e6;
+    border-radius: 12px;
+    padding: 1.5rem;
+    flex: 1;
+    min-width: 200px;
+    text-align: center;
+}
+
+.labelEstatistica {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 1rem;
+    color: #000000;
+    font-weight: 600;
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+.numeroEstatistica {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #000000;
 }
 
 .areaFiltros {
@@ -164,21 +172,10 @@
     padding: 1rem 0.5rem;
     border-bottom: 1px solid #e8edf2;
     color: #333333;
-    vertical-align: middle;
 }
 
 .tabela tr:hover td {
     background-color: #fcfcfc;
-}
-
-.colunaProcesso {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-}
-
-.iconeProcesso {
-    flex-shrink: 0;
 }
 
 .statusBadge {
@@ -188,32 +185,27 @@
     font-size: 0.8rem;
     font-weight: 600;
     text-align: center;
-    min-width: 100px;
+    min-width: 80px;
 }
 
-.statusBadge.em_andamento {
-    background-color: #ffe69c;
-    color: #7a5b00;
+.statusBadge.apagar {
+    background-color: #cce5ff;
+    color: #004085;
 }
 
-.statusBadge.concluido {
+.statusBadge.paga {
     background-color: #b7e4c7;
     color: #1b4332;
 }
 
-.statusBadge.suspenso {
+.statusBadge.atrasada {
     background-color: #ffb3b3;
     color: #8a0000;
 }
 
-.statusBadge.inativo {
-    background-color: #e0e0e0;
-    color: #666666;
-}
-
 .colunaAcoes {
     text-align: center !important;
-    min-width: 160px !important;
+    min-width: 120px !important;
     white-space: nowrap !important;
 }
 
@@ -223,7 +215,7 @@
     text-align: center !important;
 }
 
-.botaoVer, .botaoInativar, .botaoAtivar {
+.botaoDarBaixa {
     padding: 0.4rem 1.2rem;
     border: none;
     border-radius: 20px;
@@ -232,100 +224,21 @@
     font-weight: 600;
     cursor: pointer;
     transition: opacity 0.2s, transform 0.1s;
+    background-color: #0047ab;
     color: #ffffff;
     margin: 0 0.25rem;
     display: inline-block;
     vertical-align: middle;
 }
 
-.botaoVer {
-    background-color: #0047ab;
-}
-
-.botaoInativar {
-    background-color: #ff4d4d;
-}
-
-.botaoAtivar {
-    background-color: #28a745;
-}
-
-.botaoVer:hover, .botaoInativar:hover, .botaoAtivar:hover {
+.botaoDarBaixa:hover {
     opacity: 0.8;
     transform: scale(1.02);
 }
 
-.botaoVer:active, .botaoInativar:active, .botaoAtivar:active {
+.botaoDarBaixa:active {
     transform: scale(0.95);
 }
-
-
-.modalOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.3s ease;
-}
-
-.modalContainer {
-    background: #ffffff;
-    border-radius: 16px;
-    max-width: 900px;
-    width: 95%;
-    max-height: 90vh;
-    overflow-y: auto;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    animation: slideUp 0.3s ease;
-}
-
-.modalHeader {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1.5rem 2rem;
-    border-bottom: 1px solid #f0f0f0;
-    position: sticky;
-    top: 0;
-    background: white;
-    z-index: 1;
-    border-radius: 16px 16px 0 0;
-}
-
-.modalTitulo {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1.6rem;
-    color: #0047ab;
-    margin: 0;
-}
-
-.modalFechar {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    color: #888888;
-    transition: color 0.3s;
-    padding: 0.3rem 0.6rem;
-    border-radius: 50%;
-}
-
-.modalFechar:hover {
-    color: #333333;
-    background-color: #f0f0f0;
-}
-
-.modalBody {
-    padding: 1.5rem 2rem 2rem;
-}
-
 
 .mensagemContainer {
     padding: 16px 24px;
@@ -350,175 +263,22 @@
     border: 1px solid #f5c6cb;
 }
 
-
-.secaoTitulo {
-    width: 100%;
-    margin-bottom: 1rem;
-    margin-top: 0.5rem;
-}
-
-.secaoSubtitulo {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: #0047ab;
-    margin: 0;
-    padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e0e0e0;
-}
-
-
-.formulario {
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    justify-content: center;
-    width: 100%;
-    box-sizing: border-box;
+    z-index: 9999;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
 }
 
-.linha {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    width: 100%;
-    column-gap: 4rem;
-    row-gap: 0;
-}
-
-.campoMetade {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 0.5rem !important;
-    width: calc(50% - 2rem) !important;
-    margin-bottom: 1.5rem !important;
-}
-
-.campoInteiro {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    width: 100%;
-    margin-bottom: 1.5rem;
-}
-
-.label {
-    font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1rem;
-    font-weight: 600;
-    color: #333333;
-}
-
-.input, .textarea {
-    width: 100%;
-    padding: 0.8rem 1rem;
-    border: 1px solid #dcdcdc;
-    border-radius: 8px;
-    font-size: 1rem;
-    font-family: 'Clear Sans', sans-serif;
-    outline: none;
-    transition: border-color 0.3s ease;
-    background-color: #ffffff;
-    box-sizing: border-box;
-    color: #333333;
-}
-
-.textarea {
-    resize: vertical;
-    min-height: 90px;
-}
-
-.input:focus, .textarea:focus {
-    border-color: #0047ab;
-    box-shadow: 0 0 0 2px rgba(0, 71, 171, 0.1);
-}
-
-.input::placeholder, .textarea::placeholder {
-    color: #a0a0a0;
-}
-
-.input:read-only, .textarea:read-only {
-    background-color: #f9f9f9;
-    cursor: default;
-}
-
-.obsCampos {
-    font-size: 0.85rem;
-    color: #a0a0a0;
-    font-family: 'Clear Sans', sans-serif;
-    margin: 0;
-}
-
-
-.botaoContainer {
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-    width: 100%;
-    margin-top: 1.5rem;
-    padding-top: 1.5rem;
-    border-top: 1px solid #f0f0f0;
-    flex-wrap: wrap;
-}
-
-.botaoCadastro {
-    font-family: 'Clear Sans', sans-serif;
-    background-color: #ffbf00;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 40px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.botaoCadastro:hover {
-    background-color: #d69f00;
-}
-
-.botaoCadastro:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-}
-
-.botaoCancelar {
-    font-family: 'Clear Sans', sans-serif;
-    background-color: #e0e0e0;
-    color: #666666;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 40px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.botaoCancelar:hover {
-    background-color: #cccccc;
-}
-
-.botaoEditar {
-    font-family: 'Clear Sans', sans-serif;
-    background-color: #0047ab;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 50px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.botaoEditar:hover {
-    background-color: #003580;
-}
-
-
-.modalInativacao {
+.modalBaixaContainer {
     background: #ffffff;
     border-radius: 16px;
     max-width: 480px;
@@ -549,7 +309,7 @@
     background-color: #f0f0f0;
 }
 
-.tituloInativacao {
+.tituloBaixa {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.8rem;
     font-weight: 700;
@@ -558,21 +318,26 @@
     line-height: 1.3;
 }
 
-.subtituloInativacao {
+.subtituloBaixa {
     font-family: 'Clear Sans', sans-serif;
     font-size: 1rem;
     color: #666666;
     margin: 0 0 2rem 0;
+    line-height: 1.5;
 }
 
-.botoesInativacao {
+.subtituloBaixa strong {
+    color: #333333;
+}
+
+.botoesBaixa {
     display: flex;
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
 }
 
-.btnCancelarInativacao {
+.btnCancelarBaixa {
     background-color: #003580;
     color: #ffffff;
     border: none;
@@ -586,11 +351,11 @@
     min-width: 120px;
 }
 
-.btnCancelarInativacao:hover {
+.btnCancelarBaixa:hover {
     background-color: #2f4578;
 }
 
-.btnConfirmarInativacao {
+.btnConfirmarBaixa {
     background-color: #ffbf00;
     color: #ffffff;
     border: none;
@@ -604,17 +369,55 @@
     min-width: 120px;
 }
 
-.btnConfirmarInativacao:hover {
-    background-color: #cc0000;
+.btnConfirmarBaixa:hover {
+    background-color: #edc85d;
 }
 
-.btnConfirmarInativacao:disabled {
+.btnConfirmarBaixa:disabled,
+.btnCancelarBaixa:disabled {
     background-color: #cccccc;
     cursor: not-allowed;
 }
 
 
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 2rem;
+    padding: 1rem 0;
+}
 
+.botaoPagina {
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #8eb4e6;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0047ab;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.botaoPagina:hover:not(:disabled) {
+    background-color: #0047ab;
+    color: #ffffff;
+    border-color: #0047ab;
+}
+
+.botaoPagina:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.infoPagina {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #333333;
+}
 
 @keyframes fadeIn {
     from {
