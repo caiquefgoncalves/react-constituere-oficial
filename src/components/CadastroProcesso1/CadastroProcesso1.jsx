@@ -25,13 +25,12 @@ export default function CadastroProcesso1({ api }) {
     const [carregando, setCarregando] = useState(false);
     const [carregandoClientes, setCarregandoClientes] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.34:5000';
 
     function agendarLimpezaMensagem() {
         if (window.timeoutMensagem) {
             clearTimeout(window.timeoutMensagem);
         }
-
         window.timeoutMensagem = setTimeout(() => {
             setMensagem('');
             setTipoMensagem('');
@@ -41,14 +40,9 @@ export default function CadastroProcesso1({ api }) {
     function mostrarMensagem(texto, tipo = 'erro') {
         setMensagem(texto);
         setTipoMensagem(tipo);
-
         if (topoRef.current) {
-            topoRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
-
         agendarLimpezaMensagem();
     }
 
@@ -69,7 +63,6 @@ export default function CadastroProcesso1({ api }) {
         if (valor.length > 20) {
             valor = valor.slice(0, 20);
         }
-
         if (valor.length <= 7) {
             setNumProcesso(valor);
         } else if (valor.length <= 9) {
@@ -101,7 +94,6 @@ export default function CadastroProcesso1({ api }) {
         if (valor.length > 8) {
             valor = valor.slice(0, 8);
         }
-
         if (valor.length <= 2) {
             setData(valor);
         } else if (valor.length <= 4) {
@@ -112,6 +104,7 @@ export default function CadastroProcesso1({ api }) {
     }
 
     function validarData(dataTexto) {
+        if (!dataTexto) return true;
         if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
             return false;
         }
@@ -121,6 +114,7 @@ export default function CadastroProcesso1({ api }) {
     }
 
     function validarNumeroProcesso(numero) {
+        if (!numero) return true;
         const padrao = /^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/;
         return padrao.test(numero);
     }
@@ -139,33 +133,25 @@ export default function CadastroProcesso1({ api }) {
 
     async function buscarClientes() {
         setCarregandoClientes(true);
-
         try {
             const token = localStorage.getItem('token');
             const response = await fetch(`${API_URL}/clientes`, {
                 method: 'GET',
                 credentials: 'include',
-                headers: {
-                    'X-Access-Token': token
-                }
+                headers: { 'X-Access-Token': token }
             });
-
             const dados = await response.json();
-
             if (response.status === 401) {
                 deslogar();
                 return;
             }
-
             if (!response.ok) {
                 mostrarMensagem(dados.error || 'Erro ao carregar clientes.');
                 return;
             }
-
             const lista = dados.clientes || [];
             const clientesAtivos = lista.filter(clienteItem => clienteItem.status === 'ativo');
             setClientes(clientesAtivos);
-
         } catch (erro) {
             console.error('Erro ao carregar clientes:', erro);
             mostrarMensagem('Erro de conexão ao carregar clientes.');
@@ -180,26 +166,20 @@ export default function CadastroProcesso1({ api }) {
             navigate('/login');
             return;
         }
-
         sessionStorage.removeItem('processo_temp');
         sessionStorage.removeItem('parte_contraria_temp');
         sessionStorage.removeItem('honorarios_temp');
-
         buscarClientes();
     }, [API_URL]);
 
     function handleCadastro(e) {
         e.preventDefault();
-
         setCarregando(true);
         setMensagem('');
         setTipoMensagem('');
 
         const camposFaltando = [];
 
-        if (!numProcesso.trim()) {
-            camposFaltando.push('Número do processo');
-        }
         if (!tipoProcesso.trim()) {
             camposFaltando.push('Tipo do processo');
         }
@@ -212,18 +192,13 @@ export default function CadastroProcesso1({ api }) {
         if (!comarca.trim()) {
             camposFaltando.push('Comarca');
         }
-        if (!vara.trim()) {
-            camposFaltando.push('Vara');
-        }
         if (!instancia) {
             camposFaltando.push('Instância');
-        }
-        if (!data.trim()) {
-            camposFaltando.push('Data de início');
         }
         if (!cliente) {
             camposFaltando.push('Cliente');
         }
+
 
         if (camposFaltando.length > 0) {
             mostrarMensagem(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
@@ -231,36 +206,36 @@ export default function CadastroProcesso1({ api }) {
             return;
         }
 
-        if (!validarNumeroProcesso(numProcesso)) {
+        if (numProcesso && !validarNumeroProcesso(numProcesso)) {
             mostrarMensagem('Número do processo inválido. Use o formato 0000000-00.0000.0.00.0000.');
             setCarregando(false);
             return;
         }
 
-        if (!validarData(data)) {
+        if (data && !validarData(data)) {
             mostrarMensagem('Data de início inválida.');
             setCarregando(false);
             return;
         }
 
+        const dataFinal = data || new Date().toLocaleDateString('pt-BR');
+
         const dadosProcesso = {
-            numero_processo: numProcesso.trim(),
+            numero_processo: numProcesso.trim() || null,
             tipo_processo: tipoProcesso.trim(),
             assunto: assunto.trim(),
             area: area.trim(),
             comarca: comarca.trim(),
-            vara: vara.trim(),
+            vara: vara.trim() || null,
             instancia: Number(instancia),
-            data_inicio: data,
+            data_inicio: dataFinal,
             id_cliente: Number(cliente)
         };
 
         sessionStorage.setItem('processo_temp', JSON.stringify(dadosProcesso));
 
         navigate('/cadastro_parte_contraria_fisica', {
-            state: {
-                processo: dadosProcesso
-            }
+            state: { processo: dadosProcesso }
         });
 
         setCarregando(false);
@@ -269,43 +244,31 @@ export default function CadastroProcesso1({ api }) {
     return (
         <div className={css.paginaCompleta}>
             <Header api={API_URL} />
-
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
-                    <button
-                        className={css.botaoVoltar}
-                        onClick={voltarParaProcesso}
-                        tabIndex={-1}
-                        name="btn-voltar"
-                        type="button"
-                    >
+                    <button className={css.botaoVoltar} onClick={voltarParaProcesso} tabIndex={-1} name="btn-voltar" type="button">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>
                     </button>
-
-                    <h1 className={css.titulo}>
-                        Cadastre o processo
-                    </h1>
+                    <h1 className={css.titulo}>Cadastre o processo</h1>
                 </div>
 
                 {mensagem && (
-                    <div
-                        style={{
-                            padding: '16px 24px',
-                            margin: '0 auto 25px auto',
-                            maxWidth: '700px',
-                            borderRadius: '10px',
-                            textAlign: 'center',
-                            fontFamily: 'Clear Sans, sans-serif',
-                            fontWeight: '700',
-                            fontSize: '1.05rem',
-                            backgroundColor: tipoMensagem === 'sucesso' ? '#d4edda' : '#fce8e6',
-                            color: tipoMensagem === 'sucesso' ? '#155724' : '#a94442',
-                            border: tipoMensagem === 'sucesso' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
-                            boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
-                        }}
-                    >
+                    <div style={{
+                        padding: '16px 24px',
+                        margin: '0 auto 25px auto',
+                        maxWidth: '700px',
+                        borderRadius: '10px',
+                        textAlign: 'center',
+                        fontFamily: 'Clear Sans, sans-serif',
+                        fontWeight: '700',
+                        fontSize: '1.05rem',
+                        backgroundColor: tipoMensagem === 'sucesso' ? '#d4edda' : '#fce8e6',
+                        color: tipoMensagem === 'sucesso' ? '#155724' : '#a94442',
+                        border: tipoMensagem === 'sucesso' ? '1px solid #c3e6cb' : '1px solid #f5c6cb',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
+                    }}>
                         {mensagem}
                     </div>
                 )}
@@ -313,7 +276,7 @@ export default function CadastroProcesso1({ api }) {
                 <form className={css.formulario} onSubmit={handleCadastro}>
                     <div className={css.linha}>
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Número do processo *</label>
+                            <label className={css.label}>Número do processo</label>
                             <input
                                 type="text"
                                 className={css.input}
@@ -383,7 +346,7 @@ export default function CadastroProcesso1({ api }) {
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Vara *</label>
+                            <label className={css.label}>Vara</label>
                             <input
                                 type="text"
                                 className={css.input}
@@ -412,7 +375,7 @@ export default function CadastroProcesso1({ api }) {
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Data de início *</label>
+                            <label className={css.label}>Data de início</label>
                             <input
                                 type="text"
                                 className={css.input}
@@ -467,7 +430,6 @@ export default function CadastroProcesso1({ api }) {
                     </div>
                 </form>
             </section>
-
             <Footer />
         </div>
     );

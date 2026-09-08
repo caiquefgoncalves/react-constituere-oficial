@@ -24,7 +24,7 @@ export default function PagamentosLista1({ api }) {
     const [parcelaBaixar, setParcelaBaixar] = useState(null);
     const [baixando, setBaixando] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.4:5000';
+    const API_URL = api || 'http://10.92.11.34:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 
@@ -124,14 +124,26 @@ export default function PagamentosLista1({ api }) {
 
     const irParaPagina = (novaPagina) => {
         if (novaPagina < 1) return;
+        if (novaPagina > pagina && !temMais) return;
         buscarPagamentos(novaPagina);
     };
 
     function formatarMoeda(valor) {
+        if (valor === undefined || valor === null) return 'R$ 0,00';
         return new Intl.NumberFormat('pt-BR', {
             style: 'currency',
             currency: 'BRL'
-        }).format(valor || 0);
+        }).format(valor);
+    }
+
+    function getStatusClass(status) {
+        if (!status) return '';
+        const statusMap = {
+            'A pagar': 'apagar',
+            'Paga': 'paga',
+            'Atrasada': 'atrasada'
+        };
+        return statusMap[status] || status.toLowerCase().replace(' ', '');
     }
 
     function abrirModalBaixa(parcela) {
@@ -267,18 +279,18 @@ export default function PagamentosLista1({ api }) {
                                     <tbody>
                                     {pagamentos.map(pag => (
                                         <tr key={pag.id}>
-                                            <td>{pag.nome}</td>
+                                            <td>{pag.nome || '--'}</td>
                                             <td>{formatarMoeda(pag.valor)}</td>
-                                            <td>{pag.cliente}</td>
+                                            <td>{pag.cliente || '--'}</td>
                                             <td>
-                                                <span className={`${css.statusBadge} ${css[pag.status.toLowerCase().replace(' ', '')]}`}>
-                                                    {pag.status}
+                                                <span className={`${css.statusBadge} ${css[getStatusClass(pag.status)]}`}>
+                                                    {pag.status || '--'}
                                                 </span>
                                             </td>
-                                            <td>{pag.pagamento}</td>
-                                            <td>{pag.vencimento}</td>
+                                            <td>{pag.pagamento || '--'}</td>
+                                            <td>{pag.vencimento || '--'}</td>
                                             <td className={css.colunaAcoes}>
-                                                {pag.status !== 'Paga' && (
+                                                {pag.status !== 'Paga' && pag.status !== undefined && (
                                                     <button
                                                         className={css.botaoDarBaixa}
                                                         onClick={() => abrirModalBaixa(pag)}
@@ -301,13 +313,14 @@ export default function PagamentosLista1({ api }) {
                                         Anterior
                                     </button>
                                     <span className={css.infoPagina}>Página {pagina}</span>
-                                    <button
-                                        className={css.botaoPagina}
-                                        onClick={() => irParaPagina(pagina + 1)}
-                                        disabled={!temMais}
-                                    >
-                                        Próxima
-                                    </button>
+                                    {temMais && (
+                                        <button
+                                            className={css.botaoPagina}
+                                            onClick={() => irParaPagina(pagina + 1)}
+                                        >
+                                            Próxima
+                                        </button>
+                                    )}
                                 </div>
                             </>
                         )}

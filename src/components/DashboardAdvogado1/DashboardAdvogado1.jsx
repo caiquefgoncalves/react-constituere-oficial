@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import css from './DashboardAdvogado1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
@@ -19,7 +19,13 @@ export default function DashboardAdvogado1({ api }) {
     const [clientesAtivos, setClientesAtivos] = useState(0);
     const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(true);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const [dadosGrafico, setDadosGrafico] = useState([]);
+    const [carregandoGrafico, setCarregandoGrafico] = useState(false);
+    const [filtroPeriodo, setFiltroPeriodo] = useState('2026');
+    const [totaisGrafico, setTotaisGrafico] = useState({ recebido: 0, aReceber: 0 });
+    const [dadosCache, setDadosCache] = useState({});
+
+    const API_URL = api || 'http://10.92.11.34:5000';
 
     function contarClientesMes(clientes) {
         const dataAtual = new Date();
@@ -42,6 +48,51 @@ export default function DashboardAdvogado1({ api }) {
         }).length;
     }
 
+    async function buscarDadosGrafico(periodo) {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        if (dadosCache[periodo]) {
+            setDadosGrafico(dadosCache[periodo].dados);
+            setTotaisGrafico(dadosCache[periodo].totais);
+            return;
+        }
+
+        setCarregandoGrafico(true);
+        try {
+            const response = await fetch(`${API_URL}/dashboard/rendimentos?periodo=${periodo}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const resultado = {
+                    dados: data.dados || [],
+                    totais: {
+                        recebido: data.totais?.recebido || 0,
+                        aReceber: data.totais?.a_receber || 0
+                    }
+                };
+                setDadosCache(prev => ({ ...prev, [periodo]: resultado }));
+                setDadosGrafico(resultado.dados);
+                setTotaisGrafico(resultado.totais);
+            } else if (response.status === 401) {
+                localStorage.removeItem('nome');
+                localStorage.removeItem('tipo');
+                localStorage.removeItem('token');
+                localStorage.removeItem('id_usuario');
+                navigate('/login');
+                return;
+            }
+        } catch (error) {
+            console.error('Erro ao buscar dados do gráfico:', error);
+        } finally {
+            setCarregandoGrafico(false);
+        }
+    }
+
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');
         const token = localStorage.getItem('token');
@@ -56,9 +107,7 @@ export default function DashboardAdvogado1({ api }) {
                 const response = await fetch(`${API_URL}/meus_dados`, {
                     method: 'GET',
                     credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
+                    headers: { 'X-Access-Token': token }
                 });
 
                 const data = await response.json();
@@ -89,9 +138,7 @@ export default function DashboardAdvogado1({ api }) {
                 const response = await fetch(`${API_URL}/meus_escritorios`, {
                     method: 'GET',
                     credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
+                    headers: { 'X-Access-Token': token }
                 });
 
                 if (response.ok) {
@@ -118,9 +165,7 @@ export default function DashboardAdvogado1({ api }) {
                 const response = await fetch(`${API_URL}/clientes`, {
                     method: 'GET',
                     credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
+                    headers: { 'X-Access-Token': token }
                 });
 
                 if (response.ok) {
@@ -147,7 +192,14 @@ export default function DashboardAdvogado1({ api }) {
         buscarDados();
         buscarEscritorios();
         buscarClientes();
+        buscarDadosGrafico('2026');
     }, [navigate, API_URL]);
+
+    function handleFiltroChange(e) {
+        const novoFiltro = e.target.value;
+        setFiltroPeriodo(novoFiltro);
+        buscarDadosGrafico(novoFiltro);
+    }
 
     function irParaEditarPerfil() {
         navigate('/editar_perfil_advogado');
@@ -164,6 +216,17 @@ export default function DashboardAdvogado1({ api }) {
     function getFotoEscritorio(id) {
         return `${API_URL}/uploads/Escritorios/escritorio_${id}.jpeg`;
     }
+
+    function formatarMoeda(valor) {
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(valor || 0);
+    }
+
+    const maxValor = dadosGrafico.length > 0
+        ? Math.max(...dadosGrafico.map(d => Math.max(d.recebido, d.a_receber)))
+        : 0;
 
     return (
         <div className={css.paginaCompleta}>
@@ -284,10 +347,68 @@ export default function DashboardAdvogado1({ api }) {
 
                     <div className={css.gradeDupla}>
                         <div className={css.cardDuplo}>
-                            <h3 className={css.tituloCardDuplo}>Rendimentos</h3>
-                            <div className={css.placeholderGrafico}>
-                                <p className={css.textoPlaceholder}>Gráfico em breve</p>
+                            <div className={css.cardDuploHeader}>
+                                <h3 className={css.tituloCardDuplo}>Rendimentos</h3>
+                                <select
+                                    className={css.selectFiltro}
+                                    value={filtroPeriodo}
+                                    onChange={handleFiltroChange}
+                                >
+                                    <option value="mes">Este mês</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
                             </div>
+
+                            {dadosGrafico.length === 0 && !carregandoGrafico ? (
+                                <div className={css.placeholderGrafico}>
+                                    <p className={css.textoPlaceholder}>Nenhum dado disponível</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className={css.graficoContainer}>
+                                        <div className={css.graficoLegenda}>
+                                            <span className={css.legendaRecebido}>■ Recebido</span>
+                                            <span className={css.legendaAReceber}>■ A Receber</span>
+                                        </div>
+                                        <div className={css.graficoBarras}>
+                                            {dadosGrafico.map((item, index) => {
+                                                const alturaRecebido = maxValor > 0 ? (item.recebido / maxValor) * 150 : 0;
+                                                const alturaAReceber = maxValor > 0 ? (item.a_receber / maxValor) * 150 : 0;
+                                                return (
+                                                    <div key={index} className={css.barraGrupo}>
+                                                        <div className={css.barras}>
+                                                            <div
+                                                                className={css.barraRecebido}
+                                                                style={{ height: `${alturaRecebido}px` }}
+                                                            >
+                                                                <span className={css.barraValor}>{formatarMoeda(item.recebido)}</span>
+                                                            </div>
+                                                            <div
+                                                                className={css.barraAReceber}
+                                                                style={{ height: `${alturaAReceber}px` }}
+                                                            >
+                                                                <span className={css.barraValor}>{formatarMoeda(item.a_receber)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <span className={css.barraLabel}>{item.label}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                    <div className={css.graficoTotais}>
+                                        <div className={css.totalItem}>
+                                            <span className={css.totalLabel}>Recebido</span>
+                                            <span className={css.totalValor}>{formatarMoeda(totaisGrafico.recebido)}</span>
+                                        </div>
+                                        <div className={css.totalItem}>
+                                            <span className={css.totalLabel}>A Receber</span>
+                                            <span className={css.totalValor}>{formatarMoeda(totaisGrafico.aReceber)}</span>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
                         <div className={css.cardDuplo}>
                             <h3 className={css.tituloCardDuplo}>Agendamentos</h3>

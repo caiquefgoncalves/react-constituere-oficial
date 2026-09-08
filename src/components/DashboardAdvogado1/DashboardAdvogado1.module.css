@@ -340,4 +340,182 @@
     font-family: 'Glacial Indifference', sans-serif;
 }
 
+.selectFiltro {
+    padding: 0.4rem 1.2rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    background-color: #ffffff;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.selectFiltro:focus {
+    border-color: #0047ab;
+}
+.cardDuploHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.filtroPeriodo {
+    display: flex;
+    gap: 0.3rem;
+}
+
+.btnFiltro {
+    padding: 0.3rem 0.8rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    background: #ffffff;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btnFiltro:hover {
+    border-color: #0047ab;
+    color: #0047ab;
+}
+
+.btnFiltroAtivo {
+    background: #0047ab;
+    color: #ffffff;
+    border-color: #0047ab;
+}
+
+.btnFiltroAtivo:hover {
+    background: #003580;
+    color: #ffffff;
+}
+
+.graficoContainer {
+    padding: 0.5rem 0;
+}
+
+.graficoLegenda {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+}
+
+.legendaRecebido {
+    color: #28a745;
+}
+
+.legendaAReceber {
+    color: #0047ab;
+}
+
+.graficoBarras {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 200px;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e8edf2;
+}
+
+.barraGrupo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex: 1;
+}
+
+.barras {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 180px;
+}
+
+.barraRecebido {
+    width: 20px;
+    background: #28a745;
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transition: height 0.5s ease;
+}
+
+.barraAReceber {
+    width: 20px;
+    background: #0047ab;
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transition: height 0.5s ease;
+}
+
+.barraValor {
+    position: absolute;
+    top: -18px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.6rem;
+    color: #333;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.barraRecebido:hover .barraValor,
+.barraAReceber:hover .barraValor {
+    opacity: 1;
+}
+
+.barraLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    color: #666;
+    text-align: center;
+}
+
+.graficoTotais {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.totalItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+}
+
+.totalLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.totalValor {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333;
+}
+
 

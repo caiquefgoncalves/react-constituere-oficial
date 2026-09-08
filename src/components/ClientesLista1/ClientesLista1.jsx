@@ -25,7 +25,7 @@ export default function ClientesLista1({ api }) {
     const [clienteInativar, setClienteInativar] = useState(null);
     const [inativando, setInativando] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.4:5000';
+    const API_URL = api || 'http://10.92.11.34:5000';
 
 
     function apenasNumeros(valor) {

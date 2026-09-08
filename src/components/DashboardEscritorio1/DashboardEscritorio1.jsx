@@ -20,7 +20,7 @@ export default function DashboardEscritorio1({ api }) {
     const [fotoPerfil, setFotoPerfil] = useState('');
     const [totalAdvogadosAtivos, setTotalAdvogadosAtivos] = useState(0);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || 'http://10.92.11.34:5000';
 
     useEffect(() => {
         const token = localStorage.getItem('token');

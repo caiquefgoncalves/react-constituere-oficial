@@ -50,7 +50,7 @@ export default function CadastroParteContrariaJuridica1({ api }) {
     const [carregando, setCarregando] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.34:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF',

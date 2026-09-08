@@ -35,7 +35,6 @@
     min-width: 0;
 }
 
-
 .topoSaudacao {
     display: flex;
     justify-content: space-between;
@@ -259,7 +258,6 @@
     transform: scale(0.95);
 }
 
-
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -270,7 +268,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999;
+    z-index: 1000;
     backdrop-filter: blur(4px);
     animation: fadeIn 0.3s ease;
 }
@@ -284,6 +282,7 @@
     overflow-y: auto;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
     animation: slideUp 0.3s ease;
+    z-index: 1000;
 }
 
 .modalHeader {
@@ -326,7 +325,6 @@
     padding: 1.5rem 2rem 2rem;
 }
 
-
 .mensagemContainer {
     padding: 16px 24px;
     margin-bottom: 2rem;
@@ -350,23 +348,179 @@
     border: 1px solid #f5c6cb;
 }
 
-
 .secaoTitulo {
     width: 100%;
     margin-bottom: 1rem;
     margin-top: 0.5rem;
+    display: flex;
+    gap: 2rem;
+}
+
+.topoAtualizacao {
+    width: 100%;
+    display: flex;
+    align-items: start;
+    justify-content: space-between;
+}
+
+.listaAtualizacao {
+    display: flex;
+    padding: 0.5rem 1rem;
+    flex-direction: column;
+    width: 100%;
+}
+
+.atualizacao {
+    display: flex;
+    padding: 1rem;
+    gap: 1rem;
+    align-items: center;
+    border-bottom: 1px solid #e8edf2;
+}
+
+.atualizacao:last-child {
+    border-bottom: none;
+}
+
+.dataAtualizacao {
+    background-color: #D1E4FF;
+    min-width: 70px;
+    padding: 0.8rem;
+    align-items: center;
+    justify-content: center;
+    display: flex;
+    border-radius: 1rem;
+}
+
+.textoDataAtualizacao {
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    margin: 0;
+}
+
+.textoAtualizacao {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    flex: 1;
+}
+
+.tituloAtualizacao {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.descricaoAtualizacao {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #A9A9A9;
+    margin: 0;
+}
+
+.atualizacaoAcoes {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.botaoEditarAtualizacao {
+    background: transparent;
+    border: none;
+    color: #0047ab;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.botaoEditarAtualizacao:hover {
+    background-color: #eef4fb;
+}
+
+.botaoDeletarAtualizacao {
+    background: transparent;
+    border: none;
+    color: #dc3545;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.botaoDeletarAtualizacao:hover {
+    background-color: #fce8e6;
+}
+
+.semAtualizacoes {
+    color: #999;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.badgeConcluido {
+    background-color: #28a745;
+    color: #ffffff;
+    padding: 0.1rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.modalOverlaySegunda {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.65);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    backdrop-filter: blur(4px);
+    animation: fadeIn 0.3s ease;
+}
+
+.modalContainerSegunda {
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 95%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    animation: slideUp 0.3s ease;
+    z-index: 2001;
 }
 
 .secaoSubtitulo {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.2rem;
     font-weight: 700;
-    color: #0047ab;
-    margin: 0;
+    margin: 0 0 0.2rem 0;
     padding-bottom: 0.5rem;
-    border-bottom: 2px solid #e0e0e0;
+    cursor: pointer;
+    color: #666;
 }
 
+.secaoSubtitulo:hover {
+    color: #0047ab;
+}
+
+.secaoSubtitulo.ativoInfo {
+    border-bottom: 2px solid #0047ab;
+    color: #0047ab;
+}
 
 .formulario {
     display: flex;
@@ -449,7 +603,6 @@
     margin: 0;
 }
 
-
 .botaoContainer {
     display: flex;
     justify-content: center;
@@ -516,7 +669,6 @@
 .botaoEditar:hover {
     background-color: #003580;
 }
-
 
 .modalInativacao {
     background: #ffffff;
@@ -605,7 +757,7 @@
 }
 
 .btnConfirmarInativacao:hover {
-    background-color: #cc0000;
+    background-color: #edc85d;
 }
 
 .btnConfirmarInativacao:disabled {
@@ -613,6 +765,117 @@
     cursor: not-allowed;
 }
 
+/* Estilos para a aba "Pagamento do êxito" */
+.tituloExito {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0047ab;
+    margin: 0 0 1.5rem 0;
+}
+
+.exitoContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 0.5rem 0;
+}
+
+.exitoCampo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e8edf2;
+}
+
+.exitoCampo:last-of-type {
+    border-bottom: none;
+}
+
+.exitoLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #333333;
+}
+
+.exitoValor {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #555555;
+    font-weight: 500;
+}
+
+.exitoObs {
+    font-size: 0.85rem;
+    color: #a0a0a0;
+    font-family: 'Clear Sans', sans-serif;
+    margin: 0.5rem 0;
+}
+
+.semExito {
+    color: #999;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.semAtualizacoes {
+    color: #999;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 1.5rem 0;
+}
+
+.badgeConcluido {
+    background-color: #28a745;
+    color: #ffffff;
+    padding: 0.1rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.atualizacaoAcoes {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.botaoEditarAtualizacao {
+    background: transparent;
+    border: none;
+    color: #0047ab;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.botaoEditarAtualizacao:hover {
+    background-color: #eef4fb;
+}
+
+.botaoDeletarAtualizacao {
+    background: transparent;
+    border: none;
+    color: #dc3545;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+}
+
+.botaoDeletarAtualizacao:hover {
+    background-color: #fce8e6;
+}
 
 
 

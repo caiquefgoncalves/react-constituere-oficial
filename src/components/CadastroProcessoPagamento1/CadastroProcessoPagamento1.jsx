@@ -53,7 +53,6 @@ export default function CadastroProcessoPagamento1({ api }) {
 
     const [exito, setExito] = useState('');
     const [qtdSalariosExito, setQtdSalariosExito] = useState('');
-    const [valorSalarioExito, setValorSalarioExito] = useState('');
     const [percentual, setPercentual] = useState('');
     const [juros, setJuros] = useState('');
 
@@ -61,15 +60,15 @@ export default function CadastroProcessoPagamento1({ api }) {
     const [entradaExito, setEntradaExito] = useState('');
     const [qtdParcelasExito, setQtdParcelasExito] = useState('');
     const [diaVencimentoExito, setDiaVencimentoExito] = useState('');
-    const [mesInicioExito, setMesInicioExito] = useState('');
     const [formaPagamentoExito, setFormaPagamentoExito] = useState('');
+
     const [valorCausaExito, setValorCausaExito] = useState('');
 
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.34:5000';
 
     const dias = Array.from({ length: 31 }, (_, index) => index + 1);
     const meses = [
@@ -174,13 +173,11 @@ export default function CadastroProcessoPagamento1({ api }) {
     function alterarExito(valorSelecionado) {
         setExito(valorSelecionado);
         setQtdSalariosExito('');
-        setValorSalarioExito('');
         setPercentual('');
         setDistribuicaoExito('');
         setEntradaExito('');
         setQtdParcelasExito('');
         setDiaVencimentoExito('');
-        setMesInicioExito('');
         setFormaPagamentoExito('');
         setValorCausaExito('');
     }
@@ -217,13 +214,11 @@ export default function CadastroProcessoPagamento1({ api }) {
 
         if (exito === 'salarios') {
             if (!qtdSalariosExito) camposFaltando.push('Quantidade de salários do êxito');
-            if (!valorSalarioExito) camposFaltando.push('Valor do salário do êxito');
             if (!distribuicaoExito) camposFaltando.push('Distribuição do êxito');
             if (distribuicaoExito === 'parcelado' && !qtdParcelasExito) camposFaltando.push('Quantidade de parcelas do êxito');
             if (distribuicaoExito === 'entrada' && !entradaExito) camposFaltando.push('Valor da entrada do êxito');
             if (distribuicaoExito === 'entrada' && !qtdParcelasExito) camposFaltando.push('Quantidade de parcelas do êxito');
             if (!diaVencimentoExito) camposFaltando.push('Dia do vencimento do êxito');
-            if (!mesInicioExito) camposFaltando.push('Mês de início do êxito');
             if (!formaPagamentoExito) camposFaltando.push('Forma de pagamento do êxito');
         } else if (exito === 'percentual') {
             if (!percentual) camposFaltando.push('Percentual de êxito');
@@ -232,7 +227,6 @@ export default function CadastroProcessoPagamento1({ api }) {
             if (distribuicaoExito === 'entrada' && !entradaExito) camposFaltando.push('Valor da entrada do êxito');
             if (distribuicaoExito === 'entrada' && !qtdParcelasExito) camposFaltando.push('Quantidade de parcelas do êxito');
             if (!diaVencimentoExito) camposFaltando.push('Dia do vencimento do êxito');
-            if (!mesInicioExito) camposFaltando.push('Mês de início do êxito');
             if (!formaPagamentoExito) camposFaltando.push('Forma de pagamento do êxito');
         }
 
@@ -283,6 +277,8 @@ export default function CadastroProcessoPagamento1({ api }) {
             tipoPagamentoExito = 'ENTRADA_PARCELAS';
         }
 
+        const mesInicioExito = mes ? Number(mes) : null;
+
         const honorarios = {
             tipo_honorario: tipoHonorario,
             numero_salarios: numeroSalarios,
@@ -303,10 +299,10 @@ export default function CadastroProcessoPagamento1({ api }) {
             valor_entrada_exito: distribuicaoExito === 'entrada' ? converterDinheiro(entradaExito) : null,
             numero_parcelas_exito: (distribuicaoExito === 'parcelado' || distribuicaoExito === 'entrada') ? Number(qtdParcelasExito) : null,
             dia_vencimento_exito: exito !== '' ? Number(diaVencimentoExito) : null,
-            mes_inicio_exito: exito !== '' ? Number(mesInicioExito) : null,
+            mes_inicio_exito: mesInicioExito,
             forma_pagamento_exito: exito !== '' ? formaPagamentoExito : null,
-            valor_salario_exito: exito === 'salarios' ? converterDinheiro(valorSalarioExito) : null,
-            valor_causa_exito: exito === 'percentual' ? (valorCausaExito ? converterDinheiro(valorCausaExito) : 45000.00) : null,
+            valor_salario_exito: exito === 'salarios' ? (valorSalario ? converterDinheiro(valorSalario) : null) : null,
+            valor_causa_exito: exito === 'percentual' ? (valorCausaExito ? converterDinheiro(valorCausaExito) : null) : null,
             quantidade_exito: exito === 'salarios' ? Number(qtdSalariosExito) : (exito === 'percentual' ? Number(percentual) : null)
         };
 
@@ -363,7 +359,6 @@ export default function CadastroProcessoPagamento1({ api }) {
     return (
         <div className={css.paginaCompleta}>
             <Header api={API_URL} />
-
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
                     <button className={css.botaoVoltar} onClick={voltar} tabIndex={1} name="btnVoltar" type="button">
@@ -395,7 +390,6 @@ export default function CadastroProcessoPagamento1({ api }) {
 
                 <form className={css.formulario} onSubmit={handleCadastro}>
                     <div className={css.linha}>
-                    
                         <div className={css.campoMetade}>
                             <label className={css.label}>Honorários pró-labore *</label>
                             <select
@@ -583,34 +577,19 @@ export default function CadastroProcessoPagamento1({ api }) {
                         </div>
 
                         {exito === 'salarios' && (
-                            <>
-                                <div className={css.campoMetade}>
-                                    <label className={css.label}>Quantidade de salários *</label>
-                                    <input
-                                        type="number"
-                                        min="1"
-                                        className={css.input}
-                                        placeholder="Digite"
-                                        value={qtdSalariosExito}
-                                        onChange={(e) => setQtdSalariosExito(apenasNumeros(e.target.value))}
-                                        tabIndex={12}
-                                        name="quantidadeSalariosExito"
-                                    />
-                                </div>
-                                <div className={css.campoMetade}>
-                                    <label className={css.label}>Valor do salário (êxito) *</label>
-                                    <input
-                                        type="text"
-                                        className={css.input}
-                                        placeholder="R$ 0,00"
-                                        value={valorSalarioExito}
-                                        onChange={(e) => setValorSalarioExito(formatarDinheiro(e.target.value))}
-                                        maxLength={25}
-                                        tabIndex={13}
-                                        name="valorSalarioExito"
-                                    />
-                                </div>
-                            </>
+                            <div className={css.campoMetade}>
+                                <label className={css.label}>Quantidade de salários *</label>
+                                <input
+                                    type="number"
+                                    min="1"
+                                    className={css.input}
+                                    placeholder="Digite"
+                                    value={qtdSalariosExito}
+                                    onChange={(e) => setQtdSalariosExito(apenasNumeros(e.target.value))}
+                                    tabIndex={12}
+                                    name="quantidadeSalariosExito"
+                                />
+                            </div>
                         )}
 
                         {exito === 'percentual' && (
@@ -705,28 +684,12 @@ export default function CadastroProcessoPagamento1({ api }) {
                                 </div>
 
                                 <div className={css.campoMetade}>
-                                    <label className={css.label}>Mês de início (êxito) *</label>
-                                    <select
-                                        className={css.input}
-                                        value={mesInicioExito}
-                                        onChange={(e) => setMesInicioExito(e.target.value)}
-                                        tabIndex={18}
-                                        name="mesInicioExito"
-                                    >
-                                        <option value="" disabled>Mês</option>
-                                        {meses.map(mesItem => (
-                                            <option key={mesItem.valor} value={mesItem.valor}>{mesItem.nome}</option>
-                                        ))}
-                                    </select>
-                                </div>
-
-                                <div className={css.campoMetade}>
                                     <label className={css.label}>Forma de pagamento (êxito) *</label>
                                     <select
                                         className={css.input}
                                         value={formaPagamentoExito}
                                         onChange={(e) => setFormaPagamentoExito(e.target.value)}
-                                        tabIndex={19}
+                                        tabIndex={18}
                                         name="formaPagamentoExito"
                                     >
                                         <option value="" disabled>Selecione</option>
@@ -736,6 +699,7 @@ export default function CadastroProcessoPagamento1({ api }) {
                                     </select>
                                 </div>
 
+                                {/* CAMPO VALOR DA CAUSA - VOLTOU A EXISTIR */}
                                 {exito === 'percentual' && (
                                     <div className={css.campoMetade}>
                                         <label className={css.label}>Valor da causa (para percentual)</label>
@@ -746,7 +710,7 @@ export default function CadastroProcessoPagamento1({ api }) {
                                             value={valorCausaExito}
                                             onChange={(e) => setValorCausaExito(formatarDinheiro(e.target.value))}
                                             maxLength={25}
-                                            tabIndex={20}
+                                            tabIndex={19}
                                             name="valorCausaExito"
                                         />
                                         <small style={{ display: 'block', marginTop: '5px', color: '#666' }}>
@@ -766,7 +730,7 @@ export default function CadastroProcessoPagamento1({ api }) {
                                 value={juros}
                                 onChange={(e) => setJuros(formatarPercentual(e.target.value))}
                                 maxLength={6}
-                                tabIndex={21}
+                                tabIndex={20}
                                 name="percentualJuros"
                             />
                         </div>
@@ -781,7 +745,7 @@ export default function CadastroProcessoPagamento1({ api }) {
                             className={css.botaoCadastro}
                             type="submit"
                             disabled={carregando}
-                            tabIndex={22}
+                            tabIndex={21}
                             name="btnCadastrar"
                         >
                             {carregando ? 'Cadastrando...' : 'Cadastrar processo'}
@@ -789,7 +753,6 @@ export default function CadastroProcessoPagamento1({ api }) {
                     </div>
                 </form>
             </section>
-
             <Footer />
         </div>
     );
