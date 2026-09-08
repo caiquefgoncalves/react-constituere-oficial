@@ -395,7 +395,7 @@ export default function CadastroProcessoPagamento1({ api }) {
 
                 <form className={css.formulario} onSubmit={handleCadastro}>
                     <div className={css.linha}>
-                        {/* --- PRÓ-LABORE --- */}
+                    
                         <div className={css.campoMetade}>
                             <label className={css.label}>Honorários pró-labore *</label>
                             <select
@@ -567,7 +567,6 @@ export default function CadastroProcessoPagamento1({ api }) {
                             </>
                         )}
 
-                        {/* --- ÊXITO --- */}
                         <div className={css.campoMetade}>
                             <label className={css.label}>Honorários de êxito *</label>
                             <select
@@ -630,7 +629,6 @@ export default function CadastroProcessoPagamento1({ api }) {
                             </div>
                         )}
 
-                        {/* Campos de configuração do êxito (se exito != '') */}
                         {exito !== '' && (
                             <>
                                 <div className={css.campoMetade}>
