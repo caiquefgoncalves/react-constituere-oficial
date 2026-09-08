@@ -23,7 +23,7 @@ import PagamentosLista from "./pages/PagamentosLista.jsx";
 
 
 
-const API_URL = ' http://192.168.0.130:5000'
+const API_URL = 'http://10.92.11.34:5000'
 
 function App() {
     return (
