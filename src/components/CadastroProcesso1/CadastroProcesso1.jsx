@@ -25,7 +25,7 @@ export default function CadastroProcesso1({ api }) {
     const [carregando, setCarregando] = useState(false);
     const [carregandoClientes, setCarregandoClientes] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.34:5000';
+    const API_URL = api || 'http://192.168.0.130:5000';
 
     function agendarLimpezaMensagem() {
         if (window.timeoutMensagem) {
@@ -111,6 +111,19 @@ export default function CadastroProcesso1({ api }) {
         const [dia, mes, ano] = dataTexto.split('/').map(Number);
         const dataObjeto = new Date(ano, mes - 1, dia);
         return dataObjeto.getFullYear() === ano && dataObjeto.getMonth() === mes - 1 && dataObjeto.getDate() === dia;
+    }
+
+    function dataEhFutura(dataTexto) {
+        if (!dataTexto) return false;
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) return false;
+
+        const [dia, mes, ano] = dataTexto.split('/').map(Number);
+        const dataInformada = new Date(ano, mes - 1, dia);
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        dataInformada.setHours(0, 0, 0, 0);
+
+        return dataInformada > hoje;
     }
 
     function validarNumeroProcesso(numero) {
@@ -199,7 +212,6 @@ export default function CadastroProcesso1({ api }) {
             camposFaltando.push('Cliente');
         }
 
-
         if (camposFaltando.length > 0) {
             mostrarMensagem(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
             setCarregando(false);
@@ -214,6 +226,12 @@ export default function CadastroProcesso1({ api }) {
 
         if (data && !validarData(data)) {
             mostrarMensagem('Data de início inválida.');
+            setCarregando(false);
+            return;
+        }
+
+        if (data && dataEhFutura(data)) {
+            mostrarMensagem('A data de início não pode ser uma data futura.');
             setCarregando(false);
             return;
         }

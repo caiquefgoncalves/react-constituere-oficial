@@ -41,17 +41,7 @@ export default function ModalAdvogadoAdicionar1({
                 <h1 className={css.titulo}>Adicionar advogado</h1>
 
                 {mensagem && (
-                    <div className={css.mensagemModal} style={{
-                        padding: '10px 16px',
-                        borderRadius: '8px',
-                        backgroundColor: tipoMensagem === 'erro' ? '#f8d7da' : '#d4edda',
-                        color: tipoMensagem === 'erro' ? '#721c24' : '#155724',
-                        marginBottom: '16px',
-                        textAlign: 'center',
-                        fontFamily: 'Clear Sans, sans-serif',
-                        fontSize: '14px',
-                        border: tipoMensagem === 'erro' ? '1px solid #f5c6cb' : '1px solid #c3e6cb'
-                    }}>
+                    <div className={`${css.mensagemModal} ${tipoMensagem === 'erro' ? css.erro : css.sucesso}`}>
                         {mensagem}
                     </div>
                 )}

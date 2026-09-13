@@ -39,7 +39,12 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 0.5rem;
+    flex: 1;
+}
+
+.saudacaoTexto {
+    display: flex;
+    flex-direction: column;
 }
 
 .tituloSaudacao {
@@ -54,6 +59,13 @@
     color: #333;
 }
 
+.subtituloSaudacao {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #666;
+    margin: 0.2rem 0 0 0;
+}
+
 .btnConfiguracoes {
     background: transparent;
     border: none;
@@ -63,7 +75,9 @@
     transition: background-color 0.2s;
 }
 
-.btnConfiguracoes:hover { background-color: #f0f0f0; }
+.btnConfiguracoes:hover {
+    background-color: #f0f0f0;
+}
 
 .imgEngrenagem {
     width: 28px;
@@ -71,6 +85,62 @@
     display: block;
 }
 
+.topArea {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.botaoVoltar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+}
+
+.botaoVoltar:hover {
+    background-color: #f0f0f0;
+}
+
+.botaoVoltar svg {
+    width: 20px;
+    height: 20px;
+}
+
+.botaoVoltar svg path {
+    stroke: #0047ab;
+    stroke-width: 3;
+}
+
+.mensagemContainer {
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 600;
+}
+
+.mensagemContainer.sucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.mensagemContainer.erro {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
 
 .acoesRapidas {
     background: transparent;
@@ -87,14 +157,12 @@
     margin: 0 0 1.5rem 0;
 }
 
-
 .carrosselContainer {
     display: flex;
     align-items: center;
     gap: 1rem;
     width: 100%;
 }
-
 
 .botaoSeta {
     background: #ffffff;
@@ -118,7 +186,6 @@
     color: #ffffff;
     transform: scale(1.05);
 }
-
 
 .botoesAcoes {
     display: flex;
@@ -172,6 +239,20 @@
     flex-shrink: 0;
 }
 
+
+
+.indicador {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #d0d0d0;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.indicadorAtivo {
+    background-color: #0047ab;
+}
 
 .gradeEstatisticas {
     display: flex;
@@ -233,12 +314,38 @@
     min-height: 180px;
 }
 
+.cardDuploHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
 .tituloCardDuplo {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.1rem;
     font-weight: 700;
     color: #333;
-    margin: 0 0 1rem 0;
+    margin: 0;
+}
+
+.selectFiltro {
+    padding: 0.4rem 1.2rem;
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    background-color: #ffffff;
+    color: #333;
+    cursor: pointer;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.selectFiltro:focus {
+    border-color: #0047ab;
 }
 
 .placeholderGrafico {
@@ -256,89 +363,172 @@
     font-size: 0.9rem;
 }
 
-.topArea {
+.listaProcessos {
     display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 0.5rem;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-height: 180px;
+    overflow-y: auto;
+    margin-top: 1rem;
 }
 
-.botaoVoltar {
-    background: none;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.2s;
-    border-radius: 50%;
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-}
-
-.botaoVoltar:hover {
-    background-color: #f0f0f0;
-}
-
-.botaoVoltar svg {
-    width: 20px;
-    height: 20px;
-}
-
-.botaoVoltar svg path {
-    stroke: #0047ab;
-    stroke-width: 3;
-}
-
-.topoSaudacao {
+.itemProcesso {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 0.6rem 0.8rem;
+    background: #f8fbff;
+    border: 1px solid #dbe9f7;
+    border-radius: 8px;
+}
+
+.infoProcesso {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.numeroProcesso {
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #0047ab;
+}
+
+.clienteProcesso {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.badgeProcesso {
+    background: #e0e7f5;
+    color: #0047ab;
+    border: 1px solid #0047ab;
+    padding: 0.2rem 0.6rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    font-family: 'Clear Sans', sans-serif;
+    white-space: nowrap;
+}
+
+.graficoContainer {
+    padding: 0.5rem 0;
+}
+
+.graficoLegenda {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+}
+
+.legendaRecebido {
+    color: #28a745;
+}
+
+.legendaAReceber {
+    color: #0047ab;
+}
+
+.graficoBarras {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-end;
+    height: 200px;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e8edf2;
+}
+
+.barraGrupo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
     flex: 1;
 }
 
-.saudacaoTexto {
+.barras {
+    display: flex;
+    align-items: flex-end;
+    gap: 4px;
+    height: 180px;
+}
+
+.barraRecebido {
+    width: 20px;
+    background: #28a745;
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transition: height 0.5s ease;
+}
+
+.barraAReceber {
+    width: 20px;
+    background: #0047ab;
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    transition: height 0.5s ease;
+}
+
+.barraValor {
+    position: absolute;
+    top: -18px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.6rem;
+    color: #333;
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+
+.barraRecebido:hover .barraValor,
+.barraAReceber:hover .barraValor {
+    opacity: 1;
+}
+
+.barraLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    color: #666;
+    text-align: center;
+}
+
+.graficoTotais {
+    display: flex;
+    justify-content: center;
+    gap: 3rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f0f0f0;
+}
+
+.totalItem {
     display: flex;
     flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
 }
 
-.tituloSaudacao {
+.totalLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #888;
+}
+
+.totalValor {
     font-family: 'Glacial Indifference', sans-serif;
-    font-size: 1.8rem;
+    font-size: 1.1rem;
     font-weight: 700;
-    color: #0047ab;
-    margin: 0;
-}
-
-.nomeDestaque {
     color: #333;
 }
-
-.subtituloSaudacao {
-    font-family: 'Clear Sans', sans-serif;
-    font-size: 0.9rem;
-    color: #666;
-    margin: 0.2rem 0 0 0;
-}
-
-.btnConfiguracoes {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 50%;
-    transition: background-color 0.2s;
-}
-
-.btnConfiguracoes:hover {
-    background-color: #f0f0f0;
-}
-
-.imgEngrenagem {
-    width: 28px;
-    height: 28px;
-    display: block;
-}
-

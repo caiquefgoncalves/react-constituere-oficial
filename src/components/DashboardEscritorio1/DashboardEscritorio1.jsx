@@ -19,8 +19,14 @@ export default function DashboardEscritorio1({ api }) {
     const [nomeFantasia, setNomeFantasia] = useState('Carregando...');
     const [fotoPerfil, setFotoPerfil] = useState('');
     const [totalAdvogadosAtivos, setTotalAdvogadosAtivos] = useState(0);
+    const [totalProcessosAtivos, setTotalProcessosAtivos] = useState(0);
+    const [processosAtivos, setProcessosAtivos] = useState([]);
+    const [rendimentos, setRendimentos] = useState([]);
+    const [totaisRendimentos, setTotaisRendimentos] = useState({ recebido: 0, a_receber: 0 });
+    const [carregandoGrafico, setCarregandoGrafico] = useState(false);
+    const [filtroPeriodo, setFiltroPeriodo] = useState('mes');
 
-    const API_URL = api || 'http://10.92.11.34:5000';
+    const API_URL = api || 'http://192.168.0.130:5000';
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -36,9 +42,7 @@ export default function DashboardEscritorio1({ api }) {
                 const response = await fetch(`${API_URL}/escritorio/${id}`, {
                     method: 'GET',
                     credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
+                    headers: { 'X-Access-Token': token }
                 });
 
                 if (response.ok) {
@@ -55,43 +59,97 @@ export default function DashboardEscritorio1({ api }) {
                     localStorage.removeItem('token');
                     localStorage.removeItem('id_usuario');
                     navigate('/login');
-                } else {
-                    const data = await response.json();
-                    setMensagem(data.error || 'Erro ao carregar dados do escritório');
-                    setTipoMensagem('erro');
                 }
             } catch (error) {
                 console.error('Erro ao buscar dados:', error);
-                setMensagem('Erro de conexão com o servidor');
-                setTipoMensagem('erro');
             }
         }
 
         async function buscarAdvogadosAtivos() {
             try {
-                const token = localStorage.getItem('token');
                 const response = await fetch(`${API_URL}/escritorio/${id}/advogados`, {
                     method: 'GET',
                     credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
+                    headers: { 'X-Access-Token': token }
                 });
 
                 if (response.ok) {
                     const data = await response.json();
                     setTotalAdvogadosAtivos(data.total_ativos || data.advogados?.length || 0);
-                } else {
-                    console.warn('Não foi possível buscar advogados ativos');
                 }
             } catch (error) {
                 console.error('Erro ao buscar advogados ativos:', error);
             }
         }
 
+        async function buscarProcessosAtivos() {
+            try {
+                const response = await fetch(`${API_URL}/escritorio/${id}/processos`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    const todos = data.processos || [];
+                    const ativos = todos.filter(p => p.status === 'em_andamento');
+                    setTotalProcessosAtivos(ativos.length);
+                    setProcessosAtivos(ativos.slice(0, 5));
+                }
+            } catch (error) {
+                console.error('Erro ao buscar processos:', error);
+            }
+        }
+
+        async function buscarRendimentos(periodo) {
+            try {
+                setCarregandoGrafico(true);
+                const response = await fetch(`${API_URL}/escritorio/${id}/rendimentos?periodo=${periodo}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setRendimentos(data.dados || []);
+                    setTotaisRendimentos(data.totais || { recebido: 0, a_receber: 0 });
+                }
+            } catch (error) {
+                console.error('Erro ao buscar rendimentos:', error);
+            } finally {
+                setCarregandoGrafico(false);
+            }
+        }
+
         buscarDadosEscritorio();
         buscarAdvogadosAtivos();
+        buscarProcessosAtivos();
+        buscarRendimentos(filtroPeriodo);
     }, [API_URL, navigate, id]);
+
+    function handleFiltroChange(e) {
+        const novoPeriodo = e.target.value;
+        setFiltroPeriodo(novoPeriodo);
+
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        fetch(`${API_URL}/escritorio/${id}/rendimentos?periodo=${novoPeriodo}`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: { 'X-Access-Token': token }
+        })
+            .then(r => r.ok ? r.json() : null)
+            .then(data => {
+                if (data) {
+                    setRendimentos(data.dados || []);
+                    setTotaisRendimentos(data.totais || { recebido: 0, a_receber: 0 });
+                }
+            })
+            .catch(err => console.error('Erro ao buscar rendimentos:', err));
+    }
 
     function voltarParaDashboardAdvogado() {
         navigate('/dashboard_advogado');
@@ -102,11 +160,21 @@ export default function DashboardEscritorio1({ api }) {
     }
 
     function irParaNovoCliente() {
-        navigate('/cadastro_cliente_fisico');
+        navigate('/cadastro_cliente_fisico', {
+            state: {
+                origem: 'dashboard_escritorio',
+                id_escritorio: id
+            }
+        });
     }
 
     function irParaNovoProcesso() {
-        navigate('/cadastro_processo');
+        navigate('/cadastro_processo', {
+            state: {
+                origem: 'dashboard_escritorio',
+                id_escritorio: id
+            }
+        });
     }
 
     function irParaNovoAgendamento() {
@@ -172,6 +240,11 @@ export default function DashboardEscritorio1({ api }) {
         }
     }
 
+    function formatarDinheiro(valor) {
+        const numero = Number(valor) || 0;
+        return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
     const botoesAcoes = [
         { id: 1, texto: 'Novo cliente', icone: '+', acao: irParaNovoCliente, name: 'btn-novo-cliente' },
         { id: 2, texto: 'Novo processo', icone: '+', acao: irParaNovoProcesso, name: 'btn-novo-processo' },
@@ -210,6 +283,11 @@ export default function DashboardEscritorio1({ api }) {
     const podeRolarEsquerda = paginaAtual > 0;
     const podeRolarDireita = paginaAtual < totalPaginas - 1;
 
+    const maiorValorRendimento = Math.max(
+        ...rendimentos.map(r => Math.max(r.recebido || 0, r.a_receber || 0)),
+        1
+    );
+
     return (
         <div className={css.paginaCompleta}>
             <Header api={API_URL} fotoPerfil={fotoPerfil} />
@@ -221,17 +299,8 @@ export default function DashboardEscritorio1({ api }) {
 
                 <div className={css.conteudoPrincipal}>
 
-                    {mensagem && (
-                        <div style={{
-                            padding: '12px 20px',
-                            borderRadius: '8px',
-                            backgroundColor: tipoMensagem === 'erro' ? '#f8d7da' : '#d4edda',
-                            color: tipoMensagem === 'erro' ? '#721c24' : '#155724',
-                            marginBottom: '20px',
-                            textAlign: 'center',
-                            fontFamily: 'Clear Sans, sans-serif',
-                            border: tipoMensagem === 'erro' ? '1px solid #f5c6cb' : '1px solid #c3e6cb'
-                        }}>
+                    {mensagem && !modalAberto && (
+                        <div className={`${css.mensagemContainer} ${tipoMensagem === 'erro' ? css.erro : css.sucesso}`}>
                             {mensagem}
                         </div>
                     )}
@@ -327,7 +396,7 @@ export default function DashboardEscritorio1({ api }) {
                         <div className={css.cardNovo}>
                             <span className={css.labelCardNovo}>Processos ativos</span>
                             <div className={css.bolinhaVerde}>
-                                <span className={css.numeroCardNovo}>0</span>
+                                <span className={css.numeroCardNovo}>{totalProcessosAtivos}</span>
                             </div>
                         </div>
                         <div className={css.cardNovo}>
@@ -341,10 +410,32 @@ export default function DashboardEscritorio1({ api }) {
                     <div className={css.gradeDupla}>
                         <div className={css.cardDuplo}>
                             <h3 className={css.tituloCardDuplo}>Processos ativos</h3>
-                            <div className={css.placeholderGrafico}>
-                                <p className={css.textoPlaceholder}>Nenhum processo ativo</p>
-                            </div>
+
+                            {processosAtivos.length === 0 ? (
+                                <div className={css.placeholderGrafico}>
+                                    <p className={css.textoPlaceholder}>Nenhum processo ativo</p>
+                                </div>
+                            ) : (
+                                <div className={css.listaProcessos}>
+                                    {processosAtivos.map(processo => (
+                                        <div key={processo.id} className={css.itemProcesso}>
+                                            <div className={css.infoProcesso}>
+                                                <span className={css.numeroProcesso}>
+                                                    {processo.numero || '--'}
+                                                </span>
+                                                <span className={css.clienteProcesso}>
+                                                    {processo.clientes?.[0]?.nome || '--'}
+                                                </span>
+                                            </div>
+                                            <span className={css.badgeProcesso}>
+                                                {processo.tipo_processo || '--'}
+                                            </span>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
+
                         <div className={css.cardDuplo}>
                             <h3 className={css.tituloCardDuplo}>Agendamentos</h3>
                             <div className={css.placeholderGrafico}>
@@ -355,11 +446,70 @@ export default function DashboardEscritorio1({ api }) {
 
                     <div className={css.gradeDupla}>
                         <div className={css.cardDuplo}>
-                            <h3 className={css.tituloCardDuplo}>Rendimentos</h3>
-                            <div className={css.placeholderGrafico}>
-                                <p className={css.textoPlaceholder}>Gráfico em breve</p>
+                            <div className={css.cardDuploHeader}>
+                                <h3 className={css.tituloCardDuplo}>Rendimentos</h3>
+                                <select
+                                    className={css.selectFiltro}
+                                    value={filtroPeriodo}
+                                    onChange={handleFiltroChange}
+                                >
+                                    <option value="mes">Este mês</option>
+                                    <option value="2025">2025</option>
+                                    <option value="2026">2026</option>
+                                </select>
                             </div>
+
+                            {rendimentos.length === 0 && !carregandoGrafico ? (
+                                <div className={css.placeholderGrafico}>
+                                    <p className={css.textoPlaceholder}>Nenhum dado disponível</p>
+                                </div>
+                            ) : (
+                                <>
+                                    <div className={css.graficoContainer}>
+                                        <div className={css.graficoLegenda}>
+                                            <span className={css.legendaRecebido}>■ Recebido</span>
+                                            <span className={css.legendaAReceber}>■ A Receber</span>
+                                        </div>
+                                        <div className={css.graficoBarras}>
+                                            {rendimentos.map((item, index) => {
+                                                const alturaRecebido = maiorValorRendimento > 0 ? (item.recebido / maiorValorRendimento) * 150 : 0;
+                                                const alturaAReceber = maiorValorRendimento > 0 ? (item.a_receber / maiorValorRendimento) * 150 : 0;
+                                                return (
+                                                    <div key={index} className={css.barraGrupo}>
+                                                        <div className={css.barras}>
+                                                            <div
+                                                                className={css.barraRecebido}
+                                                                style={{ height: `${alturaRecebido}px` }}
+                                                            >
+                                                                <span className={css.barraValor}>{formatarDinheiro(item.recebido)}</span>
+                                                            </div>
+                                                            <div
+                                                                className={css.barraAReceber}
+                                                                style={{ height: `${alturaAReceber}px` }}
+                                                            >
+                                                                <span className={css.barraValor}>{formatarDinheiro(item.a_receber)}</span>
+                                                            </div>
+                                                        </div>
+                                                        <span className={css.barraLabel}>{item.label}</span>
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
+                                    </div>
+                                    <div className={css.graficoTotais}>
+                                        <div className={css.totalItem}>
+                                            <span className={css.totalLabel}>Recebido</span>
+                                            <span className={css.totalValor}>{formatarDinheiro(totaisRendimentos.recebido)}</span>
+                                        </div>
+                                        <div className={css.totalItem}>
+                                            <span className={css.totalLabel}>A Receber</span>
+                                            <span className={css.totalValor}>{formatarDinheiro(totaisRendimentos.a_receber)}</span>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
                         </div>
+
                         <div className={css.cardDuplo}>
                             <h3 className={css.tituloCardDuplo}>Agendamentos</h3>
                             <div className={css.placeholderGrafico}>

@@ -7,7 +7,7 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 
 export default function AdvogadosLista1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.34:5000';
+    const API_URL = api || 'http://192.168.0.130:5000';
 
     const [advogados, setAdvogados] = useState([]);
     const [escritorios, setEscritorios] = useState([]);
@@ -20,6 +20,15 @@ export default function AdvogadosLista1({ api }) {
     const [carregandoAcao, setCarregandoAcao] = useState(false);
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
+
+    const [modalRetirarAberto, setModalRetirarAberto] = useState(false);
+    const [dadosRetirar, setDadosRetirar] = useState(null);
+
+    const [modalInativarAberto, setModalInativarAberto] = useState(false);
+    const [dadosInativar, setDadosInativar] = useState(null);
+
+    const [modalAtivarAberto, setModalAtivarAberto] = useState(false);
+    const [dadosAtivar, setDadosAtivar] = useState(null);
 
     function mostrarMensagem(texto, tipo = 'sucesso') {
         setMensagem(texto);
@@ -168,20 +177,39 @@ export default function AdvogadosLista1({ api }) {
         }
     }
 
-    async function retirarDoEscritorio(idAdvogado, idEscritorio, nomeAdvogado, nomeEscritorio) {
-        const confirmar = window.confirm(`Deseja retirar ${nomeAdvogado} do escritório ${nomeEscritorio}?`);
-        if (!confirmar) return;
+    function abrirModalRetirar(idAdvogado, idEscritorio, nomeAdvogado, nomeEscritorio) {
+        setDadosRetirar({
+            idAdvogado,
+            idEscritorio,
+            nomeAdvogado,
+            nomeEscritorio
+        });
+        setModalRetirarAberto(true);
+    }
+
+    function fecharModalRetirar() {
+        setModalRetirarAberto(false);
+        setDadosRetirar(null);
+    }
+
+    async function confirmarRetirar() {
+        if (!dadosRetirar) return;
+
         try {
             setCarregandoAcao(true);
             const token = localStorage.getItem('token');
-            const response = await fetch(`${API_URL}/advogado_escritorio/${idAdvogado}/${idEscritorio}`, {
-                method: 'DELETE',
-                credentials: 'include',
-                headers: { 'X-Access-Token': token }
-            });
+            const response = await fetch(
+                `${API_URL}/advogado_escritorio/${dadosRetirar.idAdvogado}/${dadosRetirar.idEscritorio}`,
+                {
+                    method: 'DELETE',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                }
+            );
             const data = await response.json();
             if (response.ok) {
                 mostrarMensagem(data.mensagem || 'Advogado retirado do escritório com sucesso!', 'sucesso');
+                fecharModalRetirar();
                 await buscarAdvogados();
                 return;
             }
@@ -190,6 +218,92 @@ export default function AdvogadosLista1({ api }) {
                 return;
             }
             mostrarMensagem(data.error || 'Erro ao retirar advogado do escritório.', 'erro');
+        } catch (error) {
+            mostrarMensagem('Erro de conexão com o servidor.', 'erro');
+        } finally {
+            setCarregandoAcao(false);
+        }
+    }
+
+    function abrirModalInativar(idAdvogado, nomeAdvogado) {
+        setDadosInativar({ idAdvogado, nomeAdvogado });
+        setModalInativarAberto(true);
+    }
+
+    function fecharModalInativar() {
+        setModalInativarAberto(false);
+        setDadosInativar(null);
+    }
+
+    async function confirmarInativar() {
+        if (!dadosInativar) return;
+
+        try {
+            setCarregandoAcao(true);
+            const token = localStorage.getItem('token');
+            const response = await fetch(
+                `${API_URL}/advogado/${dadosInativar.idAdvogado}/inativar`,
+                {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                }
+            );
+            const data = await response.json();
+            if (response.ok) {
+                mostrarMensagem(data.mensagem || 'Advogado inativado com sucesso!', 'sucesso');
+                fecharModalInativar();
+                await buscarAdvogados();
+                return;
+            }
+            if (response.status === 401) {
+                deslogar();
+                return;
+            }
+            mostrarMensagem(data.error || 'Erro ao inativar advogado.', 'erro');
+        } catch (error) {
+            mostrarMensagem('Erro de conexão com o servidor.', 'erro');
+        } finally {
+            setCarregandoAcao(false);
+        }
+    }
+
+    function abrirModalAtivar(idAdvogado, nomeAdvogado) {
+        setDadosAtivar({ idAdvogado, nomeAdvogado });
+        setModalAtivarAberto(true);
+    }
+
+    function fecharModalAtivar() {
+        setModalAtivarAberto(false);
+        setDadosAtivar(null);
+    }
+
+    async function confirmarAtivar() {
+        if (!dadosAtivar) return;
+
+        try {
+            setCarregandoAcao(true);
+            const token = localStorage.getItem('token');
+            const response = await fetch(
+                `${API_URL}/advogado/${dadosAtivar.idAdvogado}/ativar`,
+                {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                }
+            );
+            const data = await response.json();
+            if (response.ok) {
+                mostrarMensagem(data.mensagem || 'Advogado ativado com sucesso!', 'sucesso');
+                fecharModalAtivar();
+                await buscarAdvogados();
+                return;
+            }
+            if (response.status === 401) {
+                deslogar();
+                return;
+            }
+            mostrarMensagem(data.error || 'Erro ao ativar advogado.', 'erro');
         } catch (error) {
             mostrarMensagem('Erro de conexão com o servidor.', 'erro');
         } finally {
@@ -286,8 +400,15 @@ export default function AdvogadosLista1({ api }) {
                                 </thead>
                                 <tbody>
                                 {advogadosFiltrados.map(advogado => (
-                                    <tr key={advogado.id}>
-                                        <td>{advogado.nome}</td>
+                                    <tr key={advogado.id} style={{ opacity: advogado.ativo_advogado === false ? 0.6 : 1 }}>
+                                        <td>
+                                            <div className={css.nomeComBadge}>
+                                                <span>{advogado.nome}</span>
+                                                {advogado.ativo_advogado === false && (
+                                                    <span className={css.badgeInativo}>Inativo</span>
+                                                )}
+                                            </div>
+                                        </td>
                                         <td>{advogado.oab}</td>
                                         <td>{advogado.email}</td>
                                         <td className={css.colunaEscritorios}>
@@ -308,30 +429,49 @@ export default function AdvogadosLista1({ api }) {
                                                     <div key={esc.id} className={css.itemAcaoGrid}>
                                                         {esc.pode_gerenciar ? (
                                                             <>
-                                                                {esc.status === 'PARCEIRO' ? (
+                                                                {advogado.ativo_advogado === false ? (
                                                                     <button
-                                                                        className={css.botaoVer}
+                                                                        className={css.botaoAtivar}
                                                                         disabled={carregandoAcao}
-                                                                        onClick={() => alterarCargo(advogado.id, esc.id, 'PROPRIETARIO')}
+                                                                        onClick={() => abrirModalAtivar(advogado.id, advogado.nome)}
                                                                     >
-                                                                        Promover
+                                                                        Ativar
                                                                     </button>
                                                                 ) : (
-                                                                    <button
-                                                                        className={css.botaoVer}
-                                                                        disabled={carregandoAcao}
-                                                                        onClick={() => alterarCargo(advogado.id, esc.id, 'PARCEIRO')}
-                                                                    >
-                                                                        Regredir
-                                                                    </button>
+                                                                    <>
+                                                                        {esc.status === 'PARCEIRO' ? (
+                                                                            <button
+                                                                                className={css.botaoVer}
+                                                                                disabled={carregandoAcao}
+                                                                                onClick={() => alterarCargo(advogado.id, esc.id, 'PROPRIETARIO')}
+                                                                            >
+                                                                                Promover
+                                                                            </button>
+                                                                        ) : (
+                                                                            <button
+                                                                                className={css.botaoVer}
+                                                                                disabled={carregandoAcao}
+                                                                                onClick={() => alterarCargo(advogado.id, esc.id, 'PARCEIRO')}
+                                                                            >
+                                                                                Regredir
+                                                                            </button>
+                                                                        )}
+                                                                        <button
+                                                                            className={css.botaoInativar}
+                                                                            disabled={carregandoAcao}
+                                                                            onClick={() => abrirModalRetirar(advogado.id, esc.id, advogado.nome, esc.nome)}
+                                                                        >
+                                                                            Retirar
+                                                                        </button>
+                                                                        <button
+                                                                            className={css.botaoInativarAdvogado}
+                                                                            disabled={carregandoAcao}
+                                                                            onClick={() => abrirModalInativar(advogado.id, advogado.nome)}
+                                                                        >
+                                                                            Inativar
+                                                                        </button>
+                                                                    </>
                                                                 )}
-                                                                <button
-                                                                    className={css.botaoInativar}
-                                                                    disabled={carregandoAcao}
-                                                                    onClick={() => retirarDoEscritorio(advogado.id, esc.id, advogado.nome, esc.nome)}
-                                                                >
-                                                                    Retirar
-                                                                </button>
                                                             </>
                                                         ) : (
                                                             <span className={css.semAcao}>Sem Ações</span>
@@ -348,6 +488,167 @@ export default function AdvogadosLista1({ api }) {
                     </div>
                 </div>
             </div>
+
+            {modalRetirarAberto && dadosRetirar && (
+                <div
+                    className={css.modalOverlay}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && !carregandoAcao) {
+                            fecharModalRetirar();
+                        }
+                    }}
+                >
+                    <div className={css.modalInativacao}>
+                        <button
+                            className={css.modalFecharIconeLeft}
+                            onClick={fecharModalRetirar}
+                            type="button"
+                            disabled={carregandoAcao}
+                        >
+                            X
+                        </button>
+
+                        <h2 className={css.tituloInativacao}>
+                            Certeza que gostaria de
+                            <br />
+                            retirar?
+                        </h2>
+
+                        <p className={css.subtituloInativacao}>
+                            Confirme para retirar <strong>{dadosRetirar.nomeAdvogado}</strong> do escritório <strong>{dadosRetirar.nomeEscritorio}</strong>.
+                        </p>
+
+                        <div className={css.botoesInativacao}>
+                            <button
+                                className={css.btnCancelarInativacao}
+                                onClick={fecharModalRetirar}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                className={css.btnConfirmarInativacao}
+                                onClick={confirmarRetirar}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                {carregandoAcao ? 'Retirando...' : 'Retirar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modalInativarAberto && dadosInativar && (
+                <div
+                    className={css.modalOverlay}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && !carregandoAcao) {
+                            fecharModalInativar();
+                        }
+                    }}
+                >
+                    <div className={css.modalInativacao}>
+                        <button
+                            className={css.modalFecharIconeLeft}
+                            onClick={fecharModalInativar}
+                            type="button"
+                            disabled={carregandoAcao}
+                        >
+                            X
+                        </button>
+
+                        <h2 className={css.tituloInativacao}>
+                            Certeza que gostaria de
+                            <br />
+                            inativar?
+                        </h2>
+
+                        <p className={css.subtituloInativacao}>
+                            Confirme para inativar <strong>{dadosInativar.nomeAdvogado}</strong>.
+                            <br />
+                            Ele perderá acesso a <strong>todos os escritórios</strong> e não conseguirá mais logar no sistema.
+                        </p>
+
+                        <div className={css.botoesInativacao}>
+                            <button
+                                className={css.btnCancelarInativacao}
+                                onClick={fecharModalInativar}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                className={css.btnConfirmarInativacao}
+                                onClick={confirmarInativar}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                {carregandoAcao ? 'Inativando...' : 'Inativar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modalAtivarAberto && dadosAtivar && (
+                <div
+                    className={css.modalOverlay}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && !carregandoAcao) {
+                            fecharModalAtivar();
+                        }
+                    }}
+                >
+                    <div className={css.modalInativacao}>
+                        <button
+                            className={css.modalFecharIconeLeft}
+                            onClick={fecharModalAtivar}
+                            type="button"
+                            disabled={carregandoAcao}
+                        >
+                            X
+                        </button>
+
+                        <h2 className={css.tituloInativacao}>
+                            Certeza que gostaria de
+                            <br />
+                            ativar?
+                        </h2>
+
+                        <p className={css.subtituloInativacao}>
+                            Confirme para reativar <strong>{dadosAtivar.nomeAdvogado}</strong>.
+                            <br />
+                            Ele poderá logar novamente e voltará a ter acesso aos escritórios.
+                        </p>
+
+                        <div className={css.botoesInativacao}>
+                            <button
+                                className={css.btnCancelarInativacao}
+                                onClick={fecharModalAtivar}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                className={css.btnConfirmarInativacao}
+                                onClick={confirmarAtivar}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                {carregandoAcao ? 'Ativando...' : 'Ativar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
             <Footer />
         </div>
     );
