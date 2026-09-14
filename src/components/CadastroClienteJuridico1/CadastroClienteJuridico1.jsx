@@ -9,7 +9,6 @@ export default function CadastroClienteJuridico1({ api }) {
     const navigate = useNavigate();
     const topoRef = useRef(null);
 
-
     const [razaoSocial, setRazaoSocial] = useState('');
     const [nomeFantasia, setNomeFantasia] = useState('');
     const [cnpj, setCnpj] = useState('');
@@ -35,7 +34,16 @@ export default function CadastroClienteJuridico1({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const tipo = localStorage.getItem('tipo');
+
+        if (!token || tipo === null) {
+            navigate('/login', { replace: true });
+        }
+    }, [navigate]);
+
+    const API_URL = api || ' http://172.20.10.2:5000';
     const ufs = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
     function agendarLimpezaMensagem() {
@@ -73,7 +81,6 @@ export default function CadastroClienteJuridico1({ api }) {
         setTipoMensagem('sucesso');
         agendarLimpezaMensagem();
     }
-
 
     function handleRazaoSocial(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s0-9]/g, '');
@@ -207,10 +214,8 @@ export default function CadastroClienteJuridico1({ api }) {
         return () => { if (timerAviso) clearTimeout(timerAviso); };
     }, [exibirCarregamento]);
 
-
     function irParaRepresentante(e) {
         e.preventDefault();
-
 
         let camposFaltando = [];
         if (!razaoSocial.trim()) camposFaltando.push('Razão social');
@@ -254,7 +259,6 @@ export default function CadastroClienteJuridico1({ api }) {
             mostrarErro('As senhas não coincidem.');
             return;
         }
-
 
         const dadosCliente = {
             razaoSocial,

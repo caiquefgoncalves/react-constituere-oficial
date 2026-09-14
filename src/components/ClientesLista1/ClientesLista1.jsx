@@ -31,7 +31,7 @@ export default function ClientesLista1({ api }) {
     const [inativando, setInativando] = useState(false);
     const [ativando, setAtivando] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || ' http://172.20.10.2:5000';
     const ufs = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
 
     function apenasNumeros(valor) {
@@ -83,7 +83,19 @@ export default function ClientesLista1({ api }) {
 
     function formatarData(valor) {
         if (!valor) return '';
-        let n = apenasNumeros(valor);
+
+        const texto = String(valor).trim();
+
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+            return texto;
+        }
+
+        if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+            const [ano, mes, dia] = texto.slice(0, 10).split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        let n = apenasNumeros(texto);
         if (n.length > 8) n = n.slice(0, 8);
         if (n.length <= 2) return n;
         if (n.length <= 4) return `${n.slice(0,2)}/${n.slice(2)}`;

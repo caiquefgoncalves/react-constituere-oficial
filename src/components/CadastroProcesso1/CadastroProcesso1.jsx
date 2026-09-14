@@ -24,8 +24,9 @@ export default function CadastroProcesso1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
     const [carregandoClientes, setCarregandoClientes] = useState(false);
+    const [verificandoNumero, setVerificandoNumero] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || 'http://172.20.10.2:5000';
 
     function agendarLimpezaMensagem() {
         if (window.timeoutMensagem) {
@@ -126,10 +127,37 @@ export default function CadastroProcesso1({ api }) {
         return dataInformada > hoje;
     }
 
+    function dataMaisDe120AnosAtras(dataTexto) {
+        if (!dataTexto) return false;
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) return false;
+
+        const [dia, mes, ano] = dataTexto.split('/').map(Number);
+        const dataInformada = new Date(ano, mes - 1, dia);
+
+        const hoje = new Date();
+        const limite = new Date(
+            hoje.getFullYear() - 120,
+            hoje.getMonth(),
+            hoje.getDate()
+        );
+
+        dataInformada.setHours(0, 0, 0, 0);
+        limite.setHours(0, 0, 0, 0);
+
+        return dataInformada < limite;
+    }
+
     function validarNumeroProcesso(numero) {
         if (!numero) return true;
         const padrao = /^\d{7}-\d{2}\.\d{4}\.\d\.\d{2}\.\d{4}$/;
         return padrao.test(numero);
+    }
+
+    function numeroProcessoZerado(numero) {
+        if (!numero) return false;
+        const apenasDigitos = apenasNumeros(numero);
+        if (!apenasDigitos) return false;
+        return /^0+$/.test(apenasDigitos);
     }
 
     function voltarParaProcesso() {
@@ -142,6 +170,37 @@ export default function CadastroProcesso1({ api }) {
         localStorage.removeItem('token');
         localStorage.removeItem('id_usuario');
         navigate('/login');
+    }
+
+    async function verificarNumeroDuplicado(numero) {
+        const token = localStorage.getItem('token');
+        if (!token) return false;
+
+        try {
+            const response = await fetch(
+                `${API_URL}/processo/verificar_numero?numero=${encodeURIComponent(numero)}`,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                }
+            );
+
+            if (response.status === 401) {
+                deslogar();
+                return false;
+            }
+
+            if (!response.ok) {
+                return false;
+            }
+
+            const dados = await response.json();
+            return dados.existe === true;
+        } catch (erro) {
+            console.error('Erro ao verificar número:', erro);
+            return false;
+        }
     }
 
     async function buscarClientes() {
@@ -185,7 +244,7 @@ export default function CadastroProcesso1({ api }) {
         buscarClientes();
     }, [API_URL]);
 
-    function handleCadastro(e) {
+    async function handleCadastro(e) {
         e.preventDefault();
         setCarregando(true);
         setMensagem('');
@@ -224,6 +283,24 @@ export default function CadastroProcesso1({ api }) {
             return;
         }
 
+        if (numProcesso && numeroProcessoZerado(numProcesso)) {
+            mostrarMensagem('Número do processo não pode ser todo zero.');
+            setCarregando(false);
+            return;
+        }
+
+        if (numProcesso) {
+            setVerificandoNumero(true);
+            const duplicado = await verificarNumeroDuplicado(numProcesso);
+            setVerificandoNumero(false);
+
+            if (duplicado) {
+                mostrarMensagem('Já existe um processo cadastrado com este número.');
+                setCarregando(false);
+                return;
+            }
+        }
+
         if (data && !validarData(data)) {
             mostrarMensagem('Data de início inválida.');
             setCarregando(false);
@@ -232,6 +309,12 @@ export default function CadastroProcesso1({ api }) {
 
         if (data && dataEhFutura(data)) {
             mostrarMensagem('A data de início não pode ser uma data futura.');
+            setCarregando(false);
+            return;
+        }
+
+        if (data && dataMaisDe120AnosAtras(data)) {
+            mostrarMensagem('A data de início não pode ser superior a 120 anos atrás.');
             setCarregando(false);
             return;
         }
@@ -439,11 +522,11 @@ export default function CadastroProcesso1({ api }) {
                         <button
                             className={css.botaoCadastro}
                             type="submit"
-                            disabled={carregando || carregandoClientes}
+                            disabled={carregando || carregandoClientes || verificandoNumero}
                             tabIndex={10}
                             name="btn-cadastrar"
                         >
-                            {carregando ? 'Carregando...' : 'Parte Contrária ➝'}
+                            {verificandoNumero ? 'Verificando...' : carregando ? 'Carregando...' : 'Parte Contrária ➝'}
                         </button>
                     </div>
                 </form>

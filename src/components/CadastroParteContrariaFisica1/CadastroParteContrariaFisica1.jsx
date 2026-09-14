@@ -58,7 +58,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
     const [carregando, setCarregando] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || ' http://172.20.10.2:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES',
@@ -99,6 +99,53 @@ export default function CadastroParteContrariaFisica1({ api }) {
         return valor.replace(/\D/g, '');
     }
 
+    function validarCpf(cpf) {
+        const n = apenasNumeros(cpf);
+        if (n.length !== 11) return false;
+        if (/^(\d)\1{10}$/.test(n)) return false;
+
+        let soma = 0;
+        for (let i = 0; i < 9; i++) soma += parseInt(n[i]) * (10 - i);
+        let resto = (soma * 10) % 11;
+        if (resto === 10) resto = 0;
+        if (resto !== parseInt(n[9])) return false;
+
+        soma = 0;
+        for (let i = 0; i < 10; i++) soma += parseInt(n[i]) * (11 - i);
+        resto = (soma * 10) % 11;
+        if (resto === 10) resto = 0;
+        if (resto !== parseInt(n[10])) return false;
+
+        return true;
+    }
+
+    function validarData(dataTexto) {
+        if (!dataTexto) return true;
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
+            return false;
+        }
+        const [dia, mes, ano] = dataTexto.split('/').map(Number);
+        const dataObjeto = new Date(ano, mes - 1, dia);
+        return dataObjeto.getFullYear() === ano && dataObjeto.getMonth() === mes - 1 && dataObjeto.getDate() === dia;
+    }
+
+    function calcularIdade(dataStr) {
+        if (!dataStr) return null;
+        const p = String(dataStr).replace(/[\/\-]/g, '/').split('/');
+        if (p.length !== 3) return null;
+        const d = parseInt(p[0]), m = parseInt(p[1]) - 1, a = parseInt(p[2]);
+        if (isNaN(d) || isNaN(m) || isNaN(a)) return null;
+        const nasc = new Date(a, m, d);
+        const hoje = new Date();
+        let idade = hoje.getFullYear() - nasc.getFullYear();
+        if (hoje.getMonth() < m || (hoje.getMonth() === m && hoje.getDate() < d)) idade--;
+        return idade;
+    }
+
+    function validarEmail(emailTexto) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTexto);
+    }
+
     function handleNome(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
         if (valor.length <= 254) {
@@ -118,16 +165,6 @@ export default function CadastroParteContrariaFisica1({ api }) {
         } else {
             setDataNascimento(`${valor.slice(0, 2)}/${valor.slice(2, 4)}/${valor.slice(4, 8)}`);
         }
-    }
-
-    function validarData(dataTexto) {
-        if (!dataTexto) return true;
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
-            return false;
-        }
-        const [dia, mes, ano] = dataTexto.split('/').map(Number);
-        const dataObjeto = new Date(ano, mes - 1, dia);
-        return dataObjeto.getFullYear() === ano && dataObjeto.getMonth() === mes - 1 && dataObjeto.getDate() === dia;
     }
 
     function handleCpf(e) {
@@ -299,6 +336,15 @@ export default function CadastroParteContrariaFisica1({ api }) {
         }
     }
 
+    function converterDataParaBanco(data) {
+        if (!data) return null;
+        const n = apenasNumeros(data);
+        if (n.length === 8) {
+            return `${n.slice(4, 8)}-${n.slice(2, 4)}-${n.slice(0, 2)}`;
+        }
+        return null;
+    }
+
     function handleCadastro(e) {
         e.preventDefault();
 
@@ -352,9 +398,34 @@ export default function CadastroParteContrariaFisica1({ api }) {
             return;
         }
 
-        if (dataNascimento && !validarData(dataNascimento)) {
-            mostrarErro('Data de nascimento inválida. Use DD/MM/AAAA.');
+        if (!validarCpf(cpfNumeros)) {
+            mostrarErro('CPF inválido. Verifique os números informados.');
             return;
+        }
+
+        if (dataNascimento) {
+            if (!validarData(dataNascimento)) {
+                mostrarErro('Data de nascimento inválida. Use DD/MM/AAAA.');
+                return;
+            }
+
+            const idade = calcularIdade(dataNascimento);
+            if (idade === null) {
+                mostrarErro('Data de nascimento inválida.');
+                return;
+            }
+            if (idade < 0) {
+                mostrarErro('A data de nascimento não pode ser uma data futura.');
+                return;
+            }
+            if (idade < 18) {
+                mostrarErro('A parte contrária deve ter no mínimo 18 anos.');
+                return;
+            }
+            if (idade > 120) {
+                mostrarErro('A idade da parte contrária não pode ser superior a 120 anos.');
+                return;
+            }
         }
 
         const cepNumeros = apenasNumeros(cep);
@@ -363,9 +434,16 @@ export default function CadastroParteContrariaFisica1({ api }) {
             return;
         }
 
-        const telefoneNumeros = apenasNumeros(telefone);
-        if (telefoneNumeros && (telefoneNumeros.length < 10 || telefoneNumeros.length > 11)) {
-            mostrarErro('Telefone inválido. Digite DDD + número.');
+        if (telefone) {
+            const telefoneNumeros = apenasNumeros(telefone);
+            if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+                mostrarErro('Telefone inválido. Digite DDD + número.');
+                return;
+            }
+        }
+
+        if (email && !validarEmail(email)) {
+            mostrarErro('Digite um e-mail válido.');
             return;
         }
 
@@ -377,7 +455,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
             orgao_expedidor: orgaoExpedidor ? orgaoExpedidor.trim() : null,
             nacionalidade: nacionalidade ? nacionalidade.trim() : null,
             estado_civil: estadoCivil || null,
-            data_nascimento: dataNascimento || null,
+            data_nascimento: dataNascimento ? converterDataParaBanco(dataNascimento) : null,
             sexo: sexo || null,
             carteira_trabalho: carteiraTrabalho || null,
             serie_carteira: serieCarteira || null,
@@ -389,7 +467,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
             bairro: bairro.trim(),
             cidade: cidade.trim(),
             estado: uf,
-            telefone: telefoneNumeros || null,
+            telefone: telefone ? apenasNumeros(telefone) : null,
             email: email ? email.trim() : null,
             razao_social: null,
             nome_fantasia: null
@@ -472,6 +550,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
                                 tabIndex={2}
                                 name="data_nascimento"
                             />
+                            <small style={{ color: '#888', fontSize: '0.8rem' }}>Idade mínima: 18 anos | Máxima: 120 anos</small>
                         </div>
 
                         <div className={css.campoMetade}>

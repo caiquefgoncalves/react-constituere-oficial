@@ -7,7 +7,7 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 
 export default function ProcessosLista1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || ' http://172.20.10.2:5000';
 
     const [processos, setProcessos] = useState([]);
     const [tiposProcessos, setTiposProcessos] = useState([]);
@@ -245,6 +245,40 @@ export default function ProcessosLista1({ api }) {
         return Number.isNaN(numero) ? null : numero;
     }
 
+    function formatarNumeroProcessoEdit(valor) {
+        let n = apenasNumeros(valor);
+
+        if (n.length > 20) {
+            n = n.slice(0, 20);
+        }
+
+        if (n.length <= 7) return n;
+        if (n.length <= 9) return `${n.slice(0, 7)}-${n.slice(7)}`;
+        if (n.length <= 13) return `${n.slice(0, 7)}-${n.slice(7, 9)}.${n.slice(9)}`;
+        if (n.length <= 14) return `${n.slice(0, 7)}-${n.slice(7, 9)}.${n.slice(9, 13)}.${n.slice(13)}`;
+        if (n.length <= 16) return `${n.slice(0, 7)}-${n.slice(7, 9)}.${n.slice(9, 13)}.${n.slice(13, 14)}.${n.slice(14)}`;
+
+        return `${n.slice(0, 7)}-${n.slice(7, 9)}.${n.slice(9, 13)}.${n.slice(13, 14)}.${n.slice(14, 16)}.${n.slice(16)}`;
+    }
+
+    function formatarDataEdit(valor) {
+        let n = apenasNumeros(valor);
+
+        if (n.length > 8) {
+            n = n.slice(0, 8);
+        }
+
+        if (n.length <= 2) return n;
+        if (n.length <= 4) return `${n.slice(0, 2)}/${n.slice(2)}`;
+
+        return `${n.slice(0, 2)}/${n.slice(2, 4)}/${n.slice(4, 8)}`;
+    }
+
+    function formatarNumeroParaExibicao(valor) {
+        if (!valor) return '';
+        return formatarNumeroProcessoEdit(String(valor));
+    }
+
     async function buscarProcessos() {
         const token = localStorage.getItem('token');
 
@@ -450,7 +484,8 @@ export default function ProcessosLista1({ api }) {
                 body: JSON.stringify({
                     titulo: titulo.trim(),
                     descricao: descricao.trim() ? descricao.trim() : null,
-                    processo_concluido: processoConcluido
+                    processo_concluido: processoConcluido,
+                    data: data || null
                 })
             });
 
@@ -702,7 +737,8 @@ export default function ProcessosLista1({ api }) {
                 atualizacao: {
                     id_atualizacao: atualizacaoPendente.id_atualizacao || null,
                     titulo: atualizacaoPendente.titulo,
-                    descricao: atualizacaoPendente.descricao
+                    descricao: atualizacaoPendente.descricao,
+                    data: data || null
                 },
                 exito: {
                     tipo_exito: dadosExito.tipo_pagamento,
@@ -715,7 +751,7 @@ export default function ProcessosLista1({ api }) {
                     numero_parcelas_exito: (dadosExito.distribuicao === 'PARCELADO' || dadosExito.distribuicao === 'ENTRADA_PARCELAS') ? Number(dadosExito.num_parcelas) : null,
                     dia_vencimento_exito: dadosExito.distribuicao !== 'RETIDO_FONTE' ? Number(dadosExito.dia_vencimento) : null,
                     mes_inicio_exito: dadosExito.distribuicao !== 'RETIDO_FONTE' ? Number(dadosExito.mes_inicio) : null,
-                    forma_pagamento_exito: dadosExito.forma_pagamento || null
+                    forma_pagamento_exito: dadosExito.distribuicao !== 'RETIDO_FONTE' ? (dadosExito.forma_pagamento || null) : null
                 }
             };
 
@@ -818,8 +854,14 @@ export default function ProcessosLista1({ api }) {
     function abrirModal(processo) {
         limparTodasMensagens();
 
+        const dadosNormalizados = {
+            ...processo,
+            numero_processo: formatarNumeroParaExibicao(processo.numero_processo || processo.numero),
+            data_inicio: processo.data_inicio ? formatarDataEdit(processo.data_inicio) : ''
+        };
+
         setProcessoSelecionado(processo);
-        setDadosEditados({ ...processo });
+        setDadosEditados(dadosNormalizados);
         setEditando(false);
         setModalAberto(true);
         setOpcao("info");
@@ -865,9 +907,19 @@ export default function ProcessosLista1({ api }) {
     function handleEditChange(e) {
         const { name, value } = e.target;
 
+        let valorFormatado = value;
+
+        if (name === 'numero_processo') {
+            valorFormatado = formatarNumeroProcessoEdit(value);
+        }
+
+        if (name === 'data_inicio') {
+            valorFormatado = formatarDataEdit(value);
+        }
+
         setDadosEditados(prev => ({
             ...prev,
-            [name]: value
+            [name]: valorFormatado
         }));
     }
 
@@ -925,6 +977,15 @@ export default function ProcessosLista1({ api }) {
 
             if (dataObjeto > hoje) {
                 mostrarMensagemModal('A data de início não pode ser uma data futura.', 'erro');
+                return;
+            }
+
+            const limite120 = new Date();
+            limite120.setFullYear(limite120.getFullYear() - 120);
+            limite120.setHours(0, 0, 0, 0);
+
+            if (dataObjeto < limite120) {
+                mostrarMensagemModal('A data de início não pode ser superior a 120 anos atrás.', 'erro');
                 return;
             }
         }
@@ -987,7 +1048,13 @@ export default function ProcessosLista1({ api }) {
 
     function cancelarEdicao() {
         setEditando(false);
-        setDadosEditados(processoSelecionado);
+
+        setDadosEditados({
+            ...processoSelecionado,
+            numero_processo: formatarNumeroParaExibicao(processoSelecionado.numero_processo || processoSelecionado.numero),
+            data_inicio: processoSelecionado.data_inicio ? formatarDataEdit(processoSelecionado.data_inicio) : ''
+        });
+
         setMensagemModal('');
         setTipoMensagemModal('');
     }
@@ -1929,7 +1996,8 @@ export default function ProcessosLista1({ api }) {
                                                         num_parcelas: valor === 'AVISTA' || valor === 'RETIDO_FONTE' ? '' : prev.num_parcelas,
                                                         valor_entrada: valor === 'ENTRADA_PARCELAS' ? prev.valor_entrada : '',
                                                         dia_vencimento: valor === 'RETIDO_FONTE' ? '' : prev.dia_vencimento,
-                                                        mes_inicio: valor === 'RETIDO_FONTE' ? '' : prev.mes_inicio
+                                                        mes_inicio: valor === 'RETIDO_FONTE' ? '' : prev.mes_inicio,
+                                                        forma_pagamento: valor === 'RETIDO_FONTE' ? '' : prev.forma_pagamento
                                                     }));
                                                 }}
                                             >
@@ -2014,20 +2082,22 @@ export default function ProcessosLista1({ api }) {
                                             </>
                                         )}
 
-                                        <div className={css.campoMetade}>
-                                            <label className={css.label}>Forma de pagamento</label>
+                                        {dadosExito.distribuicao !== 'RETIDO_FONTE' && (
+                                            <div className={css.campoMetade}>
+                                                <label className={css.label}>Forma de pagamento</label>
 
-                                            <select
-                                                className={css.input}
-                                                value={dadosExito.forma_pagamento}
-                                                onChange={(e) => setDadosExito(prev => ({ ...prev, forma_pagamento: e.target.value }))}
-                                            >
-                                                <option value="">Selecione</option>
-                                                <option value="CREDITO">Crédito</option>
-                                                <option value="DEBITO">Débito</option>
-                                                <option value="PIX">Pix</option>
-                                            </select>
-                                        </div>
+                                                <select
+                                                    className={css.input}
+                                                    value={dadosExito.forma_pagamento}
+                                                    onChange={(e) => setDadosExito(prev => ({ ...prev, forma_pagamento: e.target.value }))}
+                                                >
+                                                    <option value="">Selecione</option>
+                                                    <option value="CREDITO">Crédito</option>
+                                                    <option value="DEBITO">Débito</option>
+                                                    <option value="PIX">Pix</option>
+                                                </select>
+                                            </div>
+                                        )}
 
                                         <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>
                                             <p className={css.obsCampos}>* Campos obrigatórios</p>

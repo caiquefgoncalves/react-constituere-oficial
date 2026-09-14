@@ -50,7 +50,7 @@ export default function CadastroParteContrariaJuridica1({ api }) {
     const [carregando, setCarregando] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || ' http://172.20.10.2:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF',
@@ -89,6 +89,41 @@ export default function CadastroParteContrariaJuridica1({ api }) {
 
     function apenasNumeros(valor) {
         return valor.replace(/\D/g, '');
+    }
+
+    function validarCnpj(cnpj) {
+        const n = apenasNumeros(cnpj);
+        if (n.length !== 14) return false;
+        if (/^(\d)\1{13}$/.test(n)) return false;
+
+        let tam = n.length - 2;
+        let nums = n.substring(0, tam);
+        let dig = n.substring(tam);
+        let soma = 0;
+        let pos = tam - 7;
+        for (let i = tam; i >= 1; i--) {
+            soma += parseInt(nums.charAt(tam - i)) * pos--;
+            if (pos < 2) pos = 9;
+        }
+        let resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+        if (resultado !== parseInt(dig.charAt(0))) return false;
+
+        tam = tam + 1;
+        nums = n.substring(0, tam);
+        soma = 0;
+        pos = tam - 7;
+        for (let i = tam; i >= 1; i--) {
+            soma += parseInt(nums.charAt(tam - i)) * pos--;
+            if (pos < 2) pos = 9;
+        }
+        resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
+        if (resultado !== parseInt(dig.charAt(1))) return false;
+
+        return true;
+    }
+
+    function validarEmail(emailTexto) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailTexto);
     }
 
     function handleRazaoSocial(e) {
@@ -275,19 +310,26 @@ export default function CadastroParteContrariaJuridica1({ api }) {
             return;
         }
 
+        if (!validarCnpj(cnpjNumeros)) {
+            mostrarErro('CNPJ inválido. Verifique os números informados.');
+            return;
+        }
+
         const cepNumeros = apenasNumeros(cep);
         if (cepNumeros.length !== 8) {
             mostrarErro('CEP incompleto. Digite os 8 números do CEP.');
             return;
         }
 
-        const telefoneNumeros = apenasNumeros(telefone);
-        if (telefoneNumeros && (telefoneNumeros.length < 10 || telefoneNumeros.length > 11)) {
-            mostrarErro('Telefone inválido. Digite DDD + número.');
-            return;
+        if (telefone) {
+            const telefoneNumeros = apenasNumeros(telefone);
+            if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
+                mostrarErro('Telefone inválido. Digite DDD + número.');
+                return;
+            }
         }
 
-        if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        if (email && !validarEmail(email)) {
             mostrarErro('Digite um e-mail válido.');
             return;
         }
@@ -314,7 +356,7 @@ export default function CadastroParteContrariaJuridica1({ api }) {
             bairro: bairro.trim(),
             cidade: cidade.trim(),
             estado: uf,
-            telefone: telefoneNumeros || null,
+            telefone: telefone ? apenasNumeros(telefone) : null,
             email: email.trim() ? email.trim() : null
         };
 

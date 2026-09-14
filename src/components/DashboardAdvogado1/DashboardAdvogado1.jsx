@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import css from './DashboardAdvogado1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
@@ -21,11 +21,10 @@ export default function DashboardAdvogado1({ api }) {
 
     const [dadosGrafico, setDadosGrafico] = useState([]);
     const [carregandoGrafico, setCarregandoGrafico] = useState(false);
-    const [filtroPeriodo, setFiltroPeriodo] = useState('2026');
+    const [filtroPeriodo, setFiltroPeriodo] = useState('mes');
     const [totaisGrafico, setTotaisGrafico] = useState({ recebido: 0, aReceber: 0 });
-    const [dadosCache, setDadosCache] = useState({});
 
-    const API_URL = api || 'http://192.168.0.130:5000';
+    const API_URL = api || 'http://172.20.10.2:5000';
 
     function contarClientesMes(clientes) {
         const dataAtual = new Date();
@@ -52,13 +51,8 @@ export default function DashboardAdvogado1({ api }) {
         const token = localStorage.getItem('token');
         if (!token) return;
 
-        if (dadosCache[periodo]) {
-            setDadosGrafico(dadosCache[periodo].dados);
-            setTotaisGrafico(dadosCache[periodo].totais);
-            return;
-        }
-
         setCarregandoGrafico(true);
+
         try {
             const response = await fetch(`${API_URL}/dashboard/rendimentos?periodo=${periodo}`, {
                 method: 'GET',
@@ -68,16 +62,11 @@ export default function DashboardAdvogado1({ api }) {
 
             if (response.ok) {
                 const data = await response.json();
-                const resultado = {
-                    dados: data.dados || [],
-                    totais: {
-                        recebido: data.totais?.recebido || 0,
-                        aReceber: data.totais?.a_receber || 0
-                    }
-                };
-                setDadosCache(prev => ({ ...prev, [periodo]: resultado }));
-                setDadosGrafico(resultado.dados);
-                setTotaisGrafico(resultado.totais);
+                setDadosGrafico(data.dados || []);
+                setTotaisGrafico({
+                    recebido: data.totais?.recebido || 0,
+                    aReceber: data.totais?.a_receber || 0
+                });
             } else if (response.status === 401) {
                 localStorage.removeItem('nome');
                 localStorage.removeItem('tipo');
@@ -192,7 +181,7 @@ export default function DashboardAdvogado1({ api }) {
         buscarDados();
         buscarEscritorios();
         buscarClientes();
-        buscarDadosGrafico('2026');
+        buscarDadosGrafico('mes');
     }, [navigate, API_URL]);
 
     function handleFiltroChange(e) {
