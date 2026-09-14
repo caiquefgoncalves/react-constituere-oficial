@@ -58,7 +58,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
     const [carregando, setCarregando] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || ' http://172.20.10.2:5000';
+    const API_URL = api || 'http://10.135.105.197:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES',
@@ -373,9 +373,6 @@ export default function CadastroParteContrariaFisica1({ api }) {
         }
         if (!logradouro.trim()) {
             camposFaltando.push('Logradouro');
-        }
-        if (!numero.trim()) {
-            camposFaltando.push('Número');
         }
         if (!bairro.trim()) {
             camposFaltando.push('Bairro');
@@ -721,7 +718,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Número *</label>
+                            <label className={css.label}>Número</label>
                             <input
                                 type="text"
                                 className={css.input}

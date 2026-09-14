@@ -8,6 +8,10 @@
     background-color: #ffffff;
 }
 
+.nomeProcesso {
+    text-transform: capitalize;
+}
+
 .layoutDashboard {
     display: flex;
     flex: 1;

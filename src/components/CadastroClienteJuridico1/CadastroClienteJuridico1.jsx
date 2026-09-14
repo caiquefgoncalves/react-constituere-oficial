@@ -43,7 +43,7 @@ export default function CadastroClienteJuridico1({ api }) {
         }
     }, [navigate]);
 
-    const API_URL = api || ' http://172.20.10.2:5000';
+    const API_URL = api || 'http://10.135.105.197:5000';
     const ufs = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
     function agendarLimpezaMensagem() {

@@ -24,7 +24,7 @@ export default function PagamentosLista1({ api }) {
     const [parcelaBaixar, setParcelaBaixar] = useState(null);
     const [baixando, setBaixando] = useState(false);
 
-    const API_URL = api || ' http://172.20.10.2:5000';
+    const API_URL = api || 'http://10.135.105.197:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 
@@ -279,7 +279,7 @@ export default function PagamentosLista1({ api }) {
                                     <tbody>
                                     {pagamentos.map(pag => (
                                         <tr key={pag.id}>
-                                            <td>{pag.nome || '--'}</td>
+                                            <td className={css.nomeProcesso}>{pag.nome || '--'}</td>
                                             <td>{formatarMoeda(pag.valor)}</td>
                                             <td>{pag.cliente || '--'}</td>
                                             <td>
