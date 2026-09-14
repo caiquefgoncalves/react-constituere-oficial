@@ -400,12 +400,12 @@ export default function AdvogadosLista1({ api }) {
                                 </thead>
                                 <tbody>
                                 {advogadosFiltrados.map(advogado => (
-                                    <tr key={advogado.id} style={{ opacity: advogado.ativo_advogado === false ? 0.6 : 1 }}>
+                                    <tr key={advogado.id}>
                                         <td>
                                             <div className={css.nomeComBadge}>
                                                 <span>{advogado.nome}</span>
                                                 {advogado.ativo_advogado === false && (
-                                                    <span className={css.badgeInativo}>Inativo</span>
+                                                    <span className={`${css.statusBadge} ${css.inativo}`}>Inativo</span>
                                                 )}
                                             </div>
                                         </td>

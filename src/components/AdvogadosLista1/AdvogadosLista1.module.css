@@ -189,15 +189,10 @@
     flex-wrap: wrap;
 }
 
-.badgeInativo {
-    display: inline-block;
-    padding: 0.15rem 0.5rem;
-    border-radius: 20px;
-    font-size: 0.7rem;
-    font-weight: 700;
+
+.statusBadge.inativo {
     background-color: #e0e0e0;
     color: #666666;
-    white-space: nowrap;
 }
 
 .colunaEscritorios {
@@ -306,7 +301,7 @@
 }
 
 .botaoInativarAdvogado {
-    background-color: #b02a37;
+    background-color: #ffbf00;
 }
 
 .botaoVer:hover,
