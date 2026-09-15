@@ -31,7 +31,7 @@ export default function CadastroEscritorio1({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://10.135.105.197:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');

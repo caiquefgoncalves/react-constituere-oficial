@@ -68,7 +68,7 @@ export default function CadastroProcessoPagamento1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
 
-    const API_URL = api || 'http://10.135.105.197:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
 
     const dias = Array.from({ length: 31 }, (_, index) => index + 1);
     const meses = [
@@ -143,6 +143,31 @@ export default function CadastroProcessoPagamento1({ api }) {
         if (!valorTexto) return null;
         const numero = Number(valorTexto.replace('%', '').replace(',', '.'));
         return Number.isNaN(numero) ? null : numero;
+    }
+
+    function normalizarData(valor) {
+        if (!valor) return null;
+
+        const texto = String(valor).trim();
+
+        if (!texto) return null;
+
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+            return texto;
+        }
+
+        if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+            const [ano, mes, dia] = texto.slice(0, 10).split('-');
+            return `${dia}/${mes}/${ano}`;
+        }
+
+        const numeros = texto.replace(/\D/g, '');
+
+        if (numeros.length === 8) {
+            return `${numeros.slice(0, 2)}/${numeros.slice(2, 4)}/${numeros.slice(4, 8)}`;
+        }
+
+        return null;
     }
 
     function voltar() {
@@ -235,6 +260,20 @@ export default function CadastroProcessoPagamento1({ api }) {
             return;
         }
 
+        const dataInicioNormalizada = normalizarData(processo?.data_inicio);
+
+        if (processo?.data_inicio && !dataInicioNormalizada) {
+            mostrarMensagem('Data de início inválida. Volte e informe uma data no formato DD/MM/AAAA.');
+            return;
+        }
+
+        const dataNascimentoNormalizada = normalizarData(parteContraria?.data_nascimento);
+
+        if (parteContraria?.data_nascimento && !dataNascimentoNormalizada) {
+            mostrarMensagem('Data de nascimento inválida. Volte e informe uma data no formato DD/MM/AAAA.');
+            return;
+        }
+
         let tipoHonorario = 'NAO_HA';
         let numeroSalarios = null;
         let valorHonorario = null;
@@ -307,8 +346,14 @@ export default function CadastroProcessoPagamento1({ api }) {
         };
 
         const dadosCadastro = {
-            processo: processo,
-            parte_contraria: parteContraria,
+            processo: {
+                ...processo,
+                data_inicio: dataInicioNormalizada
+            },
+            parte_contraria: {
+                ...parteContraria,
+                data_nascimento: dataNascimentoNormalizada
+            },
             honorarios: honorarios
         };
 
@@ -699,7 +744,6 @@ export default function CadastroProcessoPagamento1({ api }) {
                                     </select>
                                 </div>
 
-                                {/* CAMPO VALOR DA CAUSA - VOLTOU A EXISTIR */}
                                 {exito === 'percentual' && (
                                     <div className={css.campoMetade}>
                                         <label className={css.label}>Valor da causa (para percentual)</label>

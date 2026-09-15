@@ -7,7 +7,7 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 
 export default function ProcessosLista1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.135.105.197:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
 
     const [processos, setProcessos] = useState([]);
     const [tiposProcessos, setTiposProcessos] = useState([]);
@@ -53,6 +53,7 @@ export default function ProcessosLista1({ api }) {
     const [editandoAtualizacao, setEditandoAtualizacao] = useState(null);
     const [atualizacaoPendente, setAtualizacaoPendente] = useState(null);
     const [verificandoExito, setVerificandoExito] = useState(false);
+    const [temExitoProcesso, setTemExitoProcesso] = useState(false);
 
     const [modalExitoAberto, setModalExitoAberto] = useState(false);
     const [processoExito, setProcessoExito] = useState(null);
@@ -749,12 +750,14 @@ export default function ProcessosLista1({ api }) {
         const temExito = await verificarTemExito(processoSelecionado.id);
 
         setVerificandoExito(false);
+        setTemExitoProcesso(temExito);
 
         if (temExito) {
             setAtualizacaoPendente({
                 id_atualizacao: editandoAtualizacao ? editandoAtualizacao.id : null,
                 titulo: titulo.trim(),
-                descricao: descricao.trim() ? descricao.trim() : null
+                descricao: descricao.trim() ? descricao.trim() : null,
+                data: data || null
             });
 
             setProcessoExito(processoSelecionado);
@@ -921,7 +924,7 @@ export default function ProcessosLista1({ api }) {
                     id_atualizacao: atualizacaoPendente.id_atualizacao || null,
                     titulo: atualizacaoPendente.titulo,
                     descricao: atualizacaoPendente.descricao,
-                    data: data || null
+                    data: atualizacaoPendente.data || null
                 },
                 exito: {
                     tipo_exito: dadosExito.tipo_pagamento,
@@ -1017,6 +1020,7 @@ export default function ProcessosLista1({ api }) {
             setTitulo(atualizacaoPendente.titulo || '');
             setDescricao(atualizacaoPendente.descricao || '');
             setConcluido('true');
+            setData(atualizacaoPendente.data || '');
 
             if (atualizacaoPendente.id_atualizacao) {
                 const atualizacao = atualizacoes.find(
@@ -1055,6 +1059,7 @@ export default function ProcessosLista1({ api }) {
 
         buscarAtualizacoes(processo.id);
         buscarParteContraria(processo.id);
+        verificarTemExito(processo.id).then(setTemExitoProcesso);
     }
 
     function fecharModal() {
@@ -1074,6 +1079,7 @@ export default function ProcessosLista1({ api }) {
         setData('');
         setModalExitoAberto(false);
         setProcessoExito(null);
+        setTemExitoProcesso(false);
 
         setDadosExito({
             tipo_pagamento: '',
@@ -1592,7 +1598,7 @@ export default function ProcessosLista1({ api }) {
             return 'Verificando...';
         }
 
-        if (concluido === 'true') {
+        if (concluido === 'true' && temExitoProcesso) {
             return 'Próxima Etapa';
         }
 
