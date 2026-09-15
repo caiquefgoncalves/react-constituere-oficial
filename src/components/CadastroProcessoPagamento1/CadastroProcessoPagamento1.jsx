@@ -592,21 +592,7 @@ export default function CadastroProcessoPagamento1({ api }) {
                             </div>
                         )}
 
-                        {exito === 'percentual' && (
-                            <div className={css.campoMetade}>
-                                <label className={css.label}>Percentual de êxito *</label>
-                                <input
-                                    type="text"
-                                    className={css.input}
-                                    placeholder="0,00%"
-                                    value={percentual}
-                                    onChange={(e) => setPercentual(formatarPercentual(e.target.value))}
-                                    maxLength={6}
-                                    tabIndex={12}
-                                    name="percentualExito"
-                                />
-                            </div>
-                        )}
+
 
                         {exito !== '' && (
                             <>
@@ -699,7 +685,6 @@ export default function CadastroProcessoPagamento1({ api }) {
                                     </select>
                                 </div>
 
-                                {/* CAMPO VALOR DA CAUSA - VOLTOU A EXISTIR */}
                                 {exito === 'percentual' && (
                                     <div className={css.campoMetade}>
                                         <label className={css.label}>Valor da causa (para percentual)</label>
@@ -721,19 +706,7 @@ export default function CadastroProcessoPagamento1({ api }) {
                             </>
                         )}
 
-                        <div className={css.campoMetade}>
-                            <label className={css.label}>Percentual de juros</label>
-                            <input
-                                type="text"
-                                className={css.input}
-                                placeholder="0,00%"
-                                value={juros}
-                                onChange={(e) => setJuros(formatarPercentual(e.target.value))}
-                                maxLength={6}
-                                tabIndex={20}
-                                name="percentualJuros"
-                            />
-                        </div>
+
 
                         <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>
                             <p className={css.obsCampos}>* Campos obrigatórios</p>

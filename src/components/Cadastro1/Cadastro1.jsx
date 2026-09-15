@@ -46,6 +46,19 @@ export default function Cadastro1({ api }) {
         }, 7000);
     }
 
+
+    function handleRg(e) {
+        let valor = e.target.value.replace(/[^0-9Xx]/g, '');
+        if (valor.length > 9) valor = valor.slice(0, 9);
+        if (valor.length <= 2) setRg(valor);
+        else if (valor.length <= 5) setRg(`${valor.slice(0,2)}.${valor.slice(2)}`);
+        else if (valor.length <= 8) setRg(`${valor.slice(0,2)}.${valor.slice(2,5)}.${valor.slice(5)}`);
+        else {
+            const ultimoChar = valor.slice(8).toUpperCase();
+            setRg(`${valor.slice(0,2)}.${valor.slice(2,5)}.${valor.slice(5,8)}-${ultimoChar}`);
+        }
+    }
+
     function capitalizarNome(texto) {
         if (!texto) return '';
         return texto.split(' ').map(palavra =>
@@ -81,10 +94,7 @@ export default function Cadastro1({ api }) {
         else setCpf(`${valor.slice(0, 3)}.${valor.slice(3, 6)}.${valor.slice(6, 9)}-${valor.slice(9, 11)}`);
     }
 
-    function handleRg(e) {
-        const valor = apenasNumeros(e.target.value);
-        if (valor.length <= 20) setRg(valor);
-    }
+
 
     function handleOrgaoExpedidor(e) {
         const valor = e.target.value.replace(/[^a-zA-Z0-9\/]/g, '');
