@@ -7,7 +7,7 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 
 export default function AdvogadosLista1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.135.105.197:5000';
+    const API_URL = api || 'http://192.168.0.128:5000';
 
     const [advogados, setAdvogados] = useState([]);
     const [escritorios, setEscritorios] = useState([]);
@@ -29,6 +29,9 @@ export default function AdvogadosLista1({ api }) {
 
     const [modalAtivarAberto, setModalAtivarAberto] = useState(false);
     const [dadosAtivar, setDadosAtivar] = useState(null);
+
+    const [modalAlterarCargoAberto, setModalAlterarCargoAberto] = useState(false);
+    const [dadosAlterarCargo, setDadosAlterarCargo] = useState(null);
 
     function mostrarMensagem(texto, tipo = 'sucesso') {
         setMensagem(texto);
@@ -146,22 +149,44 @@ export default function AdvogadosLista1({ api }) {
         buscarAdvogados();
     }, [API_URL, filtroEscritorio, filtroCargo]);
 
-    async function alterarCargo(idAdvogado, idEscritorio, novoStatus) {
+    function abrirModalAlterarCargo(idAdvogado, idEscritorio, nomeAdvogado, nomeEscritorio, novoStatus) {
+        setDadosAlterarCargo({
+            idAdvogado,
+            idEscritorio,
+            nomeAdvogado,
+            nomeEscritorio,
+            novoStatus
+        });
+        setModalAlterarCargoAberto(true);
+    }
+
+    function fecharModalAlterarCargo() {
+        setModalAlterarCargoAberto(false);
+        setDadosAlterarCargo(null);
+    }
+
+    async function confirmarAlterarCargo() {
+        if (!dadosAlterarCargo) return;
+
         try {
             setCarregandoAcao(true);
             const token = localStorage.getItem('token');
-            const response = await fetch(`${API_URL}/alterar_cargo_advogado/${idAdvogado}/${idEscritorio}`, {
-                method: 'PUT',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Token': token
-                },
-                body: JSON.stringify({ status: novoStatus })
-            });
+            const response = await fetch(
+                `${API_URL}/alterar_cargo_advogado/${dadosAlterarCargo.idAdvogado}/${dadosAlterarCargo.idEscritorio}`,
+                {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Access-Token': token
+                    },
+                    body: JSON.stringify({ status: dadosAlterarCargo.novoStatus })
+                }
+            );
             const data = await response.json();
             if (response.ok) {
                 mostrarMensagem(data.mensagem || 'Cargo alterado com sucesso!', 'sucesso');
+                fecharModalAlterarCargo();
                 await buscarAdvogados();
                 return;
             }
@@ -316,6 +341,8 @@ export default function AdvogadosLista1({ api }) {
         return advogado.nome?.toLowerCase().includes(filtroNome.toLowerCase());
     });
 
+    const cargoEhPromocao = dadosAlterarCargo?.novoStatus === 'PROPRIETARIO';
+
     return (
         <div className={css.paginaCompleta}>
             <Header api={API_URL} />
@@ -443,7 +470,7 @@ export default function AdvogadosLista1({ api }) {
                                                                             <button
                                                                                 className={css.botaoVer}
                                                                                 disabled={carregandoAcao}
-                                                                                onClick={() => alterarCargo(advogado.id, esc.id, 'PROPRIETARIO')}
+                                                                                onClick={() => abrirModalAlterarCargo(advogado.id, esc.id, advogado.nome, esc.nome, 'PROPRIETARIO')}
                                                                             >
                                                                                 Promover
                                                                             </button>
@@ -451,7 +478,7 @@ export default function AdvogadosLista1({ api }) {
                                                                             <button
                                                                                 className={css.botaoVer}
                                                                                 disabled={carregandoAcao}
-                                                                                onClick={() => alterarCargo(advogado.id, esc.id, 'PARCEIRO')}
+                                                                                onClick={() => abrirModalAlterarCargo(advogado.id, esc.id, advogado.nome, esc.nome, 'PARCEIRO')}
                                                                             >
                                                                                 Regredir
                                                                             </button>
@@ -488,6 +515,62 @@ export default function AdvogadosLista1({ api }) {
                     </div>
                 </div>
             </div>
+
+            {modalAlterarCargoAberto && dadosAlterarCargo && (
+                <div
+                    className={css.modalOverlay}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && !carregandoAcao) {
+                            fecharModalAlterarCargo();
+                        }
+                    }}
+                >
+                    <div className={css.modalInativacao}>
+                        <button
+                            className={css.modalFecharIconeLeft}
+                            onClick={fecharModalAlterarCargo}
+                            type="button"
+                            disabled={carregandoAcao}
+                        >
+                            X
+                        </button>
+
+                        <h2 className={css.tituloInativacao}>
+                            Certeza que gostaria de
+                            <br />
+                            {cargoEhPromocao ? 'promover?' : 'regredir?'}
+                        </h2>
+
+                        <p className={css.subtituloInativacao}>
+                            Confirme para {cargoEhPromocao ? 'promover' : 'regredir'} <strong>{dadosAlterarCargo.nomeAdvogado}</strong>
+                            <br />
+                            {cargoEhPromocao ? 'a Proprietário' : 'a Parceiro'} no escritório <strong>{dadosAlterarCargo.nomeEscritorio}</strong>.
+                        </p>
+
+                        <div className={css.botoesInativacao}>
+                            <button
+                                className={css.btnCancelarInativacao}
+                                onClick={fecharModalAlterarCargo}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                Cancelar
+                            </button>
+
+                            <button
+                                className={css.btnConfirmarInativacao}
+                                onClick={confirmarAlterarCargo}
+                                type="button"
+                                disabled={carregandoAcao}
+                            >
+                                {carregandoAcao
+                                    ? (cargoEhPromocao ? 'Promovendo...' : 'Regredindo...')
+                                    : (cargoEhPromocao ? 'Promover' : 'Regredir')}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {modalRetirarAberto && dadosRetirar && (
                 <div
