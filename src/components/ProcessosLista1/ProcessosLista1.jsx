@@ -7,7 +7,7 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 
 export default function ProcessosLista1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.62:5000';
 
     const [processos, setProcessos] = useState([]);
     const [tiposProcessos, setTiposProcessos] = useState([]);

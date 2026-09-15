@@ -31,7 +31,7 @@ export default function CadastroEscritorio1({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.62:5000';
 
     useEffect(() => {
         const tipo = localStorage.getItem('tipo');
@@ -45,7 +45,7 @@ export default function CadastroEscritorio1({ api }) {
     }, [])
 
 
-        const ufs = [
+    const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
         'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN',
         'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'

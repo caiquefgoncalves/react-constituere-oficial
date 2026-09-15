@@ -28,7 +28,7 @@ export default function Cadastro1({ api }) {
     const [exibirCarregamento, setExibirCarregamento] = useState(false);
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.62:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -434,7 +434,6 @@ export default function Cadastro1({ api }) {
                                 onChange={(e) => setOab(e.target.value)}
                                 tabIndex={5}
                                 name="num_oab"
-                                maxLength={10}
                             />
                         </div>
                         <div className={css.campoMetade}>

@@ -160,19 +160,20 @@ select.input {
 
 .inputFile {
     width: 100%;
-    padding: 0.8rem 1rem;
+    padding: 0.6rem;
     border: 1px solid #dcdcdc;
     border-radius: 8px;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-family: 'Clear Sans', sans-serif;
-    outline: none;
-    transition: border-color 0.3s ease;
     background-color: #ffffff;
     box-sizing: border-box;
     cursor: pointer;
-    height: 50px;
+
     display: flex;
     align-items: center;
+    gap: 10px;
+
+    overflow: hidden;
 }
 
 .inputFile::-webkit-file-upload-button {
@@ -248,5 +249,157 @@ select.input {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+
+@media (min-width: 1400px) {
+    .formulario {
+        max-width: 1300px;
+    }
+
+    .titulo {
+        font-size: 3.8rem;
+    }
+
+    .mensagemContainer {
+        max-width: 800px;
+    }
+}
+
+
+
+@media (max-width: 1024px) {
+
+    .formulario {
+        padding: 0 2rem;
+    }
+
+    .linha {
+        column-gap: 2rem;
+    }
+
+    .campoMetade {
+        width: calc(50% - 1rem) !important;
+    }
+
+    .titulo {
+        font-size: 2.5rem;
+    }
+
+    .botaoVoltar {
+        left: 1.5rem;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+
+    .topArea {
+        flex-direction: column;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 0.5rem;
+    }
+
+
+    .botaoVoltar {
+        position: relative;
+        left: 0;
+        align-self: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .titulo {
+        font-size: 2rem;
+    }
+
+    .formulario {
+        padding: 0 1.5rem;
+    }
+
+    .linha {
+        flex-direction: column;
+    }
+
+
+    .campoMetade {
+        width: 100% !important;
+    }
+
+    .botaoCadastro {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .mensagemContainer {
+        margin: 0 1rem 2rem 1rem;
+    }
+}
+
+
+
+@media (max-width: 480px) {
+
+    .containerSection {
+        padding-top: 0.5rem;
+    }
+
+    .titulo {
+        font-size: 1.6rem;
+    }
+
+    .formulario {
+        padding: 0 1rem;
+    }
+
+    .label {
+        font-size: 0.9rem;
+    }
+
+    .input,
+    .inputFile {
+        font-size: 0.9rem;
+        padding: 0.7rem;
+    }
+
+    .botaoCadastro {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.95rem;
+    }
+}
+
+
+
+@media (max-width: 360px) {
+
+    .titulo {
+        font-size: 1.4rem;
+    }
+
+    .botaoCadastro {
+        font-size: 0.85rem;
+        padding: 10px;
+        white-space: normal;
+    }
+
+    .mensagemContainer {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+
+
+    .formulario,
+    .linha,
+    .campoMetade,
+    .campoInteiro {
+        min-width: 0;
+    }
+
+    .input,
+    .inputFile {
+        font-size: 0.85rem;
     }
 }

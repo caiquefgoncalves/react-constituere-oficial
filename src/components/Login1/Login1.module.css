@@ -169,3 +169,86 @@
 .linkCadastro:hover {
     color: #d69f00;
 }
+
+@media (max-width: 768px) {
+    .containerSection {
+        padding: 1rem;
+    }
+
+    .topArea {
+        justify-content: center;
+    }
+
+    .botaoVoltar {
+        left: 1rem;
+        width: 38px;
+        height: 38px;
+    }
+
+    .titulo {
+        font-size: 2.3rem;
+    }
+
+    .formulario {
+        padding: 0 1.5rem;
+    }
+
+    .linha {
+        max-width: 100%;
+        column-gap: 1.5rem;
+    }
+
+    .botaoLogin {
+        width: 100%;
+        max-width: 280px;
+    }
+}
+
+
+@media (max-width: 480px) {
+    .topArea {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+
+    .botaoVoltar {
+        position: relative;
+        left: 0;
+        margin-bottom: 1rem;
+        align-self: flex-start;
+    }
+
+    .titulo {
+        font-size: 1.8rem;
+        text-align: center;
+    }
+
+    .formulario {
+        padding: 0 1rem;
+    }
+
+    .linha {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .campoInteiro {
+        width: 100%;
+    }
+
+    .input {
+        width: 100%;
+    }
+
+    .botaoLogin {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .linkContainer {
+        padding: 0 1rem;
+        text-align: center;
+    }
+}

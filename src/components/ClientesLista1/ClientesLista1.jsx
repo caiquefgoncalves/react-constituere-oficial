@@ -31,7 +31,7 @@ export default function ClientesLista1({ api }) {
     const [inativando, setInativando] = useState(false);
     const [ativando, setAtivando] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.62:5000';
     const ufs = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
 
     function apenasNumeros(valor) {

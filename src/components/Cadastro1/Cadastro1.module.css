@@ -224,3 +224,211 @@ select.input {
         transform: translateY(0);
     }
 }
+
+
+
+
+
+@media (max-width: 900px) {
+
+    .formulario {
+        padding: 0 2rem;
+    }
+
+    .linha {
+        column-gap: 2rem;
+    }
+
+    .campoMetade {
+        width: calc(50% - 1rem) !important;
+    }
+
+    .titulo {
+        font-size: 2.5rem;
+    }
+
+    .botaoVoltar {
+        left: 1rem;
+    }
+}
+
+
+
+@media (max-width: 768px) {
+
+    .topArea {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+
+    .botaoVoltar {
+        position: relative;
+        left: 0;
+        align-self: flex-start;
+    }
+
+    .titulo {
+        font-size: 2rem;
+        text-align: center;
+    }
+
+    .formulario {
+        padding: 0 1.5rem;
+    }
+
+    .linha {
+        flex-direction: column;
+        gap: 0;
+    }
+
+
+    .campoMetade {
+        width: 100% !important;
+    }
+
+    .campoInteiro {
+        width: 100%;
+    }
+
+    .botaoCadastro {
+        width: 100%;
+        max-width: 300px;
+    }
+}
+
+
+@media (max-width: 360px) {
+
+    .formulario {
+        padding: 0 1rem;
+    }
+
+    .titulo {
+        font-size: 1.6rem;
+    }
+
+    .label {
+        font-size: 0.9rem;
+    }
+
+    .input,
+    .inputFile {
+        font-size: 0.9rem;
+        padding: 0.7rem;
+    }
+
+    .botaoCadastro {
+        width: 100%;
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+
+
+    .campoMetade,
+    .campoInteiro {
+        min-width: 0;
+    }
+}
+
+
+
+.botaoCadastro,
+.botaoLogin {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    line-height: 1.2;
+}
+
+
+.botaoCadastro {
+    max-width: 100%;
+    white-space: nowrap;
+}
+
+
+.topArea {
+    margin-top: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.botaoVoltar {
+    top: 0;
+    left: 2rem;
+}
+
+@media (max-width: 900px) {
+
+    .topArea {
+        margin-top: 1rem;
+    }
+
+    .botaoVoltar {
+        left: 1rem;
+    }
+
+    .titulo {
+        font-size: 2.3rem;
+    }
+
+    .botaoCadastro {
+        padding: 12px 30px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .topArea {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 0.5rem;
+    }
+
+
+    .botaoVoltar {
+        position: relative;
+        top: 0;
+        left: 0;
+        align-self: flex-start;
+        margin-bottom: 0.5rem;
+    }
+
+    .titulo {
+        font-size: 1.8rem;
+    }
+
+    .botaoCadastro {
+        width: 100%;
+        max-width: 280px;
+        padding: 12px;
+    }
+}
+
+@media (max-width: 360px) {
+
+    .topArea {
+        margin-top: 0.3rem;
+    }
+
+    .titulo {
+        font-size: 1.5rem;
+    }
+
+    .botaoCadastro {
+        width: 100%;
+        padding: 10px;
+        font-size: 0.85rem;
+        white-space: normal;
+    }
+
+
+    .formulario,
+    .linha,
+    .campoMetade,
+    .campoInteiro {
+        min-width: 0;
+    }
+}
