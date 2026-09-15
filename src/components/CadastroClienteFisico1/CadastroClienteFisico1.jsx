@@ -119,6 +119,60 @@ export default function CadastroClienteFisico1({ api }) {
         return idade;
     }
 
+    function validarDataNascimento(data) {
+        if (!data) {
+            return { valido: false, mensagem: 'Data de nascimento é obrigatória' };
+        }
+
+        const texto = String(data).trim();
+        const regexData = /^\d{2}\/\d{2}\/\d{4}$/;
+
+        if (!regexData.test(texto)) {
+            return { valido: false, mensagem: 'Data de nascimento inválida' };
+        }
+
+        const [dia, mes, ano] = texto.split('/').map(Number);
+        const dataObjeto = new Date(ano, mes - 1, dia);
+
+        const dataValida = (
+            dataObjeto.getFullYear() === ano &&
+            dataObjeto.getMonth() === mes - 1 &&
+            dataObjeto.getDate() === dia
+        );
+
+        if (!dataValida) {
+            return { valido: false, mensagem: 'Data de nascimento inválida' };
+        }
+
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        dataObjeto.setHours(0, 0, 0, 0);
+
+        if (dataObjeto > hoje) {
+            return { valido: false, mensagem: 'A data de nascimento não pode ser uma data futura' };
+        }
+
+        const limite120 = new Date();
+        limite120.setFullYear(limite120.getFullYear() - 120);
+        limite120.setHours(0, 0, 0, 0);
+
+        if (dataObjeto < limite120) {
+            return { valido: false, mensagem: 'A data de nascimento não pode ser superior a 120 anos atrás' };
+        }
+
+        const idade = calcularIdade(texto);
+
+        if (idade === null) {
+            return { valido: false, mensagem: 'Data de nascimento inválida' };
+        }
+
+        if (idade < 18) {
+            return { valido: false, mensagem: 'O cliente deve ter no mínimo 18 anos para ser cadastrado.' };
+        }
+
+        return { valido: true };
+    }
+
     function handleNome(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
         if (valor.length <= 254) setNomeCompleto(capitalizarNome(valor));
@@ -274,38 +328,79 @@ export default function CadastroClienteFisico1({ api }) {
         setMensagem('');
         setTipoMensagem('');
 
-        let camposFaltando = [];
-        if (!nomeCompleto.trim()) camposFaltando.push('Nome completo');
-        if (!dataNascimento.trim()) camposFaltando.push('Data de nascimento');
-        if (!cpf.trim()) camposFaltando.push('CPF');
-        if (!sexo.trim()) camposFaltando.push('Sexo');
-        if (!telefone.trim()) camposFaltando.push('Telefone');
-        if (!email.trim()) camposFaltando.push('E-mail');
-        if (!cep.trim()) camposFaltando.push('CEP');
-        if (!logradouro.trim()) camposFaltando.push('Logradouro');
-        if (!numero.trim()) camposFaltando.push('Número');
-        if (!bairro.trim()) camposFaltando.push('Bairro');
-        if (!cidade.trim()) camposFaltando.push('Cidade');
-        if (!uf.trim()) camposFaltando.push('Estado');
-        if (!senha.trim()) camposFaltando.push('Senha');
-        if (!confirmarSenha.trim()) camposFaltando.push('Confirmar senha');
-
-        if (camposFaltando.length > 0) {
-            mostrarErro(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
+        if (!nomeCompleto.trim()) {
+            mostrarErro('Nome é obrigatório');
             return;
         }
 
-        const idade = calcularIdade(dataNascimento);
-        if (idade === null) {
-            mostrarErro('Data de nascimento inválida. Use o formato DD/MM/AAAA.');
+        if (!email.trim()) {
+            mostrarErro('E-mail é obrigatório');
             return;
         }
-        if (idade < 18) {
-            mostrarErro('O cliente deve ter no mínimo 18 anos para ser cadastrado.');
+
+        if (!senha.trim()) {
+            mostrarErro('Senha é obrigatória');
             return;
         }
-        if (idade > 120) {
-            mostrarErro('A idade do cliente não pode ser superior a 120 anos.');
+
+        if (!confirmarSenha.trim()) {
+            mostrarErro('Confirmar senha é obrigatório');
+            return;
+        }
+
+        if (!telefone.trim()) {
+            mostrarErro('Telefone é obrigatório');
+            return;
+        }
+
+        if (!dataNascimento.trim()) {
+            mostrarErro('Data de nascimento é obrigatória');
+            return;
+        }
+
+        if (!sexo.trim()) {
+            mostrarErro('Sexo é obrigatório');
+            return;
+        }
+
+        if (!cpf.trim()) {
+            mostrarErro('CPF é obrigatório');
+            return;
+        }
+
+        if (!cep.trim()) {
+            mostrarErro('CEP é obrigatório');
+            return;
+        }
+
+        if (!logradouro.trim()) {
+            mostrarErro('Logradouro é obrigatório');
+            return;
+        }
+
+        if (!numero.trim()) {
+            mostrarErro('Número é obrigatório');
+            return;
+        }
+
+        if (!bairro.trim()) {
+            mostrarErro('Bairro é obrigatório');
+            return;
+        }
+
+        if (!cidade.trim()) {
+            mostrarErro('Cidade é obrigatória');
+            return;
+        }
+
+        if (!uf.trim()) {
+            mostrarErro('Estado é obrigatório');
+            return;
+        }
+
+        const validacaoData = validarDataNascimento(dataNascimento);
+        if (!validacaoData.valido) {
+            mostrarErro(validacaoData.mensagem);
             return;
         }
 
@@ -328,7 +423,7 @@ export default function CadastroClienteFisico1({ api }) {
         }
 
         if (senha !== confirmarSenha) {
-            mostrarErro('As senhas não coincidem.');
+            mostrarErro('Senhas não correspondem');
             return;
         }
 
@@ -378,17 +473,22 @@ export default function CadastroClienteFisico1({ api }) {
                 body: formData
             });
 
-            const dados = await resposta.json();
+            let dados = {};
+            try {
+                dados = await resposta.json();
+            } catch {
+                dados = {};
+            }
             setExibirCarregamento(false);
 
             if (resposta.ok) {
-                setMensagem('Cliente cadastrado com sucesso!');
+                setMensagem('Cadastro realizado com sucesso!');
                 setTipoMensagem('sucesso');
                 setCarregando(false);
                 agendarLimpezaMensagem();
                 setTimeout(() => navigate('/clientes'), 2000);
             } else {
-                setMensagem(dados.error || 'Erro ao cadastrar cliente.');
+                setMensagem(dados.error || `Erro ao cadastrar cliente (HTTP ${resposta.status}).`);
                 setTipoMensagem('erro');
                 setCarregando(false);
                 agendarLimpezaMensagem();
