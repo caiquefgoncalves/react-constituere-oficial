@@ -378,13 +378,7 @@ export default function CadastroParteContrariaJuridica1({ api }) {
 
             <section className={css.containerSection} ref={topoRef}>
                 <div className={css.topArea}>
-                    <button
-                        className={css.botaoVoltar}
-                        onClick={voltar}
-                        tabIndex={-1}
-                        type="button"
-                        name="btn-voltar"
-                    >
+                    <button className={css.botaoVoltar} onClick={voltar} tabIndex={-1} name="btn-voltar" type="button">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
                             <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
                         </svg>

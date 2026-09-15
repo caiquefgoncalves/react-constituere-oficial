@@ -24,9 +24,12 @@ export default function PagamentosLista1({ api }) {
     const [parcelaBaixar, setParcelaBaixar] = useState(null);
     const [baixando, setBaixando] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.62:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
+
+    const estatisticasRef = useRef(null);
+    const [paginaEstatisticas, setPaginaEstatisticas] = useState(0);
 
     const buscarTotais = useCallback(async () => {
         if (totaisCarregados.current) return;
@@ -196,6 +199,37 @@ export default function PagamentosLista1({ api }) {
         }
     }
 
+    const totalEstatisticas = 3;
+
+    function irParaEstatistica(pagina) {
+        if (!estatisticasRef.current) return;
+
+        estatisticasRef.current.scrollTo({
+            left: estatisticasRef.current.clientWidth * pagina,
+            behavior: 'smooth'
+        });
+
+        setPaginaEstatisticas(pagina);
+    }
+
+    function rolarEstatisticasEsquerda() {
+        if (paginaEstatisticas > 0) {
+            irParaEstatistica(paginaEstatisticas - 1);
+        }
+    }
+
+    function rolarEstatisticasDireita() {
+        if (paginaEstatisticas < totalEstatisticas - 1) {
+            irParaEstatistica(paginaEstatisticas + 1);
+        }
+    }
+
+    const podeRolarEstatisticasEsquerda =
+        paginaEstatisticas > 0;
+
+    const podeRolarEstatisticasDireita =
+        paginaEstatisticas < totalEstatisticas - 1;
+
     return (
         <div className={css.paginaCompleta}>
             <Header api={API_URL} />
@@ -216,19 +250,65 @@ export default function PagamentosLista1({ api }) {
                         </div>
                     )}
 
-                    <div className={css.gradeEstatisticas}>
-                        <div className={css.cardEstatistica}>
-                            <span className={css.labelEstatistica}>Valor Total Recebido</span>
-                            <span className={css.numeroEstatistica}>{formatarMoeda(totais.recebido)}</span>
+                    <div className={css.carrosselEstatisticas}>
+
+                        {podeRolarEstatisticasEsquerda && (
+                            <button
+                                className={css.botaoSetaEstatisticas}
+                                type="button"
+                                onClick={rolarEstatisticasEsquerda}
+                                aria-label="Estatística anterior"
+                            >
+                                &#10094;
+                            </button>
+                        )}
+
+                        <div
+                            className={css.gradeEstatisticas}
+                            ref={estatisticasRef}
+                        >
+                            <div className={css.cardEstatistica}>
+            <span className={css.labelEstatistica}>
+                Valor Total Recebido
+            </span>
+
+                                <span className={css.numeroEstatistica}>
+                {formatarMoeda(totais.recebido)}
+            </span>
+                            </div>
+
+                            <div className={css.cardEstatistica}>
+            <span className={css.labelEstatistica}>
+                Valor Total a Pagar
+            </span>
+
+                                <span className={css.numeroEstatistica}>
+                {formatarMoeda(totais.a_pagar)}
+            </span>
+                            </div>
+
+                            <div className={css.cardEstatistica}>
+            <span className={css.labelEstatistica}>
+                Valor Total em Atraso
+            </span>
+
+                                <span className={css.numeroEstatistica}>
+                {formatarMoeda(totais.atrasado)}
+            </span>
+                            </div>
                         </div>
-                        <div className={css.cardEstatistica}>
-                            <span className={css.labelEstatistica}>Valor Total a Pagar</span>
-                            <span className={css.numeroEstatistica}>{formatarMoeda(totais.a_pagar)}</span>
-                        </div>
-                        <div className={css.cardEstatistica}>
-                            <span className={css.labelEstatistica}>Valor Total em Atraso</span>
-                            <span className={css.numeroEstatistica}>{formatarMoeda(totais.atrasado)}</span>
-                        </div>
+
+                        {podeRolarEstatisticasDireita && (
+                            <button
+                                className={css.botaoSetaEstatisticas}
+                                type="button"
+                                onClick={rolarEstatisticasDireita}
+                                aria-label="Próxima estatística"
+                            >
+                                &#10095;
+                            </button>
+                        )}
+
                     </div>
 
                     <div className={css.areaFiltros}>
@@ -279,26 +359,68 @@ export default function PagamentosLista1({ api }) {
                                     <tbody>
                                     {pagamentos.map(pag => (
                                         <tr key={pag.id}>
-                                            <td className={css.nomeProcesso}>{pag.nome || '--'}</td>
-                                            <td>{formatarMoeda(pag.valor)}</td>
-                                            <td>{pag.cliente || '--'}</td>
-                                            <td>
-                                                <span className={`${css.statusBadge} ${css[getStatusClass(pag.status)]}`}>
-                                                    {pag.status || '--'}
-                                                </span>
+
+                                            <td
+                                                data-label="Nome"
+                                                className={css.nomeProcesso}
+                                            >
+                                                {pag.nome || '--'}
                                             </td>
-                                            <td>{pag.pagamento || '--'}</td>
-                                            <td>{pag.vencimento || '--'}</td>
-                                            <td className={css.colunaAcoes}>
-                                                {pag.status !== 'Paga' && pag.status !== undefined && (
-                                                    <button
-                                                        className={css.botaoDarBaixa}
-                                                        onClick={() => abrirModalBaixa(pag)}
-                                                    >
-                                                        Dar Baixa
-                                                    </button>
-                                                )}
+
+                                            <td data-label="Valor">
+                <span className={css.valorPagamento}>
+                    {formatarMoeda(pag.valor)}
+                </span>
                                             </td>
+
+                                            <td data-label="Cliente">
+                                                {pag.cliente || '--'}
+                                            </td>
+
+                                            <td data-label="Status">
+                <span
+                    className={`${css.statusBadge} ${
+                        css[getStatusClass(pag.status)]
+                    }`}
+                >
+                    {pag.status || '--'}
+                </span>
+                                            </td>
+
+                                            <td data-label="Pagamento">
+                                                {pag.pagamento || '--'}
+                                            </td>
+
+                                            <td data-label="Vencimento">
+                                                {pag.vencimento || '--'}
+                                            </td>
+
+                                            <td
+                                                data-label="Ações"
+                                                className={css.colunaAcoes}
+                                            >
+                                                <div className={css.acoesPagamento}>
+                                                    {pag.status !== 'Paga' &&
+                                                        pag.status !== undefined && (
+                                                            <button
+                                                                className={css.botaoDarBaixa}
+                                                                onClick={() =>
+                                                                    abrirModalBaixa(pag)
+                                                                }
+                                                                type="button"
+                                                            >
+                                                                Dar Baixa
+                                                            </button>
+                                                        )}
+
+                                                    {pag.status === 'Paga' && (
+                                                        <span className={css.pagamentoConcluido}>
+                            Pagamento recebido
+                        </span>
+                                                    )}
+                                                </div>
+                                            </td>
+
                                         </tr>
                                     ))}
                                     </tbody>

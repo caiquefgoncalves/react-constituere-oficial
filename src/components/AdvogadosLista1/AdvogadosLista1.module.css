@@ -1,52 +1,133 @@
 @import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
 @import url('https://fonts.cdnfonts.com/css/clear-sans');
 
+
+
+
 .paginaCompleta {
     display: flex;
     flex-direction: column;
+
     min-height: 100vh;
+
     background-color: #ffffff;
 }
+
+
+
 
 .layoutDashboard {
     display: flex;
     flex: 1;
+
     width: 100%;
     max-width: 1440px;
+
     margin: 0 auto;
+
     padding: 0 1rem;
+
     box-sizing: border-box;
 }
 
+
 .menuLateralContainer {
     width: 220px;
+
     flex-shrink: 0;
+
     background-color: #ffffff;
-    border-right: 1px solid #e0e0e0;
+
+    border-right:
+            1px
+            solid
+            #e0e0e0;
+
     padding-right: 0.5rem;
 }
 
+
 .conteudoPrincipal {
     flex: 1;
-    padding: 3rem 2.5rem 2.5rem 3rem;
+
+    padding:
+            3rem
+            2.5rem
+            2.5rem
+            3rem;
+
     display: flex;
     flex-direction: column;
+
     gap: 2rem;
+
     min-width: 0;
 }
 
+
+
 .topoSaudacao {
     display: flex;
+
     justify-content: space-between;
     align-items: center;
 }
 
+
 .tituloPagina {
-    font-family: 'Glacial Indifference', sans-serif;
+    font-family:
+            'Glacial Indifference',
+            sans-serif;
+
     font-size: 2.2rem;
+
     font-weight: 700;
+
     color: #000000;
+
     margin: 0;
+}
+
+
+
+.mensagemContainer {
+    padding:
+            12px
+            20px;
+
+    border-radius: 8px;
+
+    text-align: center;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    font-weight: 600;
+}
+
+
+.mensagemContainer.sucesso {
+    background-color: #d4edda;
+
+    color: #155724;
+
+    border:
+            1px
+            solid
+            #c3e6cb;
+}
+
+
+.mensagemContainer.erro {
+    background-color: #f8d7da;
+
+    color: #721c24;
+
+    border:
+            1px
+            solid
+            #f5c6cb;
 }
 
 
@@ -55,39 +136,57 @@
     width: 100%;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
     gap: 10px;
 
+    min-width: 0;
+
     box-sizing: border-box;
 }
+
 
 .gradeEstatisticas {
     width: 100%;
 
     display: flex;
+
     align-items: stretch;
+    justify-content: center;
 
     gap: 1.5rem;
 
     overflow: visible;
 
+    min-width: 0;
+
     box-sizing: border-box;
 }
+
 
 .cardEstatistica {
     background: #ffffff;
 
-    border: 1px solid #8bb4d9;
+    border:
+            1px
+            solid
+            #8bb4d9;
+
     border-radius: 14px;
 
-    padding: 1.8rem 1.5rem 1.5rem;
+    padding:
+            1.8rem
+            1.5rem
+            1.5rem;
 
     flex: 1 1 0;
+
     min-width: 0;
 
     display: flex;
+
     flex-direction: column;
 
     align-items: center;
@@ -95,26 +194,43 @@
 
     text-align: center;
 
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
-
     box-sizing: border-box;
+
+    box-shadow:
+            0 2px 6px
+            rgba(
+                    0,
+                    0,
+                    0,
+                    0.02
+            );
 }
 
+
 .labelEstatistica {
-    font-family: 'Glacial Indifference', sans-serif;
+    font-family:
+            'Glacial Indifference',
+            sans-serif;
 
     font-size: 1rem;
-    font-weight: 700;
 
     color: #222222;
+
+    font-weight: 700;
+
+    display: block;
 
     margin-bottom: 1rem;
 }
 
+
 .numeroEstatistica {
-    font-family: 'Glacial Indifference', sans-serif;
+    font-family:
+            'Glacial Indifference',
+            sans-serif;
 
     font-size: 1.8rem;
+
     font-weight: 700;
 
     color: #222222;
@@ -123,7 +239,9 @@
 
     border-radius: 100px;
 
-    padding: 0.4rem 1.5rem;
+    padding:
+            0.4rem
+            1.5rem;
 
     min-width: 60px;
 
@@ -131,19 +249,19 @@
 }
 
 
-/* =====================================================
-SETAS DAS ESTATÍSTICAS
-===================================================== */
+
 
 .botaoSetaEstatisticas {
     display: none;
 
     border: none;
+
     background: transparent;
 
     color: #0047ab;
 
     font-size: 28px;
+
     font-weight: bold;
 
     width: 30px;
@@ -164,415 +282,831 @@ SETAS DAS ESTATÍSTICAS
             transform 0.2s ease;
 }
 
+
 .botaoSetaEstatisticas:hover {
     color: #003580;
+
     transform: scale(1.1);
 }
 
+
+
+
 .areaFiltros {
     display: flex;
+
     flex-direction: column;
+
     gap: 1rem;
 }
 
+
 .buscaContainer {
     position: relative;
+
     width: 100%;
 }
 
+
 .inputBusca {
     width: 100%;
-    padding: 0.8rem 1rem;
+
+    padding:
+            0.8rem
+            1rem;
+
     padding-right: 3rem;
-    border: 1px solid #8eb4e6;
+
+    border:
+            1px
+            solid
+            #8eb4e6;
+
     border-radius: 8px;
+
     font-size: 1rem;
-    font-family: 'Clear Sans', sans-serif;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     outline: none;
+
     box-sizing: border-box;
 }
+
 
 .inputBusca::placeholder {
     color: #a0a0a0;
 }
 
+
 .inputBusca:focus {
     border-color: #0047ab;
 }
 
+
 .iconeBusca {
     position: absolute;
+
     right: 1rem;
+
     top: 50%;
-    transform: translateY(-50%);
+
+    transform:
+            translateY(-50%);
+
     pointer-events: none;
 }
 
+
 .filtrosOpcoes {
     display: flex;
+
     gap: 1rem;
+
     flex-wrap: wrap;
 }
 
+
 .selectFiltro {
-    padding: 0.8rem 1rem;
-    border: 1px solid #8eb4e6;
+    padding:
+            0.8rem
+            1rem;
+
+    border:
+            1px
+            solid
+            #8eb4e6;
+
     border-radius: 8px;
+
     font-size: 0.9rem;
+
     color: #888888;
-    font-family: 'Clear Sans', sans-serif;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     outline: none;
+
     background-color: #ffffff;
+
     cursor: pointer;
+
     appearance: none;
-    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 1rem center;
+
+    background-image:
+            url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/%3E%3C/svg%3E");
+
+    background-repeat:
+            no-repeat;
+
+    background-position:
+            right 1rem center;
+
     background-size: 1rem;
+
     padding-right: 3rem;
 }
+
 
 .selectFiltro:focus {
     border-color: #0047ab;
 }
 
+
+
+
 .tabelaContainer {
     background: #ffffff;
-    overflow-x: auto;
+
     width: 100%;
+
+    min-width: 0;
+
+    overflow: visible;
 }
+
 
 .tabela {
     width: 100%;
+
     border-collapse: collapse;
-    font-family: 'Clear Sans', sans-serif;
+
+    table-layout: fixed;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     font-size: 0.9rem;
-    table-layout: auto;
 }
+
 
 .tabela th {
     text-align: left;
-    padding: 1rem 0.5rem;
-    border-bottom: 2px solid #e8edf2;
-    color: #000000;
-    font-weight: 700;
-    white-space: nowrap;
-}
 
-.tabela td {
-    padding: 1rem 0.5rem;
-    border-bottom: 1px solid #e8edf2;
-    color: #333333;
+    padding:
+            1rem
+            0.75rem;
+
+    border-bottom:
+            2px
+            solid
+            #e8edf2;
+
+    color: #000000;
+
+    font-weight: 700;
+
     vertical-align: middle;
 }
+
+
+.tabela td {
+    padding:
+            1.25rem
+            0.75rem;
+
+    border-bottom:
+            1px
+            solid
+            #e8edf2;
+
+    color: #333333;
+
+    vertical-align: middle;
+
+    overflow-wrap: anywhere;
+}
+
 
 .tabela tr:hover td {
     background-color: #fcfcfc;
 }
 
+
+
+.tabela th:nth-child(1),
+.tabela td:nth-child(1) {
+    width: 20%;
+}
+
+
+.tabela th:nth-child(2),
+.tabela td:nth-child(2) {
+    width: 10%;
+}
+
+
+.tabela th:nth-child(3),
+.tabela td:nth-child(3) {
+    width: 21%;
+}
+
+
+.tabela th:nth-child(4),
+.tabela td:nth-child(4) {
+    width: 25%;
+}
+
+
+.tabela th:nth-child(5),
+.tabela td:nth-child(5) {
+    width: 10%;
+}
+
+
+
+
 .nomeComBadge {
     display: flex;
+
     align-items: center;
+
     gap: 0.5rem;
+
     flex-wrap: wrap;
+
+    min-width: 0;
+}
+
+
+
+
+.colunaEscritorios {
+    min-width: 0;
+}
+
+
+.gridVinculos {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.75rem;
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+.itemGrid {
+    display: flex;
+
+    align-items: center;
+
+    gap: 0.75rem;
+
+    flex-wrap: wrap;
+
+    min-width: 0;
+}
+
+
+.nomeEscritorio {
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    font-size: 0.9rem;
+
+    color: #333333;
+
+    font-weight: 500;
+
+    min-width: 0;
+
+    overflow-wrap: anywhere;
+}
+
+
+
+.statusBadge {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding:
+            0.3rem
+            0.85rem;
+
+    border-radius: 20px;
+
+    font-size: 0.75rem;
+
+    font-weight: 600;
+
+    text-align: center;
+
+    white-space: nowrap;
+
+    min-width: 90px;
+
+    box-sizing: border-box;
+
+    flex-shrink: 0;
+}
+
+
+.statusBadge.proprietario {
+    background-color: #0047ab;
+
+    color: #ffffff;
+}
+
+
+.statusBadge.parceiro {
+    background-color: #dbe9f7;
+
+    color: #0047ab;
+
+    border:
+            1px
+            solid
+            #8eb4e6;
 }
 
 
 .statusBadge.inativo {
     background-color: #e0e0e0;
+
     color: #666666;
+
+    min-width: auto;
 }
 
-.colunaEscritorios {
-    min-width: 200px;
-}
 
-.gridVinculos {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
 
-.itemGrid {
-    display: flex;
-    align-items: center;
-    gap: 0.6rem;
-    flex-wrap: wrap;
-}
-
-.nomeEscritorio {
-    font-family: 'Clear Sans', sans-serif;
-    font-size: 0.85rem;
-    color: #333333;
-}
-
-.statusBadge {
-    display: inline-block;
-    padding: 0.25rem 0.8rem;
-    border-radius: 20px;
-    font-size: 0.75rem;
-    font-weight: 600;
-    text-align: center;
-    white-space: nowrap;
-    min-width: 90px;
-}
-
-.statusBadge.proprietario {
-    background-color: #0047ab;
-    color: #ffffff;
-}
-
-.statusBadge.parceiro {
-    background-color: #dbe9f7;
-    color: #0047ab;
-    border: 1px solid #8eb4e6;
-}
 
 .colunaAcoes {
     text-align: center !important;
-    min-width: 280px !important;
-    white-space: nowrap !important;
+
+    white-space: normal !important;
 }
+
 
 .tabela td.colunaAcoes {
     display: table-cell !important;
+
     vertical-align: middle !important;
+
     text-align: center !important;
 }
 
+
 .gridAcoes {
     display: flex;
+
     flex-direction: column;
+
     gap: 0.5rem;
+
     align-items: center;
+
+    width: 100%;
+
+    min-width: 0;
 }
+
 
 .itemAcaoGrid {
     display: flex;
-    gap: 0.4rem;
+
     align-items: center;
     justify-content: center;
-    flex-wrap: nowrap;
-    white-space: nowrap;
+
+    gap: 0.5rem;
+
+    flex-wrap: wrap;
+
+    width: 100%;
+
+    min-width: 0;
 }
+
+
+.nomeEscritorioAcao {
+    display: none;
+}
+
+
+.botoesLinhaAcao {
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 0.45rem;
+
+    flex-wrap: wrap;
+
+    min-width: 0;
+}
+
+
 
 .botaoVer,
 .botaoInativar,
 .botaoAtivar,
 .botaoInativarAdvogado {
-    padding: 0.4rem 0.9rem;
+    padding:
+            0.45rem
+            1rem;
+
     border: none;
+
     border-radius: 20px;
+
     font-size: 0.8rem;
-    font-family: 'Clear Sans', sans-serif;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     font-weight: 600;
+
     cursor: pointer;
-    transition: opacity 0.2s, transform 0.1s;
+
+    transition:
+            opacity 0.2s,
+            transform 0.1s;
+
     color: #ffffff;
-    display: inline-block;
-    vertical-align: middle;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
     white-space: nowrap;
+
     line-height: 1.2;
+
     flex-shrink: 0;
 }
+
 
 .botaoVer {
     background-color: #0047ab;
 }
 
+
 .botaoInativar {
     background-color: #ff4d4d;
 }
+
 
 .botaoAtivar {
     background-color: #28a745;
 }
 
+
 .botaoInativarAdvogado {
     background-color: #ffbf00;
 }
+
 
 .botaoVer:hover,
 .botaoInativar:hover,
 .botaoAtivar:hover,
 .botaoInativarAdvogado:hover {
     opacity: 0.85;
-    transform: scale(1.03);
+
+    transform:
+            scale(1.03);
 }
+
 
 .botaoVer:disabled,
 .botaoInativar:disabled,
 .botaoAtivar:disabled,
 .botaoInativarAdvogado:disabled {
     opacity: 0.5;
+
     cursor: not-allowed;
+
     transform: none;
 }
 
+
 .semAcao {
-    color: #999;
+    color: #999999;
+
     font-size: 0.8rem;
-    font-family: 'Clear Sans', sans-serif;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     font-style: italic;
 }
 
+
+
+
 .modalOverlay {
     position: fixed;
+
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
+
+    background-color:
+            rgba(
+                    0,
+                    0,
+                    0,
+                    0.6
+            );
+
     display: flex;
+
     justify-content: center;
     align-items: center;
+
     z-index: 1000;
-    backdrop-filter: blur(4px);
-    animation: fadeIn 0.3s ease;
+
+    backdrop-filter:
+            blur(4px);
+
+    animation:
+            fadeIn
+            0.3s
+            ease;
 }
+
 
 .modalInativacao {
     background: #ffffff;
+
     border-radius: 16px;
+
     max-width: 480px;
+
     width: 90%;
-    padding: 2rem 2.5rem 2.5rem;
+
+    padding:
+            2rem
+            2.5rem
+            2.5rem;
+
     text-align: center;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-    animation: slideUp 0.3s ease;
+
+    box-shadow:
+            0 8px 32px
+            rgba(
+                    0,
+                    0,
+                    0,
+                    0.2
+            );
+
+    animation:
+            slideUp
+            0.3s
+            ease;
+
     position: relative;
+
+    box-sizing: border-box;
 }
+
 
 .modalFecharIconeLeft {
     background: none;
+
     border: none;
+
     font-size: 1.2rem;
+
     cursor: pointer;
+
     color: #888888;
-    transition: color 0.3s;
-    padding: 0.3rem 0.6rem;
+
+    transition:
+            color 0.3s;
+
+    padding:
+            0.3rem
+            0.6rem;
+
     border-radius: 50%;
+
     position: absolute;
+
     top: 1rem;
+
     left: 1.5rem;
 }
 
+
 .modalFecharIconeLeft:hover {
     color: #333333;
+
     background-color: #f0f0f0;
 }
 
+
 .modalFecharIconeLeft:disabled {
     opacity: 0.5;
+
     cursor: not-allowed;
 }
 
+
 .tituloInativacao {
-    font-family: 'Glacial Indifference', sans-serif;
+    font-family:
+            'Glacial Indifference',
+            sans-serif;
+
     font-size: 1.8rem;
+
     font-weight: 700;
+
     color: #003580;
-    margin: 1.5rem 0 0.5rem 0;
+
+    margin:
+            1.5rem
+            0
+            0.5rem;
+
     line-height: 1.3;
 }
 
+
 .subtituloInativacao {
-    font-family: 'Clear Sans', sans-serif;
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     font-size: 1rem;
+
     color: #666666;
-    margin: 0 0 2rem 0;
+
+    margin:
+            0
+            0
+            2rem;
+
     line-height: 1.5;
 }
 
+
 .botoesInativacao {
     display: flex;
+
     justify-content: center;
+
     gap: 1rem;
+
     flex-wrap: wrap;
 }
 
+
 .btnCancelarInativacao {
     background-color: #003580;
+
     color: #ffffff;
+
     border: none;
+
     border-radius: 8px;
-    padding: 0.7rem 3rem;
-    font-family: 'Clear Sans', sans-serif;
+
+    padding:
+            0.7rem
+            3rem;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     font-size: 1rem;
+
     font-weight: 600;
+
     cursor: pointer;
-    transition: background-color 0.3s;
+
+    transition:
+            background-color
+            0.3s;
+
     min-width: 120px;
 }
+
 
 .btnCancelarInativacao:hover {
     background-color: #2f4578;
 }
 
+
 .btnCancelarInativacao:disabled {
     opacity: 0.5;
+
     cursor: not-allowed;
 }
 
+
 .btnConfirmarInativacao {
     background-color: #ffbf00;
+
     color: #ffffff;
+
     border: none;
+
     border-radius: 8px;
-    padding: 0.7rem 3rem;
-    font-family: 'Clear Sans', sans-serif;
+
+    padding:
+            0.7rem
+            3rem;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
     font-size: 1rem;
+
     font-weight: 600;
+
     cursor: pointer;
-    transition: background-color 0.3s;
+
+    transition:
+            background-color
+            0.3s;
+
     min-width: 120px;
 }
+
 
 .btnConfirmarInativacao:hover {
     background-color: #edc85d;
 }
 
+
 .btnConfirmarInativacao:disabled {
     opacity: 0.5;
+
     cursor: not-allowed;
 }
+
+
+
 
 @keyframes fadeIn {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
 }
+
 
 @keyframes slideUp {
     from {
-        transform: translateY(30px);
+        transform:
+                translateY(30px);
+
         opacity: 0;
     }
+
     to {
-        transform: translateY(0);
+        transform:
+                translateY(0);
+
         opacity: 1;
     }
 }
 
 
+
+
 @media (max-width: 769px) {
+
 
 
     .menuLateralContainer {
         display: none;
     }
 
+
     .layoutDashboard {
         padding: 0;
     }
 
+
     .conteudoPrincipal {
         width: 100%;
 
-        padding: 2rem 1.5rem;
+        padding:
+                2rem
+                1.5rem;
 
         box-sizing: border-box;
     }
@@ -584,6 +1118,7 @@ SETAS DAS ESTATÍSTICAS
         width: 100%;
     }
 
+
     .gradeEstatisticas {
         width: 100%;
 
@@ -592,6 +1127,7 @@ SETAS DAS ESTATÍSTICAS
         overflow: visible;
     }
 
+
     .cardEstatistica {
         flex: 1 1 0;
 
@@ -599,6 +1135,7 @@ SETAS DAS ESTATÍSTICAS
 
         max-width: none;
     }
+
 
     .botaoSetaEstatisticas {
         display: none;
@@ -610,6 +1147,7 @@ SETAS DAS ESTATÍSTICAS
     .filtrosOpcoes {
         width: 100%;
     }
+
 
     .selectFiltro {
         flex: 1;
@@ -626,15 +1164,20 @@ SETAS DAS ESTATÍSTICAS
         background: transparent;
     }
 
+
     .tabela {
         display: block;
 
         width: 100%;
+
+        table-layout: auto;
     }
+
 
     .tabela thead {
         display: none;
     }
+
 
     .tabela tbody {
         display: flex;
@@ -644,6 +1187,9 @@ SETAS DAS ESTATÍSTICAS
         gap: 1.25rem;
     }
 
+
+
+
     .tabela tr {
         display: block;
 
@@ -651,7 +1197,10 @@ SETAS DAS ESTATÍSTICAS
 
         background: #ffffff;
 
-        border: 1px solid #dbe9f7;
+        border:
+                1px
+                solid
+                #dbe9f7;
 
         border-radius: 16px;
 
@@ -663,12 +1212,37 @@ SETAS DAS ESTATÍSTICAS
 
         box-shadow:
                 0 3px 12px
-                rgba(0, 71, 171, 0.06);
+                rgba(
+                        0,
+                        71,
+                        171,
+                        0.06
+                );
     }
+
 
     .tabela tr:hover td {
         background: transparent;
     }
+
+
+
+
+    .tabela th:nth-child(1),
+    .tabela td:nth-child(1),
+    .tabela th:nth-child(2),
+    .tabela td:nth-child(2),
+    .tabela th:nth-child(3),
+    .tabela td:nth-child(3),
+    .tabela th:nth-child(4),
+    .tabela td:nth-child(4),
+    .tabela th:nth-child(5),
+    .tabela td:nth-child(5) {
+        width: auto;
+    }
+
+
+
 
     .tabela td {
         display: flex;
@@ -680,11 +1254,18 @@ SETAS DAS ESTATÍSTICAS
 
         width: auto;
 
-        margin: 0 1.25rem;
+        margin:
+                0
+                1.25rem;
 
-        padding: 1rem 0;
+        padding:
+                1rem
+                0;
 
-        border-bottom: 1px solid #edf0f3;
+        border-bottom:
+                1px
+                solid
+                #edf0f3;
 
         box-sizing: border-box;
 
@@ -695,6 +1276,7 @@ SETAS DAS ESTATÍSTICAS
         overflow-wrap: anywhere;
     }
 
+
     .tabela td:last-child {
         border-bottom: none;
     }
@@ -703,11 +1285,15 @@ SETAS DAS ESTATÍSTICAS
 
 
     .tabela td::before {
-        content: attr(data-label);
+        content:
+                attr(data-label);
 
-        font-family: 'Clear Sans', sans-serif;
+        font-family:
+                'Clear Sans',
+                sans-serif;
 
         font-size: 0.85rem;
+
         font-weight: 700;
 
         color: #666666;
@@ -729,12 +1315,17 @@ SETAS DAS ESTATÍSTICAS
 
         background: #f8fbff;
 
-        border-bottom: 1px solid #dbe9f7;
+        border-bottom:
+                1px
+                solid
+                #dbe9f7;
     }
+
 
     .tabela td:first-child::before {
         color: #0047ab;
     }
+
 
     .nomeComBadge {
         justify-content: flex-end;
@@ -747,19 +1338,23 @@ SETAS DAS ESTATÍSTICAS
     }
 
 
-
-
     .colunaEscritorios {
         min-width: 0;
     }
 
+
     .gridVinculos {
-        width: min(100%, 420px);
+        width:
+                min(
+                        100%,
+                        420px
+                );
 
         align-items: stretch;
 
         gap: 0.6rem;
     }
+
 
     .itemGrid {
         width: 100%;
@@ -774,12 +1369,16 @@ SETAS DAS ESTATÍSTICAS
 
         background: #f8fbff;
 
-        border: 1px solid #e1ebf5;
+        border:
+                1px
+                solid
+                #e1ebf5;
 
         border-radius: 10px;
 
         box-sizing: border-box;
     }
+
 
     .nomeEscritorio {
         text-align: left;
@@ -796,19 +1395,26 @@ SETAS DAS ESTATÍSTICAS
         white-space: normal !important;
     }
 
+
     .tabela td.colunaAcoes {
         display: flex !important;
 
         text-align: right !important;
     }
 
+
     .gridAcoes {
-        width: min(100%, 420px);
+        width:
+                min(
+                        100%,
+                        420px
+                );
 
         align-items: stretch;
 
         gap: 0.75rem;
     }
+
 
     .itemAcaoGrid {
         display: flex;
@@ -819,30 +1425,35 @@ SETAS DAS ESTATÍSTICAS
 
         gap: 0.4rem;
 
+        width: 100%;
+
         white-space: normal;
     }
+
 
     .nomeEscritorioAcao {
         display: block;
 
-        font-family: 'Clear Sans', sans-serif;
+        font-family:
+                'Clear Sans',
+                sans-serif;
 
         font-size: 0.75rem;
+
         font-weight: 600;
 
         color: #777777;
     }
 
+
     .botoesLinhaAcao {
-        display: flex;
-
         justify-content: flex-end;
-
-        gap: 0.4rem;
 
         flex-wrap: wrap;
     }
+
 }
+
 
 
 
@@ -851,10 +1462,19 @@ SETAS DAS ESTATÍSTICAS
 
 
     .conteudoPrincipal {
-        padding: 1rem 4vw;
+        width: 100%;
+
+        padding:
+                1rem
+                4vw;
 
         gap: 1.5rem;
+
+        box-sizing: border-box;
     }
+
+
+
 
     .tituloPagina {
         font-size: 1.8rem;
@@ -866,15 +1486,9 @@ SETAS DAS ESTATÍSTICAS
     .carrosselEstatisticas {
         width: 100%;
 
-        display: flex;
-
-        align-items: center;
-        justify-content: center;
-
         gap: 3px;
-
-        box-sizing: border-box;
     }
+
 
     .gradeEstatisticas {
         width: 100%;
@@ -893,7 +1507,9 @@ SETAS DAS ESTATÍSTICAS
 
         scroll-behavior: smooth;
 
-        scroll-snap-type: x mandatory;
+        scroll-snap-type:
+                x
+                mandatory;
 
         scrollbar-width: none;
 
@@ -904,20 +1520,30 @@ SETAS DAS ESTATÍSTICAS
         box-sizing: border-box;
     }
 
+
     .gradeEstatisticas::-webkit-scrollbar {
         display: none;
     }
 
+
     .cardEstatistica {
-        flex: 0 0 calc(100% - 10px);
+        flex:
+                0
+                0
+                calc(100% - 10px);
 
-        width: calc(100% - 10px);
+        width:
+                calc(100% - 10px);
 
-        min-width: calc(100% - 10px);
+        min-width:
+                calc(100% - 10px);
 
-        max-width: calc(100% - 10px);
+        max-width:
+                calc(100% - 10px);
 
-        margin: 0 5px;
+        margin:
+                0
+                5px;
 
         padding:
                 1.6rem
@@ -929,23 +1555,30 @@ SETAS DAS ESTATÍSTICAS
         scroll-snap-align: center;
     }
 
+
     .labelEstatistica {
         font-size: 1.2rem;
     }
+
 
     .numeroEstatistica {
         font-size: 2rem;
     }
 
+
     .botaoSetaEstatisticas {
         display: flex;
 
-        flex: 0 0 26px;
+        flex:
+                0
+                0
+                26px;
 
         width: 26px;
         height: 50px;
 
         padding: 0;
+
         margin: 0;
 
         font-size: 22px;
@@ -957,6 +1590,7 @@ SETAS DAS ESTATÍSTICAS
     .filtrosOpcoes {
         flex-direction: column;
     }
+
 
     .selectFiltro {
         width: 100%;
@@ -971,9 +1605,11 @@ SETAS DAS ESTATÍSTICAS
         gap: 1rem;
     }
 
+
     .tabela tr {
         border-radius: 14px;
     }
+
 
     .tabela td {
         flex-direction: column;
@@ -992,6 +1628,7 @@ SETAS DAS ESTATÍSTICAS
 
         text-align: left;
     }
+
 
     .tabela td::before {
         font-size: 0.8rem;
@@ -1012,16 +1649,20 @@ SETAS DAS ESTATÍSTICAS
         background: #f8fbff;
     }
 
+
     .tabela td:first-child::before {
         color: #0047ab;
     }
+
 
     .nomeComBadge {
         justify-content: flex-start;
 
         text-align: left;
 
-        font-family: 'Clear Sans', sans-serif;
+        font-family:
+                'Clear Sans',
+                sans-serif;
 
         font-size: 1rem;
 
@@ -1036,6 +1677,7 @@ SETAS DAS ESTATÍSTICAS
 
         align-items: stretch;
     }
+
 
     .itemGrid {
         width: 100%;
@@ -1061,11 +1703,13 @@ SETAS DAS ESTATÍSTICAS
         text-align: left !important;
     }
 
+
     .gridAcoes {
         width: 100%;
 
         align-items: stretch;
     }
+
 
     .itemAcaoGrid {
         width: 100%;
@@ -1074,8 +1718,12 @@ SETAS DAS ESTATÍSTICAS
 
         padding-bottom: 0.65rem;
 
-        border-bottom: 1px solid #f0f0f0;
+        border-bottom:
+                1px
+                solid
+                #f0f0f0;
     }
+
 
     .itemAcaoGrid:last-child {
         padding-bottom: 0;
@@ -1083,11 +1731,13 @@ SETAS DAS ESTATÍSTICAS
         border-bottom: none;
     }
 
+
     .nomeEscritorioAcao {
         font-size: 0.78rem;
 
         color: #666666;
     }
+
 
     .botoesLinhaAcao {
         width: 100%;
@@ -1096,6 +1746,7 @@ SETAS DAS ESTATÍSTICAS
 
         flex-wrap: wrap;
     }
+
 
     .botaoVer,
     .botaoInativar,
@@ -1112,7 +1763,8 @@ SETAS DAS ESTATÍSTICAS
 
 
     .modalInativacao {
-        width: calc(100% - 2rem);
+        width:
+                calc(100% - 2rem);
 
         padding:
                 2rem
@@ -1122,13 +1774,21 @@ SETAS DAS ESTATÍSTICAS
         box-sizing: border-box;
     }
 
+
     .tituloInativacao {
         font-size: 1.5rem;
     }
 
+
+    .subtituloInativacao {
+        font-size: 0.95rem;
+    }
+
+
     .botoesInativacao {
         flex-direction: column;
     }
+
 
     .btnCancelarInativacao,
     .btnConfirmarInativacao {
@@ -1140,4 +1800,5 @@ SETAS DAS ESTATÍSTICAS
 
         box-sizing: border-box;
     }
+
 }
