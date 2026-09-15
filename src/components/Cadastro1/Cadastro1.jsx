@@ -434,6 +434,7 @@ export default function Cadastro1({ api }) {
                                 onChange={(e) => setOab(e.target.value)}
                                 tabIndex={5}
                                 name="num_oab"
+                                maxLength={10}
                             />
                         </div>
                         <div className={css.campoMetade}>

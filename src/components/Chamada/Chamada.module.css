@@ -97,3 +97,51 @@
     filter: drop-shadow(0px -10px 10px rgba(0,0,0,0.1));
 }
 
+@media (max-width: 426px) {
+    .container {
+        flex-direction: column;
+    }
+    .imagemArea {
+        justify-content: center;
+        min-width: 0;
+        max-width: 80vw;
+    }
+
+    .titulo {
+        font-size: 2rem;
+    }
+
+    .paragrafo {
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+    .botaoChamada {
+        padding: 0.5rem 1rem;
+
+    }
+
+    .quadroAzul {
+        width: 80vw;
+        max-width: 100%;
+
+    }
+    .estatuaSaindo {
+        max-width: 100vw;
+    }
+}
+
+@media (max-width: 321px) {
+    .textoArea {
+        max-width: 80vw;
+        min-width: 0;
+    }
+
+    .titulo {
+        max-width: 80vw;
+    }
+
+    .paragrafo {
+        max-width: 80vw;
+    }
+}

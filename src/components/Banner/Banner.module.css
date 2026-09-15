@@ -22,7 +22,7 @@
 }
 
 .textoArea {
-    max-width: 600px;
+    max-width: 40vw;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -69,3 +69,84 @@
     background-color: #003580; /* Azul mais escuro */
 }
 
+@media (max-width: 769px) {
+    .banner {
+        background-position: -18rem 1rem;
+        padding: 4rem 0.5rem 4rem 1.5rem;
+    }
+
+    .textoArea {
+        max-width: 60vw;
+    }
+
+    .textos {
+        max-width: 30rem;
+        padding: 0 1rem;
+    }
+
+    .titulo {
+        font-size: 2rem;
+    }
+
+    .paragrafo {
+        font-size: 0.9rem;
+        max-width: 25rem;
+    }
+
+    .botaoBanner {
+        font-size: 1.2rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .textoArea {
+        max-width: 65vw;
+        padding: 0;
+    }
+
+    .subtitulo {
+        font-size: 1.2rem;
+    }
+
+    .banner {
+        height: auto;
+        min-height: 380px;
+        padding-top: 60px;
+        padding-bottom: 40px;
+        background-position: -90vw 0.5vw;
+    }
+
+    .textos {
+        max-width: 85%;
+        padding: 0 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.2rem;
+    }
+
+    .titulo {
+        font-size: 1.5rem;
+    }
+
+    .paragrafo {
+        font-size: 0.85rem;
+        max-width: 90%;
+    }
+
+    .botaoBanner {
+        font-size: 1rem;
+        padding: 0.5rem 1rem;
+    }
+}
+
+@media (max-width: 376px) {
+    .banner {
+        background-position: -140vw 1vw;
+    }
+
+    .botaoBanner {
+        padding: 0.5rem 0.7rem;
+    }
+}

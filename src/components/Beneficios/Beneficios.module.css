@@ -42,7 +42,7 @@
     color: #ffffff;
     border: none;
     border-radius: 50px;
-    padding: 14px 50px;
+    padding: 1rem 1.5rem;
     font-size: 1.1rem;
     font-weight: 700;
     cursor: pointer;
@@ -55,18 +55,51 @@
     background-color: #d69f00;
 }
 
-@media (max-width: 768px) {
+
+@media (max-width: 769px) {
     .titulo {
         text-align: center;
         font-size: 2rem;
         margin-bottom: 2.5rem;
     }
+
+    .centralizar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .titulo{
+        margin-left: 0rem;
+    }
+
+    .cards {
+        display: flex;
+        justify-content: center;
+    }
+
+    .botao {
+        margin-top: 2rem;
+    }
+
     .cardsContainer {
-        gap: 2rem;
+        gap: 0;
+        justify-content: space-around;
     }
-    .botaoAmbar {
-        padding: 12px 30px;
-        width: 100%;
-        max-width: 300px;
+
+}
+
+@media(max-width:426px){
+
+    .botao{
+        margin-top: 3rem;
+        margin-bottom: 2rem;
     }
+
+    .cardsContainer {
+        flex-direction: column;
+        align-items: center;
+        gap: 5vw;
+    }
+
 }
