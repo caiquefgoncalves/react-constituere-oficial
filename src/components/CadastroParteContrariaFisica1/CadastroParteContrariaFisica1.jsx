@@ -6,6 +6,10 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import BotaoAlternar from "../BotaoAlternar/BotaoAlternar.jsx";
 
 export default function CadastroParteContrariaFisica1({ api }) {
+    window.onload = function() {
+        window.scrollTo(0, 0);
+    };
+
     const navigate = useNavigate();
     const location = useLocation();
     const topoRef = useRef(null);
@@ -694,6 +698,7 @@ export default function CadastroParteContrariaFisica1({ api }) {
                                     maxLength={9}
                                     tabIndex={12}
                                     name="cep"
+                                    onBlur={buscarCep}
                                 />
                                 {buscandoCep && (
                                     <span style={{ position: 'absolute', right: '15px', top: '50%', transform: 'translateY(-50%)', fontSize: '0.9rem', color: '#666' }}>

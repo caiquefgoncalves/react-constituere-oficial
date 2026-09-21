@@ -11,7 +11,9 @@ export default function Header({ api, fotoPerfil }) {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.20:5000';
+    const [menuNotificacoes, setMenuNotificacoes] = useState(false);
+
+    const API_URL = api || 'http://10.92.11.39:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -64,6 +66,10 @@ export default function Header({ api, fotoPerfil }) {
         }
     }
 
+    function mostrarNotificacoes() {
+        setMenuNotificacoes(!menuNotificacoes);
+    }
+
 
     function fazerLogout() {
         fecharMenuMobile();
@@ -92,6 +98,85 @@ export default function Header({ api, fotoPerfil }) {
         } else {
             navigate('/dashboard');
         }
+    }
+
+    function ListaNotificacoes() {
+        return (
+            <div className={css.listaNotificacoes}>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+                <div className={css.notificacao}>
+                    <div className={css.notificacaoTopo}>
+                        <p className={css.notificacaoTitulo}>Nome</p>
+                        <p className={css.notificacaoData}>21/09/26</p>
+
+                    </div>
+                    <p className={css.notificacaoDescricao}>Descrição</p>
+                </div>
+            </div>
+        )
     }
 
 
@@ -330,16 +415,16 @@ export default function Header({ api, fotoPerfil }) {
 
 
 
-                <div
-                    className={`d-none d-lg-flex ${css.divbotoes}`}
-                >
+                <div className={css.divbotoes}>
 
                     {token ? (
                         <>
+                            {/* BOTÃO DE NOTIFICAÇÕES */}
                             <button
                                 className={css.iconeBtn}
                                 type="button"
                                 name="btn-notificacoes"
+                                onClick={mostrarNotificacoes}
                             >
                                 <img
                                     src="/sino.png"
@@ -348,8 +433,9 @@ export default function Header({ api, fotoPerfil }) {
                                 />
                             </button>
 
+                            {/* PERFIL */}
                             <button
-                                className={css.iconeBtn}
+                                className={`${css.iconeBtn} d-none d-lg-flex`}
                                 onClick={irParaPerfil}
                                 type="button"
                                 name="btn-perfil"
@@ -367,7 +453,7 @@ export default function Header({ api, fotoPerfil }) {
                             </button>
                         </>
                     ) : (
-                        <>
+                        <div className="d-none d-lg-flex">
                             <Link to="/cadastro">
                                 <button
                                     className={css.cadastro}
@@ -387,7 +473,7 @@ export default function Header({ api, fotoPerfil }) {
                                     Login
                                 </button>
                             </Link>
-                        </>
+                        </div>
                     )}
 
                 </div>
@@ -442,6 +528,10 @@ export default function Header({ api, fotoPerfil }) {
                 </button>
 
                 <MenuMobile />
+
+                {menuNotificacoes && (
+                    <ListaNotificacoes />
+                )}
 
             </div>
 

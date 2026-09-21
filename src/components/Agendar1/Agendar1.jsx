@@ -10,23 +10,24 @@ export default function Agendar1({ api }) {
 
     const [data, setData] = useState('');
     const [cliente, setCliente] = useState('');
+    const [advogado2, setAdvogado2] = useState('');
     const [assunto, setAssunto] = useState('');
+    const [horario, setHorario] = useState('');
     const [duracao, setDuracao] = useState('');
 
     const [clientes, setClientes] = useState([]);
+    const [advogados, setAdvogados] = useState([]);
 
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
     const [carregandoClientes, setCarregandoClientes] = useState(false);
+    const [carregandoAdvogados, setCarregandoAdvogados] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.123:5000';
+    const API_URL = api || 'http://10.92.11.39:5000';
 
     function agendarLimpezaMensagem() {
-        if (window.timeoutMensagem) {
-            clearTimeout(window.timeoutMensagem);
-        }
-
+        if (window.timeoutMensagem) clearTimeout(window.timeoutMensagem);
         window.timeoutMensagem = setTimeout(() => {
             setMensagem('');
             setTipoMensagem('');
@@ -38,10 +39,7 @@ export default function Agendar1({ api }) {
         setTipoMensagem(tipo);
 
         if (topoRef.current) {
-            topoRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
+            topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
         agendarLimpezaMensagem();
@@ -51,7 +49,7 @@ export default function Agendar1({ api }) {
         if (!texto) return '';
         return texto
             .split(' ')
-            .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase())
+            .map(p => p.charAt(0).toUpperCase() + p.slice(1).toLowerCase())
             .join(' ');
     }
 
@@ -61,52 +59,66 @@ export default function Agendar1({ api }) {
 
     function handleAssunto(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
-        if (valor.length <= 256) {
-            setAssunto(capitalizar(valor));
-        }
+        if (valor.length <= 256) setAssunto(capitalizar(valor));
     }
 
     function handleData(e) {
         let valor = apenasNumeros(e.target.value);
-        if (valor.length > 8) {
-            valor = valor.slice(0, 8);
-        }
+        if (valor.length > 8) valor = valor.slice(0, 8);
 
-        if (valor.length <= 2) {
-            setData(valor);
-        } else if (valor.length <= 4) {
-            setData(`${valor.slice(0, 2)}/${valor.slice(2)}`);
-        } else {
-            setData(`${valor.slice(0, 2)}/${valor.slice(2, 4)}/${valor.slice(4, 8)}`);
-        }
+        if (valor.length <= 2) setData(valor);
+        else if (valor.length <= 4) setData(`${valor.slice(0, 2)}/${valor.slice(2)}`);
+        else setData(`${valor.slice(0, 2)}/${valor.slice(2, 4)}/${valor.slice(4, 8)}`);
     }
 
-    function validarData(dataTexto) {
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) {
-            return false;
-        }
-        const [dia, mes, ano] = dataTexto.split('/').map(Number);
-        const dataObjeto = new Date(ano, mes - 1, dia);
-        return dataObjeto.getFullYear() === ano && dataObjeto.getMonth() === mes - 1 && dataObjeto.getDate() === dia;
+    function handleHorario(e) {
+        let valor = apenasNumeros(e.target.value);
+        if (valor.length > 4) valor = valor.slice(0, 4);
+
+        if (valor.length <= 2) setHorario(valor);
+        else setHorario(`${valor.slice(0, 2)}:${valor.slice(2)}`);
     }
 
     function handleDuracao(e) {
         let valor = apenasNumeros(e.target.value);
+        if (valor.length > 4) valor = valor.slice(0, 4);
 
-        if (valor.length > 4) {
-            valor = valor.slice(0, 4);
-        }
-
-        if (valor.length === 0) {
-            setDuracao('');
-        } else if (valor.length <= 2) {
-            setDuracao(valor);
-        } else {
-            setDuracao(`${valor.slice(0, 2)}:${valor.slice(2)}`);
-        }
+        if (valor.length === 0) setDuracao('');
+        else if (valor.length <= 2) setDuracao(valor);
+        else setDuracao(`${valor.slice(0, 2)}:${valor.slice(2)}`);
     }
 
+    function validarData(dataTexto) {
+        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) return false;
+        const [dia, mes, ano] = dataTexto.split('/').map(Number);
+        const dataObjeto = new Date(ano, mes - 1, dia);
+        return dataObjeto.getFullYear() === ano &&
+            dataObjeto.getMonth() === mes - 1 &&
+            dataObjeto.getDate() === dia;
+    }
 
+    function validarHorario(horarioTexto) {
+        if (!/^\d{2}:\d{2}$/.test(horarioTexto)) return false;
+        const [hora, minuto] = horarioTexto.split(':').map(Number);
+        return hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59;
+    }
+
+    function duracaoParaMinutos(duracaoTexto) {
+        if (!duracaoTexto) return null;
+
+        if (duracaoTexto.includes(':')) {
+            const partes = duracaoTexto.split(':');
+            if (partes.length !== 2) return null;
+            const h = Number(partes[0]);
+            const m = Number(partes[1]);
+            if (isNaN(h) || isNaN(m) || m >= 60) return null;
+            return h * 60 + m;
+        }
+
+        if (/^\d+$/.test(duracaoTexto)) return Number(duracaoTexto);
+
+        return null;
+    }
 
     function voltar() {
         navigate('/agendamentos');
@@ -128,9 +140,7 @@ export default function Agendar1({ api }) {
             const response = await fetch(`${API_URL}/clientes`, {
                 method: 'GET',
                 credentials: 'include',
-                headers: {
-                    'X-Access-Token': token
-                }
+                headers: { 'X-Access-Token': token }
             });
 
             const dados = await response.json();
@@ -146,14 +156,44 @@ export default function Agendar1({ api }) {
             }
 
             const lista = dados.clientes || [];
-            const clientesAtivos = lista.filter(clienteItem => clienteItem.status === 'ativo');
-            setClientes(clientesAtivos);
+            setClientes(lista.filter(c => c.status === 'ativo'));
 
         } catch (erro) {
             console.error('Erro ao carregar clientes:', erro);
             mostrarMensagem('Erro de conexão ao carregar clientes.');
         } finally {
             setCarregandoClientes(false);
+        }
+    }
+
+    async function buscarAdvogados() {
+        setCarregandoAdvogados(true);
+
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/listar_advogados`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
+
+            if (response.status === 401) {
+                deslogar();
+                return;
+            }
+
+            if (!response.ok) {
+                setAdvogados([]);
+                return;
+            }
+
+            const dados = await response.json();
+            setAdvogados(dados.advogados || []);
+
+        } catch (erro) {
+            console.error('Erro ao carregar advogados:', erro);
+        } finally {
+            setCarregandoAdvogados(false);
         }
     }
 
@@ -164,14 +204,11 @@ export default function Agendar1({ api }) {
             return;
         }
 
-        sessionStorage.removeItem('processo_temp');
-        sessionStorage.removeItem('parte_contraria_temp');
-        sessionStorage.removeItem('honorarios_temp');
-
         buscarClientes();
+        buscarAdvogados();
     }, [API_URL]);
 
-    function handleCadastro(e) {
+    async function handleCadastro(e) {
         e.preventDefault();
 
         setCarregando(true);
@@ -180,33 +217,11 @@ export default function Agendar1({ api }) {
 
         const camposFaltando = [];
 
-        if (!numProcesso.trim()) {
-            camposFaltando.push('Número do processo');
-        }
-        if (!tipoProcesso.trim()) {
-            camposFaltando.push('Tipo do processo');
-        }
-        if (!assunto.trim()) {
-            camposFaltando.push('Assunto');
-        }
-        if (!area.trim()) {
-            camposFaltando.push('Área');
-        }
-        if (!comarca.trim()) {
-            camposFaltando.push('Comarca');
-        }
-        if (!vara.trim()) {
-            camposFaltando.push('Vara');
-        }
-        if (!instancia) {
-            camposFaltando.push('Instância');
-        }
-        if (!data.trim()) {
-            camposFaltando.push('Data de início');
-        }
-        if (!cliente) {
-            camposFaltando.push('Cliente');
-        }
+        if (!cliente) camposFaltando.push('Cliente');
+        if (!assunto.trim()) camposFaltando.push('Assunto');
+        if (!data.trim()) camposFaltando.push('Data');
+        if (!horario.trim()) camposFaltando.push('Horário');
+        if (!duracao.trim()) camposFaltando.push('Duração');
 
         if (camposFaltando.length > 0) {
             mostrarMensagem(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
@@ -214,33 +229,101 @@ export default function Agendar1({ api }) {
             return;
         }
 
-        if (!validarNumeroProcesso(numProcesso)) {
-            mostrarMensagem('Número do processo inválido. Use o formato 0000000-00.0000.0.00.0000.');
-            setCarregando(false);
-            return;
-        }
-
         if (!validarData(data)) {
-            mostrarMensagem('Data de início inválida.');
+            mostrarMensagem('Data inválida.');
             setCarregando(false);
             return;
         }
 
-        const dadosProcesso = {
+        const [dia, mes, ano] = data.split('/').map(Number);
+        const dataObjeto = new Date(ano, mes - 1, dia);
+        const hoje = new Date();
+        hoje.setHours(0, 0, 0, 0);
+        dataObjeto.setHours(0, 0, 0, 0);
+
+        if (dataObjeto < hoje) {
+            mostrarMensagem('A data não pode ser anterior ao dia de hoje.');
+            setCarregando(false);
+            return;
+        }
+
+        if (!validarHorario(horario)) {
+            mostrarMensagem('Horário inválido. Use o formato HH:MM.');
+            setCarregando(false);
+            return;
+        }
+
+        const duracaoMin = duracaoParaMinutos(duracao);
+
+        if (duracaoMin === null) {
+            mostrarMensagem('Duração inválida.');
+            setCarregando(false);
+            return;
+        }
+
+        if (duracaoMin <= 0) {
+            mostrarMensagem('A duração deve ser maior que 0.');
+            setCarregando(false);
+            return;
+        }
+
+        if (duracaoMin > 480) {
+            mostrarMensagem('A duração não pode ser maior que 8 horas.');
+            setCarregando(false);
+            return;
+        }
+
+        const nomeCliente = clientes.find(c => String(c.id) === String(cliente));
+
+        const payload = {
+            id_cliente: Number(cliente),
+            id_advogado_2: advogado2 ? Number(advogado2) : null,
+            cliente: nomeCliente ? nomeCliente.nome : '',
             assunto: assunto.trim(),
-            data_inicio: data,
-            id_cliente: Number(cliente)
+            data: data,
+            horario: horario,
+            duracao: duracao
         };
 
-        sessionStorage.setItem('processo_temp', JSON.stringify(dadosProcesso));
+        try {
+            const token = localStorage.getItem('token');
+            const resposta = await fetch(`${API_URL}/agendamentos`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Token': token
+                },
+                body: JSON.stringify(payload)
+            });
 
-        navigate('/cadastro_parte_contraria_fisica', {
-            state: {
-                processo: dadosProcesso
+            let dados = {};
+            try {
+                dados = await resposta.json();
+            } catch {
+                dados = {};
             }
-        });
 
-        setCarregando(false);
+            if (resposta.status === 401) {
+                deslogar();
+                return;
+            }
+
+            if (!resposta.ok) {
+                mostrarMensagem(dados.error || 'Erro ao cadastrar agendamento.');
+                return;
+            }
+
+            mostrarMensagem(dados.mensagem || 'Agendamento cadastrado com sucesso!', 'sucesso');
+
+            setTimeout(() => navigate('/agendamentos'), 2000);
+
+        } catch (erro) {
+            console.error('Erro ao cadastrar agendamento:', erro);
+            mostrarMensagem('Erro de conexão com o servidor.');
+        } finally {
+            setCarregando(false);
+        }
     }
 
     return (
@@ -302,10 +385,8 @@ export default function Agendar1({ api }) {
                                 <option value="" disabled>
                                     {carregandoClientes ? 'Carregando clientes...' : 'Selecione o cliente'}
                                 </option>
-                                {clientes.map(clienteItem => (
-                                    <option key={clienteItem.id} value={clienteItem.id}>
-                                        {clienteItem.nome}
-                                    </option>
+                                {clientes.map(c => (
+                                    <option key={c.id} value={c.id}>{c.nome}</option>
                                 ))}
                             </select>
                             {!carregandoClientes && clientes.length === 0 && (
@@ -317,24 +398,19 @@ export default function Agendar1({ api }) {
                             <label className={css.label}>Advogado 2 (se houver)</label>
                             <select
                                 className={css.input}
-                                value={cliente}
-                                onChange={(e) => setCliente(e.target.value)}
+                                value={advogado2}
+                                onChange={(e) => setAdvogado2(e.target.value)}
                                 tabIndex={2}
-                                name="cliente"
-                                disabled={carregandoClientes}
+                                name="advogado2"
+                                disabled={carregandoAdvogados}
                             >
-                                <option value="" disabled>
-                                    {carregandoClientes ? 'Carregando clientes...' : 'Selecione o cliente'}
+                                <option value="">
+                                    {carregandoAdvogados ? 'Carregando advogados...' : 'Nenhum'}
                                 </option>
-                                {clientes.map(clienteItem => (
-                                    <option key={clienteItem.id} value={clienteItem.id}>
-                                        {clienteItem.nome}
-                                    </option>
+                                {advogados.map(a => (
+                                    <option key={a.id} value={a.id}>{a.nome}</option>
                                 ))}
                             </select>
-                            {!carregandoClientes && clientes.length === 0 && (
-                                <small>Nenhum cliente ativo encontrado.</small>
-                            )}
                         </div>
 
                         <div className={css.campoMetade}>
@@ -348,6 +424,7 @@ export default function Agendar1({ api }) {
                                 tabIndex={3}
                             />
                         </div>
+
                         <div className={css.campoMetade}>
                             <label className={css.label}>Data *</label>
                             <input
@@ -364,26 +441,16 @@ export default function Agendar1({ api }) {
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Horário *</label>
-                            <select
+                            <input
+                                type="text"
                                 className={css.input}
-                                value={cliente}
-                                onChange={(e) => setCliente(e.target.value)}
+                                placeholder="HH:MM"
+                                value={horario}
+                                onChange={handleHorario}
                                 tabIndex={5}
-                                name="cliente"
-                                disabled={carregandoClientes}
-                            >
-                                <option value="" disabled>
-                                    {carregandoClientes ? 'Carregando clientes...' : 'Selecione o cliente'}
-                                </option>
-                                {clientes.map(clienteItem => (
-                                    <option key={clienteItem.id} value={clienteItem.id}>
-                                        {clienteItem.nome}
-                                    </option>
-                                ))}
-                            </select>
-                            {!carregandoClientes && clientes.length === 0 && (
-                                <small>Nenhum cliente ativo encontrado.</small>
-                            )}
+                                name="horario"
+                                maxLength={5}
+                            />
                         </div>
 
                         <div className={css.campoMetade}>
@@ -394,9 +461,10 @@ export default function Agendar1({ api }) {
                                 placeholder="00:00"
                                 value={duracao}
                                 onChange={handleDuracao}
+                                tabIndex={6}
+                                name="duracao"
                             />
                         </div>
-
 
                         <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>
                             <p className={css.obsCampos}>* Campos obrigatórios</p>

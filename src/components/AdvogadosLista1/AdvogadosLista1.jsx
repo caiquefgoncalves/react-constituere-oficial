@@ -8,7 +8,7 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 export default function AdvogadosLista1({ api }) {
     const navigate = useNavigate();
 
-    const API_URL = api || 'http://10.92.11.20:5000';
+    const API_URL = api || 'http://10.92.11.39:5000';
 
 
     const [advogados, setAdvogados] = useState([]);

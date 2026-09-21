@@ -170,7 +170,13 @@
     align-items: center;
     justify-content: center;
 
+    position: relative;
+
     transition: transform 0.2s ease;
+}
+
+.iconeBtn:hover {
+    transform: scale(1.08);
 }
 
 .iconeBtn:hover {
@@ -443,38 +449,358 @@
     font-family: 'Glacial Indifference', sans-serif;
 }
 
+.listaNotificacoes {
+    display: flex;
+    flex-direction: column;
+
+    gap: 15px;
+
+    position: absolute;
+
+    right: 20px;
+    top: 70px;
+
+    padding: 20px;
+
+    width: 360px;
+
+    height: auto;
+
+    max-height: 500px;
+
+    background: white;
+
+    border-radius: 15px;
+
+    box-shadow:
+            0 4px 8px rgba(0, 0, 0, 0.2),
+            0 6px 20px rgba(0, 0, 0, 0.19);
+
+    overflow-y: auto;
+
+    z-index: 2000;
+}
+
+.notificacao {
+    display: flex;
+    flex-direction: column;
+}
+
+.notificacao p {
+    margin: 0;
+}
+
+.notificacaoTopo {
+    width: 16vw;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.notificacaoTitulo {
+    font-size: 1.5vw;
+    font-weight: 700;
+}
+
+.notificacaoDescricao {
+    font-size: 1vw;
+}
+
+.notificacaoData {
+    font-style: italic;
+    font-size: 0.8vw;
+}
 
 
 
-@media (min-width: 1200px) {
+
+@media (max-width: 991px) {
+
+    .headerContainer {
+        height: 80px;
+        position: relative;
+    }
 
     .headerContent {
-        padding: 0 30px;
+        width: 100%;
+        height: 80px;
+
+        padding: 0 25px;
+
+        position: relative;
+
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
     }
 
-    .navList {
-        gap: 40px;
+
+
+    .logo {
+        height: 42px;
+        width: auto;
     }
 
-    .link {
-        font-size: 17px;
+
+
+
+    .divbotoes {
+        position: absolute;
+
+        right: 65px;
+
+        top: 50%;
+
+        transform: translateY(-50%);
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+
+        gap: 0;
+
+        margin: 0;
+
+        padding: 0;
+
+        width: auto;
+
+        z-index: 1100;
+    }
+
+
+    .iconeBtn {
+        width: 40px;
+        height: 40px;
+
+        padding: 0;
+
+        margin: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+    }
+
+
+    .iconeImg {
+        width: 32px;
+        height: 32px;
+
+        object-fit: contain;
+    }
+
+
+
+    .actionBtn {
+        width: 40px;
+        height: 40px;
+
+        padding: 0;
+
+        margin: 0;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: center;
+    }
+
+
+
+
+    .listaNotificacoes {
+        position: absolute;
+
+        top: 80px;
+
+        right: 15px;
+        left: auto;
+
+        width: 360px;
+
+        max-width: calc(100vw - 30px);
+
+        max-height: 70vh;
+
+        padding: 18px;
+
+        gap: 15px;
+
+        background-color: #ffffff;
+
+        border-radius: 15px;
+
+        box-shadow:
+                0 4px 8px rgba(0, 0, 0, 0.15),
+                0 6px 20px rgba(0, 0, 0, 0.12);
+
+        overflow-y: auto;
+
+        z-index: 3000;
+    }
+
+
+    .notificacaoTopo {
+        width: 100%;
+
+        display: flex;
+
+        align-items: center;
+
+        justify-content: space-between;
+
+        gap: 10px;
+    }
+
+
+    .notificacaoTitulo {
+        font-size: 16px;
+    }
+
+
+    .notificacaoDescricao {
+        font-size: 14px;
+
+        line-height: 1.4;
+    }
+
+
+    .notificacaoData {
+        font-size: 11px;
+
+        white-space: nowrap;
     }
 }
 
 
 
-@media (max-width: 769px) {
+
+@media (max-width: 768px) {
+
+    .headerContent {
+        padding: 0 20px;
+    }
+
+
+    .logo {
+        height: 40px;
+    }
+
+
+    .divbotoes {
+        right: 65px;
+    }
+
+
+    .iconeImg {
+        width: 31px;
+        height: 31px;
+    }
+
+
+    .listaNotificacoes {
+        right: 15px;
+
+        width: 350px;
+
+        max-width: calc(100vw - 30px);
+    }
+}
+
+
+
+
+@media (max-width: 576px) {
 
     .headerContainer {
         height: 80px;
     }
 
+
     .headerContent {
-        padding: 0 25px;
+        height: 80px;
+
+        padding: 0 18px;
     }
 
+
     .logo {
-        height: 42px;
+        height: 38px;
+    }
+
+
+
+
+    .divbotoes {
+        right: 58px;
+    }
+
+
+    .iconeBtn {
+        width: 38px;
+        height: 38px;
+    }
+
+
+    .iconeImg {
+        width: 30px;
+        height: 30px;
+    }
+
+
+    /* HAMBÚRGUER */
+
+    .actionBtn {
+        width: 38px;
+        height: 38px;
+    }
+
+
+    /* LISTA */
+
+    .listaNotificacoes {
+        top: 80px;
+
+        left: 12px;
+        right: 12px;
+
+        width: auto;
+
+        max-width: none;
+
+        max-height: 65vh;
+
+        padding: 15px;
+
+        border-radius: 12px;
+    }
+
+
+    .notificacao {
+        width: 100%;
+
+        padding: 5px 0;
+    }
+
+
+    .notificacaoTitulo {
+        font-size: 15px;
+    }
+
+
+    .notificacaoDescricao {
+        font-size: 13px;
+    }
+
+
+    .notificacaoData {
+        font-size: 10px;
     }
 }
 
@@ -487,31 +813,44 @@
         padding: 0 15px;
     }
 
+
     .logo {
-        height: 38px;
+        height: 36px;
     }
+
+
+    .divbotoes {
+        right: 52px;
+    }
+
+
+    .iconeBtn {
+        width: 36px;
+        height: 36px;
+    }
+
+
+    .iconeImg {
+        width: 29px;
+        height: 29px;
+    }
+
 
     .actionBtn {
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
     }
 
-    .offcanvasCustom {
-        width: 280px !important;
-    }
 
-    .offcanvasHeaderCustom {
-        padding: 0 20px;
-    }
+    .listaNotificacoes {
+        top: 80px;
 
-    .navListMobile {
-        gap: 22px;
+        left: 10px;
+        right: 10px;
 
-        padding: 10px 20px 25px 20px;
-    }
+        padding: 14px;
 
-    .linkMobile {
-        font-size: 20px;
+        max-height: 63vh;
     }
 }
 
@@ -524,31 +863,56 @@
         padding: 0 10px;
     }
 
+
     .logo {
         height: 34px;
     }
 
-    .offcanvasCustom {
-        width: 260px !important;
+
+    .divbotoes {
+        right: 48px;
     }
 
-    .navListMobile {
-        padding-left: 20px;
-        padding-right: 20px;
 
-        gap: 20px;
+    .iconeBtn {
+        width: 34px;
+        height: 34px;
     }
 
-    .linkMobile {
-        font-size: 19px;
+
+    .iconeImg {
+        width: 27px;
+        height: 27px;
     }
 
-    .mobileFotoPerfil {
-        width: 55px;
-        height: 55px;
+
+    .actionBtn {
+        width: 34px;
+        height: 34px;
     }
 
-    .perfilMobileBtn {
-        font-size: 18px;
+
+    .listaNotificacoes {
+        top: 80px;
+
+        left: 8px;
+        right: 8px;
+
+        padding: 12px;
+    }
+
+
+    .notificacaoTitulo {
+        font-size: 14px;
+    }
+
+
+    .notificacaoDescricao {
+        font-size: 12px;
+    }
+
+
+    .notificacaoData {
+        font-size: 9px;
     }
 }

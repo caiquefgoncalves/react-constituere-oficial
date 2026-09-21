@@ -5,6 +5,10 @@ import Footer from "../Footer/Footer.jsx";
 import { useNavigate, useLocation } from 'react-router-dom';
 
 export default function CadastroProcessoPagamento1({ api }) {
+    window.onload = function() {
+        window.scrollTo(0, 0);
+    };
+
     const navigate = useNavigate();
     const location = useLocation();
     const topoRef = useRef(null);

@@ -58,7 +58,7 @@ export default function ClientesLista1({ api }) {
 
 
 
-    const API_URL = api || 'http://10.92.11.20:5000';
+    const API_URL = api || 'http://10.92.11.39:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF',

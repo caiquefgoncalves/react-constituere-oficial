@@ -6,6 +6,10 @@ import Footer from "../Footer/Footer.jsx";
 import BotaoAlternar from "../BotaoAlternar/BotaoAlternar.jsx";
 
 export default function CadastroParteContrariaJuridica1({ api }) {
+    window.onload = function() {
+        window.scrollTo(0, 0);
+    };
+
     const navigate = useNavigate();
     const location = useLocation();
     const topoRef = useRef(null);

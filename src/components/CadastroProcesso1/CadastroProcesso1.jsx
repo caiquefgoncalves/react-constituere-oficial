@@ -504,7 +504,7 @@ export default function CadastroProcesso1({ api }) {
                                 </option>
                                 {clientes.map(clienteItem => (
                                     <option key={clienteItem.id} value={clienteItem.id}>
-                                        {clienteItem.nome}
+                                        {clienteItem.nome} - {clienteItem.cpf}
                                     </option>
                                 ))}
                             </select>
