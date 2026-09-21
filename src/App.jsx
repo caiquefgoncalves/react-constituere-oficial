@@ -18,12 +18,15 @@ import CadastroProcessoPagamento from "./pages/CadastroProcessoPagamento.jsx";
 import CadastroParteContrariaFisica from "./pages/CadastroParteContrariaFisica.jsx";
 import CadastroParteContrariaJuridica from "./pages/CadastroParteContrariaJuridica.jsx";
 import PagamentosLista from "./pages/PagamentosLista.jsx";
+import AgendamentosLista from "./pages/AgendamentosLista.jsx";
+import Agendar from "./pages/Agendar.jsx";
+import Reagendar from "./pages/Reagendar.jsx";
 
 
 
 
 
-const API_URL = 'http://10.92.11.34:5000'
+const API_URL = 'http://10.92.11.20:5000'
 
 function App() {
     return (
@@ -48,6 +51,9 @@ function App() {
                 <Route path="/cadastro_parte_contraria_fisica" element={<CadastroParteContrariaFisica api={API_URL} />} />
                 <Route path="/cadastro_parte_contraria_juridica" element={<CadastroParteContrariaJuridica api={API_URL} />} />
                 <Route path="/pagamentos_lista" element={<PagamentosLista api={API_URL} />} />
+                <Route path="/agendamentos" element={<AgendamentosLista api={API_URL} />} />
+                <Route path="/agendar" element={<Agendar api={API_URL} />} />
+                <Route path="/reagendar" element={<Reagendar api={API_URL} />} />
             </Routes>
         </Router>
     )
