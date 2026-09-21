@@ -128,9 +128,8 @@
 
 .cadastro {
     border: 2px solid #ffbf00 !important;
-
     background-color: #ffffff !important;
-
+    margin-right: 10px;
     color: #ffbf00 !important;
 }
 
