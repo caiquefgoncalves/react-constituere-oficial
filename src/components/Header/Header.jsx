@@ -11,7 +11,7 @@ export default function Header({ api, fotoPerfil }) {
     const [tipoUsuario, setTipoUsuario] = useState(null);
     const [idUsuario, setIdUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.62:5000';
+    const API_URL = api || 'http://10.92.11.20:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');

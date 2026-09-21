@@ -511,6 +511,8 @@
     padding-bottom: 0.5rem;
     cursor: pointer;
     color: #666;
+    text-decoration: none;
+
 }
 
 .secaoSubtitulo:hover {

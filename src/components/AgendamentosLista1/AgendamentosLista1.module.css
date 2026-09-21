@@ -1,0 +1,890 @@
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clear-sans');
+
+
+
+.paginaCompleta {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+}
+
+
+
+
+.layoutDashboard {
+    display: flex;
+    flex: 1;
+
+    width: 100%;
+    max-width: 1440px;
+
+    margin: 0 auto;
+    padding: 0 1rem;
+
+}
+
+
+.menuLateralContainer {
+    width: 220px;
+    flex-shrink: 0;
+
+    border-right: 1px solid #e0e0e0;
+}
+
+
+.conteudoPrincipal {
+    flex: 1;
+
+    padding: 3rem;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 2rem;
+
+    min-width: 0;
+}
+
+
+
+
+.topoPagina {
+    display: flex;
+
+    justify-content: space-between;
+    align-items: center;
+}
+
+
+.tituloPagina {
+    margin: 0;
+
+    font-family: 'Glacial Indifference', sans-serif;
+
+    font-size: 2.2rem;
+    font-weight: 700;
+}
+
+
+.botaoAdicionar {
+    width: 35px;
+    height: 35px;
+
+    border: none;
+    border-radius: 50%;
+
+    background-color: #0047ab;
+    color: white;
+
+    font-size: 1.4rem;
+
+    cursor: pointer;
+}
+
+
+.botaoAdicionar:hover {
+    background-color: #003580;
+}
+
+
+
+
+.areaFiltros {
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 1rem;
+
+    flex-wrap: wrap;
+}
+
+
+.filtroDatas {
+    display: flex;
+
+    align-items: flex-end;
+
+    gap: 0.5rem;
+}
+
+
+.campoData {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.3rem;
+}
+
+
+.campoData span {
+    font-family: 'Clear Sans', sans-serif;
+
+    font-size: 0.8rem;
+
+    color: #666666;
+}
+
+
+.campoData input {
+    padding: 0.7rem;
+
+    border: 1px solid #8eb4e6;
+    border-radius: 8px;
+
+    font-family: 'Clear Sans', sans-serif;
+
+    outline: none;
+}
+
+
+.ate {
+    padding-bottom: 0.7rem;
+
+    font-family: 'Clear Sans', sans-serif;
+
+    color: #666666;
+}
+
+
+.selectFiltro {
+    padding: 0.8rem 1rem;
+    border: 1px solid #8eb4e6;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #888888;
+    font-family: 'Clear Sans', sans-serif;
+    outline: none;
+    background-color: #ffffff;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolygon points='22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1rem;
+    padding-right: 3rem;
+}
+
+.selectFiltro:focus {
+    border-color: #0047ab;
+}
+
+
+
+.listaAgendamentos {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1.5rem;
+}
+
+
+
+
+.cardAgendamento {
+    display: flex;
+
+    width: 100%;
+
+    border: 1px solid #0047ab;
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    box-sizing: border-box;
+}
+
+
+
+
+.dataAgendamento {
+    width: 95px;
+
+    background-color: #d8e8ff;
+
+    border-right: 1px solid #0047ab;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+}
+
+
+.dia,
+.mes {
+    font-family: 'Glacial Indifference', sans-serif;
+
+    font-size: 1.3rem;
+    font-weight: 700;
+
+    color: #0047ab;
+}
+
+
+
+
+.dadosAgendamento {
+    flex: 1;
+
+    display: flex;
+
+    align-items: center;
+
+    min-width: 0;
+}
+
+
+.infoCliente {
+    flex: 2;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.5rem;
+
+    padding: 1.2rem;
+
+    min-width: 0;
+}
+
+
+.infoHorario {
+    flex: 1.5;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.5rem;
+
+    padding: 1.2rem;
+
+    min-width: 0;
+}
+
+
+.infoCliente strong,
+.infoHorario strong {
+    font-family: 'Clear Sans', sans-serif;
+
+    color: #111111;
+}
+
+
+.infoCliente span,
+.infoHorario span {
+    font-family: 'Clear Sans', sans-serif;
+
+    color: #888888;
+
+    font-size: 0.9rem;
+}
+
+
+
+
+.statusContainer {
+    width: 130px;
+
+    display: flex;
+
+    justify-content: center;
+
+    padding: 1rem;
+}
+
+
+.statusConfirmar,
+.statusConfirmado {
+    padding: 0.3rem 1rem;
+
+    border-radius: 20px;
+
+    font-family: 'Clear Sans', sans-serif;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    text-align: center;
+
+    white-space: nowrap;
+}
+
+
+.statusConfirmar {
+    background-color: #fff78b;
+
+    color: #e3a800;
+}
+
+
+.statusConfirmado {
+    background-color: #a9dc95;
+
+    color: #429833;
+}
+
+
+
+
+.acoes {
+    width: 110px;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    gap: 0.5rem;
+
+    padding: 1rem;
+}
+
+
+.botaoAzul,
+.botaoVermelho {
+    padding: 0.35rem 0.9rem;
+
+    border: none;
+    border-radius: 20px;
+
+    color: white;
+
+    font-family: 'Clear Sans', sans-serif;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+
+.botaoAzul {
+    background-color: #0047ab;
+}
+
+
+.botaoVermelho {
+    background-color: #ff4d4d;
+}
+
+
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+
+    background-color: rgba(0, 0, 0, 0.5);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 9999;
+
+    padding: 20px;
+
+    backdrop-filter: blur(4px);
+
+    box-sizing: border-box;
+}
+
+
+.modal {
+    position: relative;
+
+    width: 620px;
+    max-width: 100%;
+
+    max-height: 90vh;
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #0754b8;
+    border-radius: 28px;
+
+    padding: 28px 45px 35px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+
+    animation: fadeIn 0.3s ease;
+
+    box-sizing: border-box;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+
+.closeButton {
+    position: absolute;
+
+    top: 10px;
+    left: 18px;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border: none;
+
+    background: transparent;
+
+    color: #0754b8;
+
+    font-size: 42px;
+    font-weight: 300;
+
+    line-height: 35px;
+
+    cursor: pointer;
+
+    transition: opacity 0.15s ease;
+}
+
+
+.closeButton:hover {
+    opacity: 0.7;
+}
+
+
+.titulo {
+    margin: 0 0 28px;
+
+    color: #0754b8;
+
+    text-align: center;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    line-height: 1;
+
+    letter-spacing: -0.5px;
+}
+
+
+
+
+.formFieldsModal {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.formGroup {
+    display: flex;
+    flex-direction: column;
+}
+
+
+.formGroup label {
+    margin-bottom: 6px;
+
+    color: #111111;
+
+    font-size: 15px;
+    font-weight: 400;
+
+    line-height: 1.2;
+}
+
+
+.formGroup textarea {
+    width: 100%;
+    height: 100px;
+
+    padding: 12px;
+
+    border: 1px solid #b6b6b6;
+    border-radius: 9px;
+
+    outline: none;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 15px;
+
+    resize: none;
+
+    transition:
+            border-color 0.15s ease,
+            box-shadow 0.15s ease;
+
+    box-sizing: border-box;
+}
+
+
+.formGroup textarea:focus {
+    border-color: #0754b8;
+
+    box-shadow: 0 0 0 1px #0754b8;
+}
+
+
+.formGroup textarea::placeholder {
+    color: #999999;
+}
+
+
+
+
+.helpText {
+    margin-top: 8px;
+}
+
+
+.helpText p {
+    margin: 2px 0;
+
+    color: #a0a0a0;
+
+    font-size: 12px;
+    font-weight: 500;
+
+    line-height: 1.2;
+}
+
+
+
+
+.addButton {
+    display: block;
+
+    width: 170px;
+    height: 40px;
+
+    margin: 20px auto 0;
+
+    border: none;
+    border-radius: 20px;
+
+    background: #ffb900;
+
+    color: #ffffff;
+
+    font-size: 18px;
+    font-weight: 700;
+
+    line-height: 1;
+
+    cursor: pointer;
+
+    transition:
+            background 0.15s ease,
+            transform 0.1s ease;
+}
+
+
+.addButton:hover {
+    background: #f2ad00;
+}
+
+
+.addButton:active {
+    transform: scale(0.98);
+}
+
+
+
+
+@media (max-width: 769px) {
+    .overlay {
+        padding: 20px;
+    }
+
+    .modal {
+        width: 90%;
+        padding: 28px 35px 35px;
+    }
+
+    .titulo {
+        font-size: 28px;
+        margin-bottom: 25px;
+    }
+
+    .formGroup textarea {
+        height: 110px;
+    }
+
+
+    .menuLateralContainer {
+        display: none;
+    }
+
+
+    .layoutDashboard {
+        padding: 0;
+    }
+
+
+    .conteudoPrincipal {
+        padding: 2rem 1.5rem;
+    }
+
+
+
+    .dadosAgendamento {
+        width: 100%;
+    }
+
+
+    .statusContainer {
+        width: auto;
+    }
+
+
+    .acoes {
+        width: auto;
+    }
+
+}
+
+
+
+
+@media (max-width: 426px) {
+
+    .overlay {
+        padding: 15px;
+    }
+
+    .modal {
+        width: 100%;
+
+        padding:
+                55px
+                22px
+                28px;
+
+        border-radius: 22px;
+    }
+
+    .closeButton {
+        top: 8px;
+        left: 14px;
+
+        width: 35px;
+        height: 35px;
+
+        font-size: 38px;
+    }
+
+    .titulo {
+        font-size: 25px;
+
+        line-height: 1.1;
+
+        margin-bottom: 24px;
+    }
+
+    .formGroup label {
+        font-size: 14px;
+    }
+
+    .formGroup textarea {
+        height: 120px;
+
+        padding: 10px;
+
+        font-size: 14px;
+    }
+
+    .helpText p {
+        font-size: 11px;
+    }
+
+    .addButton {
+        width: 160px;
+        height: 40px;
+
+        font-size: 17px;
+
+        margin-top: 20px;
+    }
+
+    .conteudoPrincipal {
+        padding: 1rem 4vw;
+
+        gap: 1.5rem;
+    }
+
+
+    .tituloPagina {
+        font-size: 1.8rem;
+    }
+
+
+
+
+    .areaFiltros {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .filtroDatas {
+        width: 100%;
+    }
+
+
+    .campoData {
+        flex: 1;
+
+        min-width: 0;
+    }
+
+
+    .campoData input {
+        width: 100%;
+
+        min-width: 0;
+
+        box-sizing: border-box;
+    }
+
+
+    .selectFiltro {
+        width: 100%;
+
+        box-sizing: border-box;
+    }
+
+
+
+
+
+    .dataAgendamento {
+        align-items: center;
+
+
+        gap: 0.3rem;
+
+        padding: 0.8rem 1rem;
+
+    }
+
+
+    .dadosAgendamento {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+
+    .infoCliente,
+    .infoHorario {
+        width: 100%;
+
+        padding: 0.5rem 1rem;
+
+    }
+
+
+    .statusContainer {
+        width: 100%;
+
+        justify-content: flex-start;
+
+        padding: 0.5rem 1rem;
+
+        box-sizing: border-box;
+    }
+
+
+    .acoes {
+        width: 100%;
+
+        flex-direction: row;
+
+        align-items: flex-start;
+
+        padding: 0 1rem 1rem;
+
+        box-sizing: border-box;
+    }
+
+}
+
+@media (max-width: 321px) {
+
+    .overlay {
+        padding: 10px;
+    }
+
+    .modal {
+        padding:
+                50px
+                18px
+                25px;
+
+        border-radius: 20px;
+    }
+
+    .titulo {
+        font-size: 22px;
+
+        margin-bottom: 20px;
+    }
+
+    .closeButton {
+        top: 7px;
+        left: 10px;
+
+        font-size: 35px;
+    }
+
+    .formGroup textarea {
+        height: 105px;
+
+        font-size: 13px;
+    }
+
+    .addButton {
+        width: 145px;
+        height: 38px;
+
+        font-size: 16px;
+    }
+
+    .campoData input::-webkit-calendar-picker-indicator {
+        display: none;
+    }
+
+}
