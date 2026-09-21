@@ -16,7 +16,7 @@ export default function Header({ api, fotoPerfil }) {
     const [notificacoes, setNotificacoes] = useState([]);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.39:5000';
+    const API_URL = api || ' http://192.168.0.131:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -295,11 +295,7 @@ export default function Header({ api, fotoPerfil }) {
             return (
                 <div className={css.listaNotificacoes}>
                     <div className={css.notificacao}>
-                        <p
-                            className={
-                                css.notificacaoDescricao
-                            }
-                        >
+                        <p className={css.notificacaoDescricao}>
                             Carregando notificações...
                         </p>
                     </div>
@@ -311,11 +307,7 @@ export default function Header({ api, fotoPerfil }) {
             return (
                 <div className={css.listaNotificacoes}>
                     <div className={css.notificacao}>
-                        <p
-                            className={
-                                css.notificacaoDescricao
-                            }
-                        >
+                        <p className={css.notificacaoDescricao}>
                             Nenhuma notificação.
                         </p>
                     </div>
@@ -328,27 +320,15 @@ export default function Header({ api, fotoPerfil }) {
                 {notificacoes.map(
                     (notificacao) => (
                         <div
-                            className={css.notificacao}
+                            className={`${css.notificacao} ${!notificacao.lida ? css.notificacaoNaoLida : ''}`}
                             key={notificacao.id}
                         >
-                            <div
-                                className={
-                                    css.notificacaoTopo
-                                }
-                            >
-                                <p
-                                    className={
-                                        css.notificacaoTitulo
-                                    }
-                                >
+                            <div className={css.notificacaoTopo}>
+                                <p className={css.notificacaoTitulo}>
                                     {notificacao.titulo}
                                 </p>
 
-                                <p
-                                    className={
-                                        css.notificacaoData
-                                    }
-                                >
+                                <p className={css.notificacaoData}>
                                     {formatarData(
                                         notificacao.data_criacao ||
                                         notificacao.data
@@ -356,11 +336,7 @@ export default function Header({ api, fotoPerfil }) {
                                 </p>
                             </div>
 
-                            <p
-                                className={
-                                    css.notificacaoDescricao
-                                }
-                            >
+                            <p className={css.notificacaoDescricao}>
                                 {notificacao.mensagem}
                             </p>
                         </div>

@@ -1,19 +1,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference&display=swap');
 @import url('https://fonts.cdnfonts.com/css/clear-sans');
 
-
-
 .headerContainer {
     font-family: 'Clear Sans', sans-serif;
     background: #ffffff;
     height: 80px;
     width: 100%;
     display: flex;
-
     align-items: center;
-
     border-bottom: 1px solid #e0e0e0;
-
     position: relative;
     z-index: 1000;
 }
@@ -22,42 +17,29 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-
     padding: 0 20px;
-
     width: 97vw;
 }
-
-
-
 
 .logoLink {
     display: flex;
     align-items: center;
-
     margin: 0;
     padding: 0;
-
     flex-shrink: 0;
 }
 
 .logo {
     height: 45px;
     width: auto;
-
     display: block;
 }
 
-
-
-
 .desktopNav {
     flex-grow: 1;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     min-width: 0;
 }
 
@@ -65,11 +47,8 @@
     display: flex;
     align-items: center;
     justify-content: center;
-
     gap: 35px;
-
     list-style: none;
-
     margin: 0;
     padding: 0;
 }
@@ -81,16 +60,11 @@
 
 .link {
     text-decoration: none;
-
     color: #0047ab !important;
-
     font-family: 'Glacial Indifference', sans-serif;
-
     font-size: 17px;
     font-weight: 700;
-
     white-space: nowrap;
-
     transition: color 0.3s ease;
 }
 
@@ -98,31 +72,21 @@
     color: #003580 !important;
 }
 
-
-
-
 .divbotoes {
     display: flex;
     align-items: center;
-
     gap: 15px;
-
     flex-shrink: 0;
 }
 
 .cadastro,
 .login {
     font-family: 'Clear Sans', sans-serif;
-
     font-weight: 700;
     font-size: 15px;
-
     cursor: pointer;
-
     border-radius: 50px;
-
     padding: 8px 24px;
-
     transition: all 0.3s ease;
 }
 
@@ -135,15 +99,12 @@
 
 .cadastro:hover {
     background-color: #ffbf00 !important;
-
     color: #ffffff !important;
 }
 
 .login {
     border: none !important;
-
     background-color: #0047ab !important;
-
     color: #ffffff !important;
 }
 
@@ -151,31 +112,17 @@
     background-color: #003580 !important;
 }
 
-
-
-
 .iconeBtn {
     background: transparent !important;
-
     border: none !important;
-
     box-shadow: none !important;
-
     cursor: pointer;
-
     padding: 0 10px;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
     position: relative;
-
     transition: transform 0.2s ease;
-}
-
-.iconeBtn:hover {
-    transform: scale(1.08);
 }
 
 .iconeBtn:hover {
@@ -185,48 +132,29 @@
 .iconeImg {
     width: 34px;
     height: 34px;
-
     object-fit: contain;
-
     display: block;
 }
-
-
-
 
 .fotoPerfil {
     width: 48px;
     height: 48px;
-
     border-radius: 50%;
-
     object-fit: cover;
-
     border: none !important;
-
     display: block;
 }
 
-
-
-
 .actionBtn {
     background: transparent;
-
     border: none;
-
     padding: 0;
-
     width: 40px;
     height: 40px;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     flex-shrink: 0;
 }
 
@@ -234,94 +162,53 @@
     background: transparent;
 }
 
-
-
-
 .offcanvasCustom {
     background-color: #ffffff !important;
-
     width: 280px !important;
-
     height: fit-content;
-
     border-radius: 30px 0 0 30px !important;
-
     box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-
     border: none !important;
 }
 
-
-
-
 .offcanvasHeaderCustom {
     height: 80px;
-
     width: 100%;
-
     display: flex;
-
     align-items: center;
-
     justify-content: flex-end;
-
     padding: 0 25px;
 }
-
-
-
 
 .offcanvasBodyCustom {
     padding: 0;
 }
 
-
-
-
 .navListMobile {
     display: flex;
-
     flex-direction: column;
-
     align-items: flex-start;
-
     gap: 25px;
-
     list-style: none !important;
-
     margin: 0;
-
     padding: 10px 25px 25px 25px;
 }
 
 .navListMobile li {
     width: 100%;
-
     text-align: left;
-
     margin: 0;
-
     padding: 0;
 }
 
-
-
-
 .linkMobile {
     display: block;
-
     width: 100%;
-
     text-decoration: none;
-
     color: #0047ab !important;
-
     font-family: 'Glacial Indifference', sans-serif;
-
     font-size: 21px;
-
     font-weight: 700;
-
     transition: color 0.3s ease;
 }
 
@@ -329,49 +216,31 @@
     color: #003580 !important;
 }
 
-
-
-
 .mobilePerfilContainer {
     display: flex;
-
     align-items: center;
-
     gap: 12px;
-
     margin-top: 5px;
 }
 
 .mobileFotoPerfil {
     width: 60px;
     height: 60px;
-
     border-radius: 50%;
-
     object-fit: cover;
-
     border: 2px solid #0047ab;
-
     cursor: pointer;
-
     flex-shrink: 0;
 }
 
 .perfilMobileBtn {
     background: transparent;
-
     border: none;
-
     padding: 5px 0;
-
     cursor: pointer;
-
     color: #0047ab;
-
     font-family: 'Glacial Indifference', sans-serif;
-
     font-size: 20px;
-
     font-weight: 700;
 }
 
@@ -379,35 +248,20 @@
     color: #003580;
 }
 
-
-
 .btnSairMobile {
     display: flex;
-
     align-items: center;
-
     justify-content: center;
-
     gap: 8px;
-
     background-color: #0047ab;
-
     color: #ffffff;
-
     border: none;
-
     padding: 6px 12px;
-
     border-radius: 8px;
-
     cursor: pointer;
-
     font-family: 'Clear Sans', sans-serif;
-
     font-weight: 700;
-
     font-size: 15px;
-
     transition: background-color 0.3s ease;
 }
 
@@ -418,7 +272,6 @@
 .btnSairMobile img {
     width: 25px;
     height: 25px;
-
     object-fit: contain;
 }
 
@@ -451,70 +304,86 @@
 .listaNotificacoes {
     display: flex;
     flex-direction: column;
-
-    gap: 15px;
-
+    gap: 10px;
     position: absolute;
-
     right: 20px;
     top: 70px;
-
-    padding: 20px;
-
-    width: 360px;
-
+    padding: 18px;
+    width: 380px;
     height: auto;
-
     max-height: 500px;
-
-    background: white;
-
+    background: #ffffff;
+    border: 1px solid #e0e0e0;
     border-radius: 15px;
-
     box-shadow:
-            0 4px 8px rgba(0, 0, 0, 0.2),
-            0 6px 20px rgba(0, 0, 0, 0.19);
-
+            0 4px 8px rgba(0, 0, 0, 0.15),
+            0 6px 20px rgba(0, 0, 0, 0.12);
     overflow-y: auto;
-
     z-index: 2000;
 }
 
 .notificacao {
     display: flex;
     flex-direction: column;
+    gap: 6px;
+    padding: 14px 16px;
+    background-color: #f9fafc;
+    border-left: 4px solid #0047ab;
+    border-radius: 10px;
+    cursor: pointer;
+    transition:
+            background-color 0.2s ease,
+            transform 0.15s ease;
+}
+
+.notificacao:hover {
+    background-color: #eef4ff;
+    transform: translateX(2px);
+}
+
+.notificacaoNaoLida {
+    background-color: #eaf2ff;
+    border-left-color: #ffbf00;
 }
 
 .notificacao p {
     margin: 0;
+    font-family: 'Clear Sans', sans-serif;
 }
 
 .notificacaoTopo {
-    width: 16vw;
+    width: 100%;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
+    gap: 10px;
 }
 
 .notificacaoTitulo {
-    font-size: 1.5vw;
+    font-size: 15px;
     font-weight: 700;
+    color: #0047ab;
+    line-height: 1.3;
+    word-break: break-word;
 }
 
 .notificacaoDescricao {
-    font-size: 1vw;
+    font-size: 13px;
+    color: #555555;
+    line-height: 1.5;
+    word-break: break-word;
 }
 
 .notificacaoData {
+    font-size: 11px;
+    color: #999999;
     font-style: italic;
-    font-size: 0.8vw;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
-
-
-
 @media (max-width: 991px) {
-
     .headerContainer {
         height: 80px;
         position: relative;
@@ -523,395 +392,272 @@
     .headerContent {
         width: 100%;
         height: 80px;
-
         padding: 0 25px;
-
         position: relative;
-
         display: flex;
         align-items: center;
         justify-content: space-between;
     }
-
-
 
     .logo {
         height: 42px;
         width: auto;
     }
 
-
-
-
     .divbotoes {
         position: absolute;
-
         right: 65px;
-
         top: 50%;
-
         transform: translateY(-50%);
-
         display: flex;
-
         align-items: center;
-
         justify-content: center;
-
         gap: 0;
-
         margin: 0;
-
         padding: 0;
-
         width: auto;
-
         z-index: 1100;
     }
-
 
     .iconeBtn {
         width: 40px;
         height: 40px;
-
         padding: 0;
-
         margin: 0;
-
         display: flex;
-
         align-items: center;
-
         justify-content: center;
     }
-
 
     .iconeImg {
         width: 32px;
         height: 32px;
-
         object-fit: contain;
     }
-
-
 
     .actionBtn {
         width: 40px;
         height: 40px;
-
         padding: 0;
-
         margin: 0;
-
         display: flex;
-
         align-items: center;
-
         justify-content: center;
     }
 
-
-
-
     .listaNotificacoes {
         position: absolute;
-
         top: 80px;
-
         right: 15px;
         left: auto;
-
         width: 360px;
-
         max-width: calc(100vw - 30px);
-
         max-height: 70vh;
-
-        padding: 18px;
-
-        gap: 15px;
-
+        padding: 16px;
+        gap: 10px;
         background-color: #ffffff;
-
         border-radius: 15px;
-
         box-shadow:
                 0 4px 8px rgba(0, 0, 0, 0.15),
                 0 6px 20px rgba(0, 0, 0, 0.12);
-
         overflow-y: auto;
-
         z-index: 3000;
     }
 
-
     .notificacaoTopo {
         width: 100%;
-
         display: flex;
-
         align-items: center;
-
         justify-content: space-between;
-
         gap: 10px;
     }
 
-
     .notificacaoTitulo {
-        font-size: 16px;
+        font-size: 15px;
     }
 
-
     .notificacaoDescricao {
-        font-size: 14px;
-
+        font-size: 13px;
         line-height: 1.4;
     }
 
-
     .notificacaoData {
         font-size: 11px;
-
-        white-space: nowrap;
     }
 }
 
-
-
-
 @media (max-width: 768px) {
-
     .headerContent {
         padding: 0 20px;
     }
-
 
     .logo {
         height: 40px;
     }
 
-
     .divbotoes {
         right: 65px;
     }
-
 
     .iconeImg {
         width: 31px;
         height: 31px;
     }
 
-
     .listaNotificacoes {
         right: 15px;
-
         width: 350px;
-
         max-width: calc(100vw - 30px);
     }
 }
 
-
-
-
 @media (max-width: 576px) {
-
     .headerContainer {
         height: 80px;
     }
 
-
     .headerContent {
         height: 80px;
-
         padding: 0 18px;
     }
-
 
     .logo {
         height: 38px;
     }
 
-
-
-
     .divbotoes {
         right: 58px;
     }
-
 
     .iconeBtn {
         width: 38px;
         height: 38px;
     }
-
 
     .iconeImg {
         width: 30px;
         height: 30px;
     }
 
-
-    /* HAMBÚRGUER */
-
     .actionBtn {
         width: 38px;
         height: 38px;
     }
 
-
-    /* LISTA */
-
     .listaNotificacoes {
         top: 80px;
-
         left: 12px;
         right: 12px;
-
         width: auto;
-
         max-width: none;
-
         max-height: 65vh;
-
-        padding: 15px;
-
+        padding: 14px;
         border-radius: 12px;
     }
 
-
     .notificacao {
         width: 100%;
-
-        padding: 5px 0;
+        padding: 12px 14px;
     }
-
 
     .notificacaoTitulo {
-        font-size: 15px;
+        font-size: 14px;
     }
-
 
     .notificacaoDescricao {
-        font-size: 13px;
+        font-size: 12.5px;
     }
 
-
     .notificacaoData {
-        font-size: 10px;
+        font-size: 10.5px;
     }
 }
 
-
-
-
 @media (max-width: 426px) {
-
     .headerContent {
         padding: 0 15px;
     }
-
 
     .logo {
         height: 36px;
     }
 
-
     .divbotoes {
         right: 52px;
     }
-
 
     .iconeBtn {
         width: 36px;
         height: 36px;
     }
-
 
     .iconeImg {
         width: 29px;
         height: 29px;
     }
 
-
     .actionBtn {
         width: 36px;
         height: 36px;
     }
 
-
     .listaNotificacoes {
         top: 80px;
-
         left: 10px;
         right: 10px;
-
-        padding: 14px;
-
+        padding: 12px;
         max-height: 63vh;
     }
 }
 
-
-
-
 @media (max-width: 376px) {
-
     .headerContent {
         padding: 0 10px;
     }
-
 
     .logo {
         height: 34px;
     }
 
-
     .divbotoes {
         right: 48px;
     }
-
 
     .iconeBtn {
         width: 34px;
         height: 34px;
     }
 
-
     .iconeImg {
         width: 27px;
         height: 27px;
     }
-
 
     .actionBtn {
         width: 34px;
         height: 34px;
     }
 
-
     .listaNotificacoes {
         top: 80px;
-
         left: 8px;
         right: 8px;
-
-        padding: 12px;
+        padding: 10px;
     }
 
+    .notificacao {
+        padding: 10px 12px;
+    }
 
     .notificacaoTitulo {
-        font-size: 14px;
+        font-size: 13px;
     }
-
 
     .notificacaoDescricao {
         font-size: 12px;
     }
 
-
     .notificacaoData {
-        font-size: 9px;
+        font-size: 10px;
     }
 }

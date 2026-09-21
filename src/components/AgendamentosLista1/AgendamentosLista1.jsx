@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function AgendamentosLista1({ api }) {
 
-    const API_URL = api || 'http://10.92.11.39:5000';
+    const API_URL = api || ' http://192.168.0.131:5000';
     const navigate = useNavigate();
 
     const [agendamentos, setAgendamentos] = useState([]);

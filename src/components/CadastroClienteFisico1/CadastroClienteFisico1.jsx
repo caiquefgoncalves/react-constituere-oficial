@@ -51,7 +51,7 @@ export default function CadastroClienteFisico1({ api }) {
         }
     }, [navigate]);
 
-    const API_URL = api || 'http://10.92.11.39:5000';
+    const API_URL = api || ' http://192.168.0.131:5000';
     const ufs = ['AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA', 'MT', 'MS', 'MG', 'PA', 'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS', 'RO', 'RR', 'SC', 'SP', 'SE', 'TO'];
 
     function agendarLimpezaMensagem() {

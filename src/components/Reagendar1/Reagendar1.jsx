@@ -11,6 +11,25 @@ export default function Reagendar1({ api }) {
 
     const agendamentoOriginal = location.state?.agendamento;
 
+    const hojeISO = new Date().toISOString().split('T')[0];
+
+    function converterParaISO(dataTexto) {
+        if (!dataTexto) return '';
+
+        const texto = String(dataTexto).trim();
+
+        if (/^\d{4}-\d{2}-\d{2}/.test(texto)) {
+            return texto.slice(0, 10);
+        }
+
+        if (/^\d{2}\/\d{2}\/\d{4}$/.test(texto)) {
+            const [dia, mes, ano] = texto.split('/');
+            return `${ano}-${mes}-${dia}`;
+        }
+
+        return '';
+    }
+
     const [data, setData] = useState('');
     const [cliente, setCliente] = useState('');
     const [advogado2, setAdvogado2] = useState('');
@@ -34,7 +53,7 @@ export default function Reagendar1({ api }) {
         window.timeoutMensagem = setTimeout(() => {
             setMensagem('');
             setTipoMensagem('');
-        }, 7000);
+        }, 9000);
     }
 
     function mostrarMensagem(texto, tipo = 'erro') {
@@ -56,54 +75,9 @@ export default function Reagendar1({ api }) {
             .join(' ');
     }
 
-    function apenasNumeros(valor) {
-        return valor.replace(/\D/g, '');
-    }
-
     function handleAssunto(e) {
         const valor = e.target.value.replace(/[^a-zA-ZÀ-ÿ\s]/g, '');
         if (valor.length <= 256) setAssunto(capitalizar(valor));
-    }
-
-    function handleData(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 8) valor = valor.slice(0, 8);
-
-        if (valor.length <= 2) setData(valor);
-        else if (valor.length <= 4) setData(`${valor.slice(0, 2)}/${valor.slice(2)}`);
-        else setData(`${valor.slice(0, 2)}/${valor.slice(2, 4)}/${valor.slice(4, 8)}`);
-    }
-
-    function handleHorario(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 4) valor = valor.slice(0, 4);
-
-        if (valor.length <= 2) setHorario(valor);
-        else setHorario(`${valor.slice(0, 2)}:${valor.slice(2)}`);
-    }
-
-    function handleDuracao(e) {
-        let valor = apenasNumeros(e.target.value);
-        if (valor.length > 4) valor = valor.slice(0, 4);
-
-        if (valor.length === 0) setDuracao('');
-        else if (valor.length <= 2) setDuracao(valor);
-        else setDuracao(`${valor.slice(0, 2)}:${valor.slice(2)}`);
-    }
-
-    function validarData(dataTexto) {
-        if (!/^\d{2}\/\d{2}\/\d{4}$/.test(dataTexto)) return false;
-        const [dia, mes, ano] = dataTexto.split('/').map(Number);
-        const dataObjeto = new Date(ano, mes - 1, dia);
-        return dataObjeto.getFullYear() === ano &&
-            dataObjeto.getMonth() === mes - 1 &&
-            dataObjeto.getDate() === dia;
-    }
-
-    function validarHorario(horarioTexto) {
-        if (!/^\d{2}:\d{2}$/.test(horarioTexto)) return false;
-        const [hora, minuto] = horarioTexto.split(':').map(Number);
-        return hora >= 0 && hora <= 23 && minuto >= 0 && minuto <= 59;
     }
 
     function duracaoParaMinutos(duracaoTexto) {
@@ -213,7 +187,7 @@ export default function Reagendar1({ api }) {
             return;
         }
 
-        setData(agendamentoOriginal.data);
+        setData(converterParaISO(agendamentoOriginal.data_iso || agendamentoOriginal.data));
         setAssunto(agendamentoOriginal.assunto);
         setHorario(agendamentoOriginal.horario);
         setDuracao(agendamentoOriginal.duracao);
@@ -235,8 +209,8 @@ export default function Reagendar1({ api }) {
 
         if (!cliente) camposFaltando.push('Cliente');
         if (!assunto.trim()) camposFaltando.push('Assunto');
-        if (!data.trim()) camposFaltando.push('Data');
-        if (!horario.trim()) camposFaltando.push('Horário');
+        if (!data) camposFaltando.push('Data');
+        if (!horario) camposFaltando.push('Horário');
         if (!duracao.trim()) camposFaltando.push('Duração');
 
         if (camposFaltando.length > 0) {
@@ -245,26 +219,14 @@ export default function Reagendar1({ api }) {
             return;
         }
 
-        if (!validarData(data)) {
-            mostrarMensagem('Data inválida.');
-            setCarregando(false);
-            return;
-        }
-
-        const [dia, mes, ano] = data.split('/').map(Number);
-        const dataObjeto = new Date(ano, mes - 1, dia);
-        const hoje = new Date();
-        hoje.setHours(0, 0, 0, 0);
-        dataObjeto.setHours(0, 0, 0, 0);
-
-        if (dataObjeto < hoje) {
+        if (data < hojeISO) {
             mostrarMensagem('A data não pode ser anterior ao dia de hoje.');
             setCarregando(false);
             return;
         }
 
-        if (!validarHorario(horario)) {
-            mostrarMensagem('Horário inválido. Use o formato HH:MM.');
+        if (!/^\d{2}:\d{2}$/.test(horario)) {
+            mostrarMensagem('Horário inválido.');
             setCarregando(false);
             return;
         }
@@ -401,8 +363,10 @@ export default function Reagendar1({ api }) {
                                 <option value="" disabled>
                                     {carregandoClientes ? 'Carregando clientes...' : 'Selecione o cliente'}
                                 </option>
-                                {clientes.map(c => (
-                                    <option key={c.id} value={c.id}>{c.nome}</option>
+                                {clientes.map(clienteItem => (
+                                    <option key={clienteItem.id} value={clienteItem.id}>
+                                        {clienteItem.nome} - {clienteItem.cpf}
+                                    </option>
                                 ))}
                             </select>
                         </div>
@@ -441,42 +405,42 @@ export default function Reagendar1({ api }) {
                         <div className={css.campoMetade}>
                             <label className={css.label}>Data *</label>
                             <input
-                                type="text"
+                                type="date"
                                 className={css.input}
-                                placeholder="dd/mm/aaaa"
                                 value={data}
-                                onChange={handleData}
+                                min={hojeISO}
+                                onChange={(e) => setData(e.target.value)}
                                 tabIndex={4}
                                 name="data"
-                                maxLength={10}
                             />
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Horário *</label>
                             <input
-                                type="text"
+                                type="time"
                                 className={css.input}
-                                placeholder="HH:MM"
                                 value={horario}
-                                onChange={handleHorario}
+                                onChange={(e) => setHorario(e.target.value)}
                                 tabIndex={5}
                                 name="horario"
-                                maxLength={5}
                             />
                         </div>
 
                         <div className={css.campoMetade}>
                             <label className={css.label}>Duração *</label>
                             <input
-                                type="text"
+                                type="time"
                                 className={css.input}
-                                placeholder="00:00"
                                 value={duracao}
-                                onChange={handleDuracao}
+                                max="08:00"
+                                onChange={(e) => setDuracao(e.target.value)}
                                 tabIndex={6}
                                 name="duracao"
                             />
+                            <small style={{ color: '#888', fontSize: '0.8rem' }}>
+                                Máximo 8 horas
+                            </small>
                         </div>
 
                         <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>

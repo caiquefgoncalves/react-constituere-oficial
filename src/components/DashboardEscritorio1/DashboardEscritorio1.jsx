@@ -48,7 +48,7 @@ export default function DashboardEscritorio1({ api }) {
     const [carregandoGrafico, setCarregandoGrafico] = useState(false);
     const [filtroPeriodo, setFiltroPeriodo] = useState('mes');
 
-    const API_URL = api || 'http://10.92.11.39:5000';
+    const API_URL = api || ' http://192.168.0.131:5000';
 
 
 

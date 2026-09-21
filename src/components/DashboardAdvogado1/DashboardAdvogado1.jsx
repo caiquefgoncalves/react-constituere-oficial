@@ -41,7 +41,7 @@ export default function DashboardAdvogado1({ api }) {
 
 
 
-    const API_URL = api || 'http://10.92.11.39:5000';
+    const API_URL = api || ' http://192.168.0.131:5000';
 
 
 
