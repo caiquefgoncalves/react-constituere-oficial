@@ -8,32 +8,20 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 export default function ClientesLista1({ api }) {
     const navigate = useNavigate();
 
-
-
     const topoModalRef = useRef(null);
     const estatisticasRef = useRef(null);
-
-
 
     const [clientes, setClientes] = useState([]);
     const [carregando, setCarregando] = useState(true);
 
-
-
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
-
-
 
     const [filtroNome, setFiltroNome] = useState('');
     const [filtroStatus, setFiltroStatus] = useState('todos');
     const [filtroTipo, setFiltroTipo] = useState('todos');
 
-
-
     const [paginaEstatisticas, setPaginaEstatisticas] = useState(0);
-
-
 
     const [modalAberto, setModalAberto] = useState(false);
     const [clienteSelecionado, setClienteSelecionado] = useState(null);
@@ -48,15 +36,11 @@ export default function ClientesLista1({ api }) {
 
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-
-
     const [modalInativarAberto, setModalInativarAberto] = useState(false);
     const [clienteInativar, setClienteInativar] = useState(null);
 
     const [inativando, setInativando] = useState(false);
     const [ativando, setAtivando] = useState(false);
-
-
 
     const API_URL = api || 'http://10.92.11.30:5000';
 
@@ -66,8 +50,6 @@ export default function ClientesLista1({ api }) {
         'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS',
         'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
     ];
-
-
 
     function apenasNumeros(valor) {
         if (!valor) return '';
@@ -227,8 +209,6 @@ export default function ClientesLista1({ api }) {
 
         return `${v.slice(0, 2)}.${v.slice(2, 5)}.${v.slice(5, 8)}-${v.slice(8).toUpperCase()}`;
     }
-
-
 
     function validarCpf(cpf) {
         const n = apenasNumeros(cpf);
@@ -405,8 +385,6 @@ export default function ClientesLista1({ api }) {
         return '';
     }
 
-
-
     function contarClientesMes(lista) {
         const hoje = new Date();
 
@@ -437,8 +415,6 @@ export default function ClientesLista1({ api }) {
             }
         }).length;
     }
-
-
 
     function agendarLimpezaMensagem() {
         if (
@@ -472,8 +448,6 @@ export default function ClientesLista1({ api }) {
             });
         }
     }
-
-
 
     async function buscarClientes() {
         const token =
@@ -548,8 +522,6 @@ export default function ClientesLista1({ api }) {
         buscarClientes();
     }, [API_URL, navigate]);
 
-
-
     useEffect(() => {
         function ajustarCarrossel() {
             if (
@@ -580,8 +552,6 @@ export default function ClientesLista1({ api }) {
             );
         };
     }, []);
-
-
 
     async function abrirModalVer(cliente) {
         const token =
@@ -925,8 +895,6 @@ export default function ClientesLista1({ api }) {
         }
     }
 
-
-
     function fecharModal() {
         setModalAberto(false);
         setClienteSelecionado(null);
@@ -939,8 +907,6 @@ export default function ClientesLista1({ api }) {
         setMensagem('');
         setTipoMensagem('');
     }
-
-
 
     function handleEditChange(e) {
         const {
@@ -1050,8 +1016,6 @@ export default function ClientesLista1({ api }) {
         );
     }
 
-
-
     function handleRepChange(e) {
         const {
             name,
@@ -1102,8 +1066,6 @@ export default function ClientesLista1({ api }) {
             })
         );
     }
-
-
 
     async function buscarCep(
         cepInformado
@@ -1181,8 +1143,6 @@ export default function ClientesLista1({ api }) {
             setBuscandoCep(false);
         }
     }
-
-
 
     async function handleSalvarEdicao() {
         if (!clienteSelecionado) {
@@ -1827,8 +1787,6 @@ export default function ClientesLista1({ api }) {
         }
     }
 
-
-
     function cancelarEdicao() {
         setEditando(false);
 
@@ -1839,8 +1797,6 @@ export default function ClientesLista1({ api }) {
         setMensagem('');
         setTipoMensagem('');
     }
-
-
 
     function abrirModalInativar(
         cliente
@@ -1951,8 +1907,6 @@ export default function ClientesLista1({ api }) {
         }
     }
 
-
-
     async function handleAtivar(
         cliente
     ) {
@@ -1999,29 +1953,7 @@ export default function ClientesLista1({ api }) {
                 return;
             }
 
-            setClientes(
-                prev =>
-                    prev.map(c =>
-                        c.id === cliente.id
-                            ? {
-                                ...c,
-                                status: 'ativo'
-                            }
-                            : c
-                    )
-            );
-
-            if (
-                clienteSelecionado?.id ===
-                cliente.id
-            ) {
-                setClienteSelecionado(
-                    prev => ({
-                        ...prev,
-                        status: 'ativo'
-                    })
-                );
-            }
+            await buscarClientes();
 
             mostrarMensagem(
                 resultado.mensagem ||
@@ -2045,15 +1977,11 @@ export default function ClientesLista1({ api }) {
         }
     }
 
-
-
     function irParaCadastroCliente() {
         navigate(
             '/cadastro_cliente_fisico'
         );
     }
-
-
 
     const clientesFiltrados =
         clientes.filter(cliente => {
@@ -2081,11 +2009,11 @@ export default function ClientesLista1({ api }) {
             );
         });
 
-
-
     const ativos =
         clientes.filter(
-            c => c.status === 'ativo'
+            c =>
+                c.status === 'em_dia' ||
+                c.status === 'proximo_vencimento'
         ).length;
 
     const novosMes =
@@ -2103,7 +2031,6 @@ export default function ClientesLista1({ api }) {
     const ehPJ =
         clienteSelecionado?.tipo ===
         'juridico';
-
 
     const totalEstatisticas = 3;
 
@@ -2158,8 +2085,6 @@ export default function ClientesLista1({ api }) {
         paginaEstatisticas <
         totalEstatisticas - 1;
 
-
-
     return (
         <div className={css.paginaCompleta}>
 
@@ -2172,8 +2097,6 @@ export default function ClientesLista1({ api }) {
                 </div>
 
                 <main className={css.conteudoPrincipal}>
-
-
 
                     <div className={css.topoSaudacao}>
                         <h1 className={css.tituloPagina}>
@@ -2191,8 +2114,6 @@ export default function ClientesLista1({ api }) {
                         </button>
                     </div>
 
-
-
                     {mensagem && !modalAberto && (
                         <div
                             className={`${css.mensagemContainer} ${
@@ -2204,8 +2125,6 @@ export default function ClientesLista1({ api }) {
                             {mensagem}
                         </div>
                     )}
-
-
 
                     <section
                         className={css.carrosselEstatisticas}
@@ -2229,7 +2148,7 @@ export default function ClientesLista1({ api }) {
 
                             <div className={css.cardEstatistica}>
                                 <span className={css.labelEstatistica}>
-                                    Clientes ativos
+                                    Clientes em dia
                                 </span>
 
                                 <span className={css.numeroEstatistica}>
@@ -2271,8 +2190,6 @@ export default function ClientesLista1({ api }) {
                         )}
 
                     </section>
-
-
 
                     <div className={css.areaFiltros}>
 
@@ -2352,12 +2269,20 @@ export default function ClientesLista1({ api }) {
                                     Filtrar por: Status
                                 </option>
 
-                                <option value="ativo">
-                                    Ativo
+                                <option value="em_dia">
+                                    Em dia
+                                </option>
+
+                                <option value="proximo_vencimento">
+                                    A vencer
                                 </option>
 
                                 <option value="inadimplente">
                                     Inadimplente
+                                </option>
+
+                                <option value="sem_parcelas">
+                                    Sem cobranças
                                 </option>
 
                                 <option value="inativo">
@@ -2367,8 +2292,6 @@ export default function ClientesLista1({ api }) {
 
                         </div>
                     </div>
-
-
 
                     <div className={css.tabelaContainer}>
 
@@ -2434,17 +2357,15 @@ export default function ClientesLista1({ api }) {
                                                         css[cliente.status]
                                                     }`}
                                                 >
-                                                    {cliente.status ===
-                                                        'ativo' &&
-                                                        'Em dia'}
+                                                    {cliente.status === 'em_dia' && 'Em dia'}
 
-                                                    {cliente.status ===
-                                                        'inadimplente' &&
-                                                        'Inadimplente'}
+                                                    {cliente.status === 'proximo_vencimento' && 'A vencer'}
 
-                                                    {cliente.status ===
-                                                        'inativo' &&
-                                                        'Inativo'}
+                                                    {cliente.status === 'inadimplente' && 'Inadimplente'}
+
+                                                    {cliente.status === 'sem_parcelas' && 'Sem cobranças'}
+
+                                                    {cliente.status === 'inativo' && 'Inativo'}
                                                 </span>
                                         </td>
 
@@ -2513,8 +2434,6 @@ export default function ClientesLista1({ api }) {
 
                 </main>
             </div>
-
-
 
             {modalAberto && (
                 <div
@@ -2587,8 +2506,6 @@ export default function ClientesLista1({ api }) {
                                         e.preventDefault()
                                     }
                                 >
-
-
 
                                     {ehPJ && (
                                         <>
@@ -2845,8 +2762,6 @@ export default function ClientesLista1({ api }) {
                                             </div>
                                         </>
                                     )}
-
-
 
                                     {!ehPJ && (
                                         <div className={css.linha}>
@@ -3285,8 +3200,6 @@ export default function ClientesLista1({ api }) {
                                         </div>
                                     )}
 
-
-
                                     {ehPJ && (
                                         <>
                                             <h3 className={css.subtituloSecao}>
@@ -3539,8 +3452,6 @@ export default function ClientesLista1({ api }) {
                     </div>
                 </div>
             )}
-
-
 
             {modalInativarAberto && clienteInativar && (
                 <div
