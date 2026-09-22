@@ -8,6 +8,30 @@
     background-color: white;
 }
 
+.confirmacoes {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: fit-content;
+    min-width: 42px;
+    padding: 4px 8px;
+    margin-left: 0;
+    border-radius: 20px;
+    background-color: #f2f2f2;
+    color: #333333;
+    font-size: 12px;
+    font-weight: 700;
+    font-family: 'Clear Sans', sans-serif;
+    white-space: nowrap;
+}
+
+
+.botaoAzul:disabled,
+.botaoVermelho:disabled {
+    opacity: 0.6;
+    cursor: default;
+}
+
 .layoutDashboard {
     display: flex;
     flex: 1;
@@ -194,10 +218,14 @@
 }
 
 .statusContainer {
-    width: 130px;
+    width: 170px;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
+    gap: 0.45rem;
     padding: 1rem;
+    box-sizing: border-box;
 }
 
 .statusConfirmar,
@@ -478,6 +506,16 @@
 }
 
 @media (max-width: 426px) {
+
+    .statusContainer {
+        width: 100%;
+        align-items: flex-start;
+        justify-content: flex-start;
+        gap: 0.4rem;
+        padding: 0.5rem 1rem;
+        box-sizing: border-box;
+    }
+
     .overlay {
         padding: 15px;
     }

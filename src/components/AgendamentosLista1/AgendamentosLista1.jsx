@@ -23,6 +23,10 @@ export default function AgendamentosLista1({ api }) {
     const [enviando, setEnviando] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
+    const idUsuarioLogado = Number(
+        localStorage.getItem('id_usuario')
+    );
+
     function deslogar() {
         localStorage.removeItem('nome');
         localStorage.removeItem('tipo');
@@ -39,14 +43,21 @@ export default function AgendamentosLista1({ api }) {
 
         aplicarEstadoMenu({
             detail: {
-                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+                colapsado:
+                    localStorage.getItem('menu_colapsado') === 'true'
             }
         });
 
-        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        window.addEventListener(
+            'menu-lateral-toggle',
+            aplicarEstadoMenu
+        );
 
         return () => {
-            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+            window.removeEventListener(
+                'menu-lateral-toggle',
+                aplicarEstadoMenu
+            );
         };
     }, []);
 
@@ -75,19 +86,51 @@ export default function AgendamentosLista1({ api }) {
         try {
             const params = new URLSearchParams();
 
-            if (dataInicio) params.append('data_inicio', dataInicio);
-            if (dataFim) params.append('data_fim', dataFim);
-            if (filtroStatus && filtroStatus !== 'todos') params.append('status', filtroStatus);
+            if (dataInicio) {
+                params.append(
+                    'data_inicio',
+                    dataInicio
+                );
+            }
 
-            const url = `${API_URL}/agendamentos${params.toString() ? '?' + params.toString() : ''}`;
+            if (dataFim) {
+                params.append(
+                    'data_fim',
+                    dataFim
+                );
+            }
 
-            const resposta = await fetch(url, {
-                method: 'GET',
-                credentials: 'include',
-                headers: { 'X-Access-Token': token }
-            });
+            if (
+                filtroStatus &&
+                filtroStatus !== 'todos'
+            ) {
+                params.append(
+                    'status',
+                    filtroStatus
+                );
+            }
+
+            const url =
+                `${API_URL}/agendamentos` +
+                (
+                    params.toString()
+                        ? '?' + params.toString()
+                        : ''
+                );
+
+            const resposta = await fetch(
+                url,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                }
+            );
 
             let dados = {};
+
             try {
                 dados = await resposta.json();
             } catch {
@@ -103,17 +146,24 @@ export default function AgendamentosLista1({ api }) {
                 return;
             }
 
-            setAgendamentos(dados.agendamentos || []);
+            setAgendamentos(
+                dados.agendamentos || []
+            );
 
         } catch (erro) {
-            console.error('Erro ao buscar agendamentos:', erro);
+            console.error(
+                'Erro ao buscar agendamentos:',
+                erro
+            );
+
         } finally {
             setCarregando(false);
         }
     }
 
     useEffect(() => {
-        const token = localStorage.getItem('token');
+        const token =
+            localStorage.getItem('token');
 
         if (!token) {
             navigate('/login');
@@ -121,10 +171,18 @@ export default function AgendamentosLista1({ api }) {
         }
 
         buscarAgendamentos();
-    }, [dataInicio, dataFim, filtroStatus]);
 
-    async function confirmarAgendamento(agendamento) {
-        const token = localStorage.getItem('token');
+    }, [
+        dataInicio,
+        dataFim,
+        filtroStatus
+    ]);
+
+    async function confirmarAgendamento(
+        agendamento
+    ) {
+        const token =
+            localStorage.getItem('token');
 
         if (!token) {
             deslogar();
@@ -132,30 +190,61 @@ export default function AgendamentosLista1({ api }) {
         }
 
         try {
-            const resposta = await fetch(`${API_URL}/agendamento/${agendamento.id}/confirmar`, {
-                method: 'PUT',
-                credentials: 'include',
-                headers: { 'X-Access-Token': token }
-            });
+            const resposta = await fetch(
+                `${API_URL}/agendamento/${agendamento.id}/confirmar`,
+                {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                }
+            );
+
+            let dados = {};
+
+            try {
+                dados = await resposta.json();
+            } catch {
+                dados = {};
+            }
 
             if (resposta.status === 401) {
                 deslogar();
                 return;
             }
 
+            if (!resposta.ok) {
+                console.error(
+                    dados.error ||
+                    'Erro ao confirmar agendamento.'
+                );
+
+                return;
+            }
+
             await buscarAgendamentos();
 
         } catch (erro) {
-            console.error('Erro ao confirmar agendamento:', erro);
+            console.error(
+                'Erro ao confirmar agendamento:',
+                erro
+            );
         }
     }
 
     async function enviarMotivo(e) {
         e.preventDefault();
 
-        if (!motivo.trim() || !agendamentoSelecionado) return;
+        if (
+            !motivo.trim() ||
+            !agendamentoSelecionado
+        ) {
+            return;
+        }
 
-        const token = localStorage.getItem('token');
+        const token =
+            localStorage.getItem('token');
 
         if (!token) {
             deslogar();
@@ -164,22 +253,29 @@ export default function AgendamentosLista1({ api }) {
 
         setEnviando(true);
 
-        const url = modalTipo === 'recusar'
-            ? `${API_URL}/agendamento/${agendamentoSelecionado.id}/recusar`
-            : `${API_URL}/agendamento/${agendamentoSelecionado.id}/cancelar`;
+        const url =
+            modalTipo === 'recusar'
+                ? `${API_URL}/agendamento/${agendamentoSelecionado.id}/recusar`
+                : `${API_URL}/agendamento/${agendamentoSelecionado.id}/cancelar`;
 
         try {
-            const resposta = await fetch(url, {
-                method: 'PUT',
-                credentials: 'include',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Access-Token': token
-                },
-                body: JSON.stringify({ motivo: motivo.trim() })
-            });
+            const resposta = await fetch(
+                url,
+                {
+                    method: 'PUT',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Access-Token': token
+                    },
+                    body: JSON.stringify({
+                        motivo: motivo.trim()
+                    })
+                }
+            );
 
             let dados = {};
+
             try {
                 dados = await resposta.json();
             } catch {
@@ -192,15 +288,24 @@ export default function AgendamentosLista1({ api }) {
             }
 
             if (!resposta.ok) {
-                console.error(dados.error || 'Erro ao processar ação.');
+                console.error(
+                    dados.error ||
+                    'Erro ao processar ação.'
+                );
+
                 return;
             }
 
             fecharModal();
+
             await buscarAgendamentos();
 
         } catch (erro) {
-            console.error('Erro ao enviar motivo:', erro);
+            console.error(
+                'Erro ao enviar motivo:',
+                erro
+            );
+
         } finally {
             setEnviando(false);
         }
@@ -210,7 +315,7 @@ export default function AgendamentosLista1({ api }) {
         const mapa = {
             'a_confirmar': 'A confirmar',
             'confirmado': 'Confirmado',
-            'cancelado': 'Desmarcado',
+            'cancelado': 'Cancelado',
             'recusado': 'Recusado'
         };
 
@@ -218,11 +323,164 @@ export default function AgendamentosLista1({ api }) {
     }
 
     function classeStatus(status) {
-        if (status === 'confirmado') return css.statusConfirmado;
-        if (status === 'a_confirmar') return css.statusConfirmar;
-        if (status === 'recusado') return css.statusRecusado;
-        if (status === 'cancelado') return css.statusDesmarcado;
+        if (status === 'confirmado') {
+            return css.statusConfirmado;
+        }
+
+        if (status === 'a_confirmar') {
+            return css.statusConfirmar;
+        }
+
+        if (status === 'recusado') {
+            return css.statusRecusado;
+        }
+
+        if (status === 'cancelado') {
+            return css.statusDesmarcado;
+        }
+
         return '';
+    }
+
+    function valorAtivo(valor) {
+        return (
+            valor === true ||
+            valor === 1 ||
+            valor === '1'
+        );
+    }
+
+    function usuarioConfirmou(agendamento) {
+        if (
+            Number(
+                agendamento.id_advogado_1
+            ) === idUsuarioLogado
+        ) {
+            return valorAtivo(
+                agendamento.confirmado_advogado_1
+            );
+        }
+
+        if (
+            Number(
+                agendamento.id_advogado_2
+            ) === idUsuarioLogado
+        ) {
+            return valorAtivo(
+                agendamento.confirmado_advogado_2
+            );
+        }
+
+        return false;
+    }
+
+    function usuarioRecusou(agendamento) {
+        if (
+            Number(
+                agendamento.id_advogado_1
+            ) === idUsuarioLogado
+        ) {
+            return valorAtivo(
+                agendamento.recusado_advogado_1
+            );
+        }
+
+        if (
+            Number(
+                agendamento.id_advogado_2
+            ) === idUsuarioLogado
+        ) {
+            return valorAtivo(
+                agendamento.recusado_advogado_2
+            );
+        }
+
+        return false;
+    }
+
+    function dadosConfirmacoes(
+        agendamento
+    ) {
+        const temSegundoAdvogado =
+            agendamento.id_advogado_2 !== null &&
+            agendamento.id_advogado_2 !== undefined &&
+            agendamento.id_advogado_2 !== '';
+
+        const advogado1Confirmou =
+            valorAtivo(
+                agendamento.confirmado_advogado_1
+            );
+
+        const advogado2Confirmou =
+            valorAtivo(
+                agendamento.confirmado_advogado_2
+            );
+
+        const advogado1Recusou =
+            valorAtivo(
+                agendamento.recusado_advogado_1
+            );
+
+        const advogado2Recusou =
+            valorAtivo(
+                agendamento.recusado_advogado_2
+            );
+
+        const totalAdvogados =
+            temSegundoAdvogado
+                ? 2
+                : 1;
+
+        const totalConfirmados =
+            Number(
+                advogado1Confirmou
+            ) +
+            (
+                temSegundoAdvogado
+                    ? Number(
+                        advogado2Confirmou
+                    )
+                    : 0
+            );
+
+        const totalRecusados =
+            Number(
+                advogado1Recusou
+            ) +
+            (
+                temSegundoAdvogado
+                    ? Number(
+                        advogado2Recusou
+                    )
+                    : 0
+            );
+
+        let totalNecessarios =
+            totalAdvogados -
+            totalRecusados;
+
+        if (totalNecessarios < 0) {
+            totalNecessarios = 0;
+        }
+
+        return {
+            confirmados: totalConfirmados,
+            necessarios: totalNecessarios,
+            recusados: totalRecusados
+        };
+    }
+
+    function textoConfirmacoes(
+        agendamento
+    ) {
+        const dados =
+            dadosConfirmacoes(
+                agendamento
+            );
+
+        return (
+            `${dados.confirmados}/${dados.necessarios}`
+        );
     }
 
     return (
@@ -232,172 +490,481 @@ export default function AgendamentosLista1({ api }) {
 
             <div className={css.layoutDashboard}>
 
-                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
-                    <MenuLateralAdvogado api={API_URL} />
+                <div
+                    className={`
+                        ${css.menuLateralContainer}
+                        ${
+                        menuColapsado
+                            ? css.menuLateralColapsado
+                            : ''
+                    }
+                    `}
+                >
+                    <MenuLateralAdvogado
+                        api={API_URL}
+                    />
                 </div>
 
-                <div className={css.conteudoPrincipal}>
+                <div
+                    className={
+                        css.conteudoPrincipal
+                    }
+                >
 
-                    <div className={css.topoPagina}>
+                    <div
+                        className={
+                            css.topoPagina
+                        }
+                    >
 
-                        <h1 className={css.tituloPagina}>
+                        <h1
+                            className={
+                                css.tituloPagina
+                            }
+                        >
                             Meus agendamentos
                         </h1>
 
                         <button
-                            className={css.botaoAdicionar}
+                            className={
+                                css.botaoAdicionar
+                            }
                             type="button"
-                            onClick={() => navigate('/agendar')}
+                            onClick={() =>
+                                navigate(
+                                    '/agendar'
+                                )
+                            }
                         >
                             +
                         </button>
 
                     </div>
 
-                    <div className={css.areaFiltros}>
+                    <div
+                        className={
+                            css.areaFiltros
+                        }
+                    >
 
-                        <div className={css.filtroDatas}>
+                        <div
+                            className={
+                                css.filtroDatas
+                            }
+                        >
 
-                            <div className={css.campoData}>
-
+                            <div
+                                className={
+                                    css.campoData
+                                }
+                            >
                                 <input
                                     type="date"
-                                    value={dataInicio}
-                                    onChange={(e) => setDataInicio(e.target.value)}
+                                    value={
+                                        dataInicio
+                                    }
+                                    onChange={(e) =>
+                                        setDataInicio(
+                                            e.target.value
+                                        )
+                                    }
                                 />
                             </div>
 
-                            <span className={css.ate}>
+                            <span
+                                className={
+                                    css.ate
+                                }
+                            >
                                 até
                             </span>
 
-                            <div className={css.campoData}>
-
-
+                            <div
+                                className={
+                                    css.campoData
+                                }
+                            >
                                 <input
                                     type="date"
-                                    value={dataFim}
-                                    min={dataInicio}
-                                    onChange={(e) => setDataFim(e.target.value)}
+                                    value={
+                                        dataFim
+                                    }
+                                    min={
+                                        dataInicio
+                                    }
+                                    onChange={(e) =>
+                                        setDataFim(
+                                            e.target.value
+                                        )
+                                    }
                                 />
                             </div>
 
                         </div>
 
                         <select
-                            className={css.selectFiltro}
-                            value={filtroStatus}
-                            onChange={(e) => setFiltroStatus(e.target.value)}
+                            className={
+                                css.selectFiltro
+                            }
+                            value={
+                                filtroStatus
+                            }
+                            onChange={(e) =>
+                                setFiltroStatus(
+                                    e.target.value
+                                )
+                            }
                         >
-                            <option value="todos">Filtrar por: Status</option>
-                            <option value="a_confirmar">A confirmar</option>
-                            <option value="confirmado">Confirmado</option>
-                            <option value="cancelado">Desmarcado</option>
-                            <option value="recusado">Recusado</option>
+                            <option
+                                value="todos"
+                            >
+                                Filtrar por: Status
+                            </option>
+
+                            <option
+                                value="a_confirmar"
+                            >
+                                A confirmar
+                            </option>
+
+                            <option
+                                value="confirmado"
+                            >
+                                Confirmado
+                            </option>
+
+                            <option
+                                value="cancelado"
+                            >
+                                Cancelado
+                            </option>
+
+                            <option
+                                value="recusado"
+                            >
+                                Recusado
+                            </option>
                         </select>
 
                     </div>
 
-                    <div className={css.listaAgendamentos}>
+                    <div
+                        className={
+                            css.listaAgendamentos
+                        }
+                    >
 
                         {carregando ? (
-                            <p>Carregando agendamentos...</p>
+                            <p>
+                                Carregando agendamentos...
+                            </p>
+
                         ) : agendamentos.length === 0 ? (
-                            <p>Nenhum agendamento encontrado.</p>
+                            <p>
+                                Nenhum agendamento encontrado.
+                            </p>
+
                         ) : (
-                            agendamentos.map((agendamento) => (
+                            agendamentos.map(
+                                (
+                                    agendamento
+                                ) => {
 
-                                <div
-                                    key={agendamento.id}
-                                    className={css.cardAgendamento}
-                                >
+                                    const jaConfirmou =
+                                        usuarioConfirmou(
+                                            agendamento
+                                        );
 
-                                    <div className={css.dataAgendamento}>
-                                        <span className={css.dia}>
-                                            {agendamento.dia}
-                                        </span>
+                                    const jaRecusou =
+                                        usuarioRecusou(
+                                            agendamento
+                                        );
 
-                                        <span className={css.mes}>
-                                            {agendamento.mes}
-                                        </span>
-                                    </div>
+                                    const aguardando =
+                                        agendamento.status ===
+                                        'a_confirmar';
 
-                                    <div className={css.dadosAgendamento}>
+                                    const confirmadoGeral =
+                                        agendamento.status ===
+                                        'confirmado';
 
-                                        <div className={css.infoCliente}>
-                                            <strong>
-                                                {agendamento.cliente}
-                                            </strong>
+                                    const cancelado =
+                                        agendamento.status ===
+                                        'cancelado';
 
-                                            <span>
-                                                {agendamento.assunto}
-                                            </span>
-                                        </div>
+                                    return (
+                                        <div
+                                            key={
+                                                agendamento.id
+                                            }
+                                            className={
+                                                css.cardAgendamento
+                                            }
+                                        >
 
-                                        <div className={css.infoHorario}>
-                                            <strong>
-                                                Horário: {agendamento.horario}
-                                            </strong>
+                                            <div
+                                                className={
+                                                    css.dataAgendamento
+                                                }
+                                            >
+                                                <span
+                                                    className={
+                                                        css.dia
+                                                    }
+                                                >
+                                                    {
+                                                        agendamento.dia
+                                                    }
+                                                </span>
 
-                                            <span>
-                                                Duração: {agendamento.duracao}
-                                            </span>
-                                        </div>
+                                                <span
+                                                    className={
+                                                        css.mes
+                                                    }
+                                                >
+                                                    {
+                                                        agendamento.mes
+                                                    }
+                                                </span>
+                                            </div>
 
-                                        <div className={css.statusContainer}>
-                                            <span className={classeStatus(agendamento.status)}>
-                                                {formatarStatus(agendamento.status)}
-                                            </span>
-                                        </div>
+                                            <div
+                                                className={
+                                                    css.dadosAgendamento
+                                                }
+                                            >
 
-                                        <div className={css.acoes}>
+                                                <div
+                                                    className={
+                                                        css.infoCliente
+                                                    }
+                                                >
+                                                    <strong>
+                                                        {
+                                                            agendamento.cliente
+                                                        }
+                                                    </strong>
 
-                                            {agendamento.status === 'a_confirmar' && (
-                                                <>
-                                                    <button
-                                                        className={css.botaoAzul}
-                                                        type="button"
-                                                        onClick={() => confirmarAgendamento(agendamento)}
+                                                    <span>
+                                                        {
+                                                            agendamento.assunto
+                                                        }
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    className={
+                                                        css.infoHorario
+                                                    }
+                                                >
+                                                    <strong>
+                                                        Horário:{' '}
+                                                        {
+                                                            agendamento.horario
+                                                        }
+                                                    </strong>
+
+                                                    <span>
+                                                        Duração:{' '}
+                                                        {
+                                                            agendamento.duracao
+                                                        }
+                                                    </span>
+                                                </div>
+
+                                                <div
+                                                    className={
+                                                        css.statusContainer
+                                                    }
+                                                >
+
+                                                    <span
+                                                        className={
+                                                            classeStatus(
+                                                                agendamento.status
+                                                            )
+                                                        }
                                                     >
-                                                        Confirmar
-                                                    </button>
+                                                        {
+                                                            formatarStatus(
+                                                                agendamento.status
+                                                            )
+                                                        }
+                                                    </span>
 
-                                                    <button
-                                                        className={css.botaoVermelho}
-                                                        type="button"
-                                                        onClick={() => abrirModal('recusar', agendamento)}
-                                                    >
-                                                        Recusar
-                                                    </button>
-                                                </>
-                                            )}
+                                                    {!cancelado && (
+                                                        <span
+                                                            className={
+                                                                css.confirmacoes
+                                                            }
+                                                        >
+                                                            {
+                                                                textoConfirmacoes(
+                                                                    agendamento
+                                                                )
+                                                            }
+                                                        </span>
+                                                    )}
 
-                                            {agendamento.status === 'confirmado' && (
-                                                <>
-                                                    <button
-                                                        className={css.botaoAzul}
-                                                        type="button"
-                                                        onClick={() => navigate('/reagendar', { state: { agendamento } })}
-                                                    >
-                                                        Editar
-                                                    </button>
+                                                    {jaConfirmou && (
+                                                        <span
+                                                            className={
+                                                                css.statusConfirmado
+                                                            }
+                                                        >
+                                                            Você confirmou
+                                                        </span>
+                                                    )}
 
-                                                    <button
-                                                        className={css.botaoVermelho}
-                                                        type="button"
-                                                        onClick={() => abrirModal('desmarcar', agendamento)}
-                                                    >
-                                                        Desmarcar
-                                                    </button>
-                                                </>
-                                            )}
+                                                    {jaRecusou && (
+                                                        <span
+                                                            className={
+                                                                css.statusRecusado
+                                                            }
+                                                        >
+                                                            Você recusou
+                                                        </span>
+                                                    )}
+
+                                                </div>
+
+                                                <div
+                                                    className={
+                                                        css.acoes
+                                                    }
+                                                >
+
+                                                    {
+                                                        aguardando &&
+                                                        !jaConfirmou &&
+                                                        !jaRecusou && (
+                                                            <>
+                                                                <button
+                                                                    className={
+                                                                        css.botaoAzul
+                                                                    }
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        confirmarAgendamento(
+                                                                            agendamento
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Confirmar
+                                                                </button>
+
+                                                                <button
+                                                                    className={
+                                                                        css.botaoVermelho
+                                                                    }
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        abrirModal(
+                                                                            'recusar',
+                                                                            agendamento
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Recusar
+                                                                </button>
+                                                            </>
+                                                        )
+                                                    }
+
+                                                    {
+                                                        aguardando &&
+                                                        jaConfirmou && (
+                                                            <button
+                                                                className={
+                                                                    css.botaoAzul
+                                                                }
+                                                                type="button"
+                                                                disabled
+                                                            >
+                                                                Você confirmou
+                                                            </button>
+                                                        )
+                                                    }
+
+                                                    {
+                                                        aguardando &&
+                                                        jaRecusou && (
+                                                            <button
+                                                                className={
+                                                                    css.botaoVermelho
+                                                                }
+                                                                type="button"
+                                                                disabled
+                                                            >
+                                                                Você recusou
+                                                            </button>
+                                                        )
+                                                    }
+
+                                                    {
+                                                        confirmadoGeral &&
+                                                        jaConfirmou && (
+                                                            <>
+                                                                <button
+                                                                    className={
+                                                                        css.botaoAzul
+                                                                    }
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        navigate(
+                                                                            '/reagendar',
+                                                                            {
+                                                                                state: {
+                                                                                    agendamento
+                                                                                }
+                                                                            }
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Editar
+                                                                </button>
+
+                                                                <button
+                                                                    className={
+                                                                        css.botaoVermelho
+                                                                    }
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        abrirModal(
+                                                                            'desmarcar',
+                                                                            agendamento
+                                                                        )
+                                                                    }
+                                                                >
+                                                                    Desmarcar
+                                                                </button>
+                                                            </>
+                                                        )
+                                                    }
+
+                                                    {
+                                                        confirmadoGeral &&
+                                                        jaRecusou && (
+                                                            <button
+                                                                className={
+                                                                    css.botaoVermelho
+                                                                }
+                                                                type="button"
+                                                                disabled
+                                                            >
+                                                                Você recusou
+                                                            </button>
+                                                        )
+                                                    }
+
+                                                </div>
+
+                                            </div>
 
                                         </div>
-
-                                    </div>
-
-                                </div>
-                            ))
+                                    );
+                                }
+                            )
                         )}
 
                     </div>
@@ -408,64 +975,118 @@ export default function AgendamentosLista1({ api }) {
 
             {modalTipo && (
                 <div
-                    className={css.overlay}
-                    onClick={fecharModal}
+                    className={
+                        css.overlay
+                    }
+                    onClick={
+                        fecharModal
+                    }
                 >
                     <div
-                        className={css.modal}
-                        onClick={(e) => e.stopPropagation()}
+                        className={
+                            css.modal
+                        }
+                        onClick={(e) =>
+                            e.stopPropagation()
+                        }
                     >
 
                         <button
                             type="button"
-                            className={css.closeButton}
-                            onClick={fecharModal}
+                            className={
+                                css.closeButton
+                            }
+                            onClick={
+                                fecharModal
+                            }
                             aria-label="Fechar"
                         >
                             ×
                         </button>
 
-                        <h1 className={css.titulo}>
-                            {modalTipo === 'recusar'
-                                ? 'Recusar agendamento'
-                                : 'Desmarcar agendamento'}
+                        <h1
+                            className={
+                                css.titulo
+                            }
+                        >
+                            {
+                                modalTipo ===
+                                'recusar'
+                                    ? 'Recusar agendamento'
+                                    : 'Desmarcar agendamento'
+                            }
                         </h1>
 
-                        <form onSubmit={enviarMotivo}>
+                        <form
+                            onSubmit={
+                                enviarMotivo
+                            }
+                        >
 
-                            <div className={css.formFieldsModal}>
+                            <div
+                                className={
+                                    css.formFieldsModal
+                                }
+                            >
 
-                                <div className={css.formGroup}>
-                                    <label htmlFor="motivo">
+                                <div
+                                    className={
+                                        css.formGroup
+                                    }
+                                >
+                                    <label
+                                        htmlFor="motivo"
+                                    >
                                         Motivo *
                                     </label>
 
                                     <textarea
                                         id="motivo"
-                                        value={motivo}
-                                        onChange={(e) => setMotivo(e.target.value)}
+                                        value={
+                                            motivo
+                                        }
+                                        onChange={(e) =>
+                                            setMotivo(
+                                                e.target.value
+                                            )
+                                        }
                                         placeholder="Digite o motivo"
                                         required
-                                        disabled={enviando}
+                                        disabled={
+                                            enviando
+                                        }
                                     />
                                 </div>
 
                             </div>
 
-                            <div className={css.helpText}>
-                                <p>* Campos obrigatórios</p>
+                            <div
+                                className={
+                                    css.helpText
+                                }
+                            >
+                                <p>
+                                    * Campos obrigatórios
+                                </p>
                             </div>
 
                             <button
                                 type="submit"
-                                className={css.addButton}
-                                disabled={enviando}
+                                className={
+                                    css.addButton
+                                }
+                                disabled={
+                                    enviando
+                                }
                             >
-                                {enviando
-                                    ? 'Enviando...'
-                                    : modalTipo === 'recusar'
-                                        ? 'Recusar'
-                                        : 'Desmarcar'}
+                                {
+                                    enviando
+                                        ? 'Enviando...'
+                                        : modalTipo ===
+                                        'recusar'
+                                            ? 'Recusar'
+                                            : 'Desmarcar'
+                                }
                             </button>
 
                         </form>
