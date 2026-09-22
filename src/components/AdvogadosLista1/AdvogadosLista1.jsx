@@ -8,21 +8,16 @@ import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx"
 export default function AdvogadosLista1({ api }) {
     const navigate = useNavigate();
 
-    const API_URL = api || ' http://192.168.0.131:5000';
-
+    const API_URL = api || 'http://10.92.11.30:5000';
 
     const [advogados, setAdvogados] = useState([]);
     const [escritorios, setEscritorios] = useState([]);
     const [cargos, setCargos] = useState([]);
     const [quantidade, setQuantidade] = useState(0);
 
-
-
     const [filtroNome, setFiltroNome] = useState('');
     const [filtroEscritorio, setFiltroEscritorio] = useState('todos');
     const [filtroCargo, setFiltroCargo] = useState('todos');
-
-
 
     const [carregando, setCarregando] = useState(true);
     const [carregandoAcao, setCarregandoAcao] = useState(false);
@@ -30,13 +25,8 @@ export default function AdvogadosLista1({ api }) {
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
 
-
-
     const estatisticasRef = useRef(null);
-
     const [paginaEstatisticas, setPaginaEstatisticas] = useState(0);
-
-
 
     const [modalRetirarAberto, setModalRetirarAberto] = useState(false);
     const [dadosRetirar, setDadosRetirar] = useState(null);
@@ -50,8 +40,6 @@ export default function AdvogadosLista1({ api }) {
     const [modalAlterarCargoAberto, setModalAlterarCargoAberto] = useState(false);
     const [dadosAlterarCargo, setDadosAlterarCargo] = useState(null);
 
-
-
     function mostrarMensagem(texto, tipo = 'sucesso') {
         setMensagem(texto);
         setTipoMensagem(tipo);
@@ -62,20 +50,50 @@ export default function AdvogadosLista1({ api }) {
         }, 3000);
     }
 
-
     function deslogar() {
         localStorage.removeItem('nome');
         localStorage.removeItem('tipo');
         localStorage.removeItem('token');
+        localStorage.removeItem('id_usuario');
 
         navigate('/login');
     }
 
+    function vinculoAtivo(valor) {
+        return (
+            valor === true ||
+            valor === 1 ||
+            valor === '1'
+        );
+    }
 
+    async function lerResposta(response) {
+        const contentType =
+            response.headers.get('content-type');
+
+        if (
+            contentType &&
+            contentType.includes('application/json')
+        ) {
+            return await response.json();
+        }
+
+        const texto = await response.text();
+
+        console.error(
+            'Resposta não JSON:',
+            texto
+        );
+
+        return {
+            error: 'O servidor retornou uma resposta inválida.'
+        };
+    }
 
     async function buscarEscritorios() {
         try {
-            const token = localStorage.getItem('token');
+            const token =
+                localStorage.getItem('token');
 
             const response = await fetch(
                 `${API_URL}/filtro_escritorios_advogados`,
@@ -88,7 +106,8 @@ export default function AdvogadosLista1({ api }) {
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await lerResposta(response);
 
             if (response.ok) {
                 setEscritorios(
@@ -119,11 +138,10 @@ export default function AdvogadosLista1({ api }) {
         }
     }
 
-
-
     async function buscarCargos() {
         try {
-            const token = localStorage.getItem('token');
+            const token =
+                localStorage.getItem('token');
 
             const response = await fetch(
                 `${API_URL}/filtro_cargos_advogados`,
@@ -136,7 +154,8 @@ export default function AdvogadosLista1({ api }) {
                 }
             );
 
-            const data = await response.json();
+            const data =
+                await lerResposta(response);
 
             if (response.ok) {
                 setCargos(
@@ -166,8 +185,6 @@ export default function AdvogadosLista1({ api }) {
             );
         }
     }
-
-
 
     async function buscarAdvogados() {
         try {
@@ -219,7 +236,7 @@ export default function AdvogadosLista1({ api }) {
             );
 
             const data =
-                await response.json();
+                await lerResposta(response);
 
             if (response.ok) {
                 setAdvogados(
@@ -233,7 +250,9 @@ export default function AdvogadosLista1({ api }) {
                 return;
             }
 
-            if (response.status === 401) {
+            if (
+                response.status === 401
+            ) {
                 deslogar();
                 return;
             }
@@ -263,8 +282,6 @@ export default function AdvogadosLista1({ api }) {
         }
     }
 
-
-
     useEffect(() => {
         const token =
             localStorage.getItem('token');
@@ -285,8 +302,6 @@ export default function AdvogadosLista1({ api }) {
 
     }, [API_URL, navigate]);
 
-
-
     useEffect(() => {
         const token =
             localStorage.getItem('token');
@@ -302,8 +317,6 @@ export default function AdvogadosLista1({ api }) {
         filtroEscritorio,
         filtroCargo
     ]);
-
-
 
     useEffect(() => {
         function ajustarCarrossel() {
@@ -335,8 +348,6 @@ export default function AdvogadosLista1({ api }) {
             );
         };
     }, []);
-
-
 
     function abrirModalAlterarCargo(
         idAdvogado,
@@ -393,7 +404,13 @@ export default function AdvogadosLista1({ api }) {
             );
 
             const data =
-                await response.json();
+                await lerResposta(response);
+
+            console.log(
+                'ALTERAR CARGO:',
+                response.status,
+                data
+            );
 
             if (response.ok) {
                 mostrarMensagem(
@@ -434,8 +451,6 @@ export default function AdvogadosLista1({ api }) {
             setCarregandoAcao(false);
         }
     }
-
-
 
     function abrirModalRetirar(
         idAdvogado,
@@ -483,7 +498,13 @@ export default function AdvogadosLista1({ api }) {
             );
 
             const data =
-                await response.json();
+                await lerResposta(response);
+
+            console.log(
+                'RETIRAR:',
+                response.status,
+                data
+            );
 
             if (response.ok) {
                 mostrarMensagem(
@@ -525,15 +546,17 @@ export default function AdvogadosLista1({ api }) {
         }
     }
 
-
-
     function abrirModalInativar(
         idAdvogado,
-        nomeAdvogado
+        idEscritorio,
+        nomeAdvogado,
+        nomeEscritorio
     ) {
         setDadosInativar({
             idAdvogado,
-            nomeAdvogado
+            idEscritorio,
+            nomeAdvogado,
+            nomeEscritorio
         });
 
         setModalInativarAberto(true);
@@ -556,7 +579,7 @@ export default function AdvogadosLista1({ api }) {
                 localStorage.getItem('token');
 
             const response = await fetch(
-                `${API_URL}/advogado/${dadosInativar.idAdvogado}/inativar`,
+                `${API_URL}/advogado/${dadosInativar.idAdvogado}/escritorio/${dadosInativar.idEscritorio}/inativar`,
                 {
                     method: 'PUT',
                     credentials: 'include',
@@ -569,12 +592,18 @@ export default function AdvogadosLista1({ api }) {
             );
 
             const data =
-                await response.json();
+                await lerResposta(response);
+
+            console.log(
+                'INATIVAR:',
+                response.status,
+                data
+            );
 
             if (response.ok) {
                 mostrarMensagem(
                     data.mensagem ||
-                    'Advogado inativado com sucesso!',
+                    'Advogado inativado neste escritório com sucesso!',
                     'sucesso'
                 );
 
@@ -611,14 +640,17 @@ export default function AdvogadosLista1({ api }) {
         }
     }
 
-
     function abrirModalAtivar(
         idAdvogado,
-        nomeAdvogado
+        idEscritorio,
+        nomeAdvogado,
+        nomeEscritorio
     ) {
         setDadosAtivar({
             idAdvogado,
-            nomeAdvogado
+            idEscritorio,
+            nomeAdvogado,
+            nomeEscritorio
         });
 
         setModalAtivarAberto(true);
@@ -641,7 +673,7 @@ export default function AdvogadosLista1({ api }) {
                 localStorage.getItem('token');
 
             const response = await fetch(
-                `${API_URL}/advogado/${dadosAtivar.idAdvogado}/ativar`,
+                `${API_URL}/advogado/${dadosAtivar.idAdvogado}/escritorio/${dadosAtivar.idEscritorio}/ativar`,
                 {
                     method: 'PUT',
                     credentials: 'include',
@@ -654,12 +686,18 @@ export default function AdvogadosLista1({ api }) {
             );
 
             const data =
-                await response.json();
+                await lerResposta(response);
+
+            console.log(
+                'ATIVAR:',
+                response.status,
+                data
+            );
 
             if (response.ok) {
                 mostrarMensagem(
                     data.mensagem ||
-                    'Advogado ativado com sucesso!',
+                    'Advogado reativado neste escritório com sucesso!',
                     'sucesso'
                 );
 
@@ -679,7 +717,7 @@ export default function AdvogadosLista1({ api }) {
 
             mostrarMensagem(
                 data.error ||
-                'Erro ao ativar advogado.',
+                'Erro ao reativar advogado.',
                 'erro'
             );
 
@@ -696,8 +734,6 @@ export default function AdvogadosLista1({ api }) {
         }
     }
 
-
-
     const advogadosFiltrados =
         advogados.filter(advogado => {
             if (!filtroNome.trim()) {
@@ -710,8 +746,6 @@ export default function AdvogadosLista1({ api }) {
                     filtroNome.toLowerCase()
                 );
         });
-
-
 
     const totalEstatisticas = 2;
 
@@ -759,13 +793,9 @@ export default function AdvogadosLista1({ api }) {
         paginaEstatisticas <
         totalEstatisticas - 1;
 
-
-
     const cargoEhPromocao =
         dadosAlterarCargo?.novoStatus ===
         'PROPRIETARIO';
-
-
 
     return (
         <div className={css.paginaCompleta}>
@@ -794,7 +824,6 @@ export default function AdvogadosLista1({ api }) {
                     }
                 >
 
-
                     <div
                         className={
                             css.topoSaudacao
@@ -808,8 +837,6 @@ export default function AdvogadosLista1({ api }) {
                             Advogados
                         </h1>
                     </div>
-
-
 
                     {mensagem && (
                         <div
@@ -826,8 +853,6 @@ export default function AdvogadosLista1({ api }) {
                             {mensagem}
                         </div>
                     )}
-
-
 
                     <section
                         className={
@@ -923,8 +948,6 @@ export default function AdvogadosLista1({ api }) {
                         )}
 
                     </section>
-
-
 
                     <div
                         className={
@@ -1060,8 +1083,6 @@ export default function AdvogadosLista1({ api }) {
                         </div>
                     </div>
 
-
-
                     <div
                         className={
                             css.tabelaContainer
@@ -1129,35 +1150,19 @@ export default function AdvogadosLista1({ api }) {
                                             }
                                         >
 
-
-
                                             <td data-label="Nome">
                                                 <div
                                                     className={
                                                         css.nomeComBadge
                                                     }
                                                 >
-                                                        <span>
-                                                            {
-                                                                advogado.nome
-                                                            }
-                                                        </span>
-
-                                                    {advogado.ativo_advogado ===
-                                                        false && (
-                                                            <span
-                                                                className={`
-                                                                    ${css.statusBadge}
-                                                                    ${css.inativo}
-                                                                `}
-                                                            >
-                                                                Inativo
-                                                            </span>
-                                                        )}
+                                                    <span>
+                                                        {
+                                                            advogado.nome
+                                                        }
+                                                    </span>
                                                 </div>
                                             </td>
-
-
 
                                             <td data-label="Nº da OAB">
                                                 {
@@ -1166,16 +1171,12 @@ export default function AdvogadosLista1({ api }) {
                                                 }
                                             </td>
 
-
-
                                             <td data-label="E-mail">
                                                 {
                                                     advogado.email ||
                                                     '--'
                                                 }
                                             </td>
-
-
 
                                             <td
                                                 data-label="Escritório / Posição"
@@ -1199,40 +1200,49 @@ export default function AdvogadosLista1({ api }) {
                                                                     css.itemGrid
                                                                 }
                                                             >
-                                                                    <span
-                                                                        className={
-                                                                            css.nomeEscritorio
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            esc.nome
-                                                                        }
-                                                                    </span>
+                                                                <span
+                                                                    className={
+                                                                        css.nomeEscritorio
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        esc.nome
+                                                                    }
+                                                                </span>
 
                                                                 <span
                                                                     className={`
-                                                                            ${css.statusBadge}
-                                                                            ${
+                                                                        ${css.statusBadge}
+                                                                        ${
                                                                         esc.status ===
                                                                         'PROPRIETARIO'
                                                                             ? css.proprietario
                                                                             : css.parceiro
                                                                     }
-                                                                        `}
+                                                                    `}
                                                                 >
-                                                                        {esc.status ===
-                                                                        'PROPRIETARIO'
-                                                                            ? 'Proprietário'
-                                                                            : 'Parceiro'}
+                                                                    {esc.status ===
+                                                                    'PROPRIETARIO'
+                                                                        ? 'Proprietário'
+                                                                        : 'Parceiro'}
+                                                                </span>
+
+                                                                {!vinculoAtivo(esc.ativo) && (
+                                                                    <span
+                                                                        className={`
+                                                                            ${css.statusBadge}
+                                                                            ${css.inativo}
+                                                                        `}
+                                                                    >
+                                                                        Inativo
                                                                     </span>
+                                                                )}
                                                             </div>
                                                         )
                                                     )}
 
                                                 </div>
                                             </td>
-
-
 
                                             <td
                                                 data-label="Ações"
@@ -1257,15 +1267,15 @@ export default function AdvogadosLista1({ api }) {
                                                                 }
                                                             >
 
-                                                                    <span
-                                                                        className={
-                                                                            css.nomeEscritorioAcao
-                                                                        }
-                                                                    >
-                                                                        {
-                                                                            esc.nome
-                                                                        }
-                                                                    </span>
+                                                                <span
+                                                                    className={
+                                                                        css.nomeEscritorioAcao
+                                                                    }
+                                                                >
+                                                                    {
+                                                                        esc.nome
+                                                                    }
+                                                                </span>
 
                                                                 <div
                                                                     className={
@@ -1276,8 +1286,7 @@ export default function AdvogadosLista1({ api }) {
                                                                     {esc.pode_gerenciar ? (
 
                                                                         <>
-                                                                            {advogado.ativo_advogado ===
-                                                                            false ? (
+                                                                            {!vinculoAtivo(esc.ativo) ? (
 
                                                                                 <button
                                                                                     className={
@@ -1289,7 +1298,9 @@ export default function AdvogadosLista1({ api }) {
                                                                                     onClick={() =>
                                                                                         abrirModalAtivar(
                                                                                             advogado.id,
-                                                                                            advogado.nome
+                                                                                            esc.id,
+                                                                                            advogado.nome,
+                                                                                            esc.nome
                                                                                         )
                                                                                     }
                                                                                     type="button"
@@ -1297,56 +1308,52 @@ export default function AdvogadosLista1({ api }) {
                                                                                     Ativar
                                                                                 </button>
 
+                                                                            ) : esc.status === 'PROPRIETARIO' ? (
+
+                                                                                <button
+                                                                                    className={
+                                                                                        css.botaoVer
+                                                                                    }
+                                                                                    disabled={
+                                                                                        carregandoAcao
+                                                                                    }
+                                                                                    onClick={() =>
+                                                                                        abrirModalAlterarCargo(
+                                                                                            advogado.id,
+                                                                                            esc.id,
+                                                                                            advogado.nome,
+                                                                                            esc.nome,
+                                                                                            'PARCEIRO'
+                                                                                        )
+                                                                                    }
+                                                                                    type="button"
+                                                                                >
+                                                                                    Regredir
+                                                                                </button>
+
                                                                             ) : (
 
                                                                                 <>
-                                                                                    {esc.status ===
-                                                                                    'PARCEIRO' ? (
-
-                                                                                        <button
-                                                                                            className={
-                                                                                                css.botaoVer
-                                                                                            }
-                                                                                            disabled={
-                                                                                                carregandoAcao
-                                                                                            }
-                                                                                            onClick={() =>
-                                                                                                abrirModalAlterarCargo(
-                                                                                                    advogado.id,
-                                                                                                    esc.id,
-                                                                                                    advogado.nome,
-                                                                                                    esc.nome,
-                                                                                                    'PROPRIETARIO'
-                                                                                                )
-                                                                                            }
-                                                                                            type="button"
-                                                                                        >
-                                                                                            Promover
-                                                                                        </button>
-
-                                                                                    ) : (
-
-                                                                                        <button
-                                                                                            className={
-                                                                                                css.botaoVer
-                                                                                            }
-                                                                                            disabled={
-                                                                                                carregandoAcao
-                                                                                            }
-                                                                                            onClick={() =>
-                                                                                                abrirModalAlterarCargo(
-                                                                                                    advogado.id,
-                                                                                                    esc.id,
-                                                                                                    advogado.nome,
-                                                                                                    esc.nome,
-                                                                                                    'PARCEIRO'
-                                                                                                )
-                                                                                            }
-                                                                                            type="button"
-                                                                                        >
-                                                                                            Regredir
-                                                                                        </button>
-                                                                                    )}
+                                                                                    <button
+                                                                                        className={
+                                                                                            css.botaoVer
+                                                                                        }
+                                                                                        disabled={
+                                                                                            carregandoAcao
+                                                                                        }
+                                                                                        onClick={() =>
+                                                                                            abrirModalAlterarCargo(
+                                                                                                advogado.id,
+                                                                                                esc.id,
+                                                                                                advogado.nome,
+                                                                                                esc.nome,
+                                                                                                'PROPRIETARIO'
+                                                                                            )
+                                                                                        }
+                                                                                        type="button"
+                                                                                    >
+                                                                                        Promover
+                                                                                    </button>
 
                                                                                     <button
                                                                                         className={
@@ -1378,7 +1385,9 @@ export default function AdvogadosLista1({ api }) {
                                                                                         onClick={() =>
                                                                                             abrirModalInativar(
                                                                                                 advogado.id,
-                                                                                                advogado.nome
+                                                                                                esc.id,
+                                                                                                advogado.nome,
+                                                                                                esc.nome
                                                                                             )
                                                                                         }
                                                                                         type="button"
@@ -1396,8 +1405,8 @@ export default function AdvogadosLista1({ api }) {
                                                                                 css.semAcao
                                                                             }
                                                                         >
-                                                                                Sem Ações
-                                                                            </span>
+                                                                            Sem Ações
+                                                                        </span>
                                                                     )}
 
                                                                 </div>
@@ -1418,8 +1427,6 @@ export default function AdvogadosLista1({ api }) {
 
                 </main>
             </div>
-
-
 
             {modalAlterarCargoAberto &&
                 dadosAlterarCargo && (
@@ -1555,8 +1562,6 @@ export default function AdvogadosLista1({ api }) {
                     </div>
                 )}
 
-
-
             {modalRetirarAberto &&
                 dadosRetirar && (
 
@@ -1672,8 +1677,6 @@ export default function AdvogadosLista1({ api }) {
                     </div>
                 )}
 
-
-
             {modalInativarAberto &&
                 dadosInativar && (
 
@@ -1734,18 +1737,21 @@ export default function AdvogadosLista1({ api }) {
                                     {
                                         dadosInativar.nomeAdvogado
                                     }
+                                </strong>{' '}
+
+                                no escritório{' '}
+
+                                <strong>
+                                    {
+                                        dadosInativar.nomeEscritorio
+                                    }
                                 </strong>.
 
                                 <br />
 
-                                Ele perderá acesso a{' '}
-
-                                <strong>
-                                    todos os escritórios
-                                </strong>{' '}
-
-                                e não conseguirá mais
-                                logar no sistema.
+                                Ele continuará podendo acessar
+                                normalmente os outros escritórios
+                                em que estiver ativo.
                             </p>
 
                             <div
@@ -1791,8 +1797,6 @@ export default function AdvogadosLista1({ api }) {
                         </div>
                     </div>
                 )}
-
-
 
             {modalAtivarAberto &&
                 dadosAtivar && (
@@ -1854,13 +1858,20 @@ export default function AdvogadosLista1({ api }) {
                                     {
                                         dadosAtivar.nomeAdvogado
                                     }
+                                </strong>{' '}
+
+                                no escritório{' '}
+
+                                <strong>
+                                    {
+                                        dadosAtivar.nomeEscritorio
+                                    }
                                 </strong>.
 
                                 <br />
 
-                                Ele poderá logar novamente
-                                e voltará a ter acesso aos
-                                escritórios.
+                                Ele voltará a ter acesso a este
+                                escritório.
                             </p>
 
                             <div

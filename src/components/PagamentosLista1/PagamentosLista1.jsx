@@ -24,7 +24,7 @@ export default function PagamentosLista1({ api }) {
     const [parcelaBaixar, setParcelaBaixar] = useState(null);
     const [baixando, setBaixando] = useState(false);
 
-    const API_URL = api || ' http://192.168.0.131:5000';
+    const API_URL = api || 'http://10.92.11.30:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 

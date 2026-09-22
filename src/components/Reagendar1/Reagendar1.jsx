@@ -46,7 +46,7 @@ export default function Reagendar1({ api }) {
     const [carregandoClientes, setCarregandoClientes] = useState(false);
     const [carregandoAdvogados, setCarregandoAdvogados] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.39:5000';
+    const API_URL = api || 'http://10.92.11.30:5000';
 
     function agendarLimpezaMensagem() {
         if (window.timeoutMensagem) clearTimeout(window.timeoutMensagem);

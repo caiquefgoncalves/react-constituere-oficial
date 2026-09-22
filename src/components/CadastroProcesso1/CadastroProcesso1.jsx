@@ -26,7 +26,7 @@ export default function CadastroProcesso1({ api }) {
     const [carregandoClientes, setCarregandoClientes] = useState(false);
     const [verificandoNumero, setVerificandoNumero] = useState(false);
 
-    const API_URL = api || ' http://192.168.0.131:5000';
+    const API_URL = api || 'http://10.92.11.30:5000';
 
     function agendarLimpezaMensagem() {
         if (window.timeoutMensagem) {

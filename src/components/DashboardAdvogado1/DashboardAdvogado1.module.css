@@ -1,1402 +1,857 @@
 @import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
 @import url('https://fonts.cdnfonts.com/css/clear-sans');
 
-
 .paginaCompleta {
     display: flex;
     flex-direction: column;
-
     min-height: 100vh;
-
     background-color: #ffffff;
 }
-
-
 
 .layoutDashboard {
     display: flex;
     flex: 1;
-
     width: 100%;
     max-width: 1440px;
-
     margin: 0 auto;
-
     padding: 0 1rem;
-
     box-sizing: border-box;
 }
 
-
 .menuLateralContainer {
     width: 220px;
-
     flex-shrink: 0;
-
     background-color: #ffffff;
-
     border-right: 1px solid #e0e0e0;
-
     padding-right: 0.5rem;
 }
 
-
 .conteudoPrincipal {
     flex: 1;
-
-    padding:
-            2.5rem
-            2.5rem
-            2.5rem
-            3rem;
-
+    padding: 2.5rem 2.5rem 2.5rem 3rem;
     display: flex;
     flex-direction: column;
-
     gap: 2rem;
-
     min-width: 0;
 }
 
-
-
-
 .mensagemContainer {
-    padding:
-            12px
-            20px;
-
+    padding: 12px 20px;
     border-radius: 8px;
-
     text-align: center;
-
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-weight: 600;
 }
 
-
 .mensagemContainer.sucesso {
     background-color: #d4edda;
-
     color: #155724;
-
-    border:
-            1px
-            solid
-            #c3e6cb;
+    border: 1px solid #c3e6cb;
 }
-
 
 .mensagemContainer.erro {
     background-color: #f8d7da;
-
     color: #721c24;
-
-    border:
-            1px
-            solid
-            #f5c6cb;
+    border: 1px solid #f5c6cb;
 }
-
-
-
 
 .topoSaudacao {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     gap: 1rem;
-
     width: 100%;
-
     margin-bottom: 0.5rem;
-
     min-width: 0;
 }
-
 
 .saudacaoTexto {
     min-width: 0;
 }
 
-
 .tituloSaudacao {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.8rem;
-
     font-weight: 700;
-
     color: #0047ab;
-
     margin: 0;
-
     line-height: 1.2;
 }
-
 
 .nomeDestaque {
     color: #333333;
 }
 
-
-
-
 .btnConfiguracoes {
     background: transparent;
-
     border: none;
-
     cursor: pointer;
-
     padding: 5px;
-
     border-radius: 50%;
-
     flex-shrink: 0;
-
-    transition:
-            background-color
-            0.2s;
+    transition: background-color 0.2s;
 }
-
 
 .btnConfiguracoes:hover {
     background-color: #f0f0f0;
 }
 
-
 .imgEngrenagem {
     width: 28px;
     height: 28px;
-
     display: block;
 }
 
-
-
-
 .carrosselEstatisticas {
     width: 100%;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     gap: 10px;
-
     min-width: 0;
-
     box-sizing: border-box;
 }
-
 
 .estatisticasContainer {
     width: 100%;
-
     display: flex;
-
     align-items: stretch;
     justify-content: center;
-
     gap: 1.5rem;
-
     overflow: visible;
-
     min-width: 0;
-
     box-sizing: border-box;
 }
-
-
-
 
 .cardNovo {
     background: #ffffff;
-
-    border:
-            1px
-            solid
-            #8bb4d9;
-
+    border: 1px solid #8bb4d9;
     border-radius: 14px;
-
-    padding:
-            1.8rem
-            1.5rem
-            1.5rem;
-
+    padding: 1.8rem 1.5rem 1.5rem;
     min-width: 0;
-
     flex: 1 1 0;
-
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
     justify-content: center;
-
-    box-shadow:
-            0 2px 6px
-            rgba(
-                    0,
-                    0,
-                    0,
-                    0.02
-            );
-
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02);
     box-sizing: border-box;
 }
 
-
 .labelCardNovo {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-weight: 700;
-
     font-size: 1rem;
-
     color: #222222;
-
     margin-bottom: 1rem;
-
     text-align: center;
 }
 
-
 .bolinhaVerde {
     background-color: #ddf6d6;
-
     border-radius: 100px;
-
-    padding:
-            0.4rem
-            1.5rem;
-
+    padding: 0.4rem 1.5rem;
     display: inline-flex;
-
     align-items: center;
     justify-content: center;
-
     min-width: 60px;
-
     box-sizing: border-box;
 }
 
-
 .numeroCardNovo {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.8rem;
-
     font-weight: 700;
-
     color: #222222;
 }
 
-
-
-
 .botaoSetaEstatisticas {
     display: none;
-
     border: none;
-
     background: transparent;
-
     color: #0047ab;
-
     font-size: 28px;
-
     font-weight: bold;
-
     width: 30px;
     height: 50px;
-
     padding: 0;
     margin: 0;
-
     align-items: center;
     justify-content: center;
-
     cursor: pointer;
-
     flex-shrink: 0;
-
-    transition:
-            color 0.2s ease,
-            transform 0.2s ease;
+    transition: color 0.2s ease, transform 0.2s ease;
 }
-
 
 .botaoSetaEstatisticas:hover {
     color: #003580;
-
     transform: scale(1.1);
 }
 
-
-
-
 .areaTitulo {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     gap: 1rem;
-
-    border-bottom:
-            1px
-            solid
-            #eeeeee;
-
+    border-bottom: 1px solid #eeeeee;
     padding-bottom: 1rem;
 }
 
-
 .tituloSecao {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.3rem;
-
     font-weight: 700;
-
     color: #333333;
-
     margin: 0;
 }
 
-
 .botaoAdicionarEscritorio {
     background-color: #0047ab;
-
     color: #ffffff;
-
     border: none;
-
     border-radius: 50%;
-
     width: 34px;
     height: 34px;
-
     font-size: 1.4rem;
-
     cursor: pointer;
-
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     flex-shrink: 0;
-
-    transition:
-            background-color
-            0.3s;
+    transition: background-color 0.3s;
 }
-
 
 .botaoAdicionarEscritorio:hover {
     background-color: #003580;
 }
 
-
-
-
 .areaEscritorios {
-    padding:
-            0.5rem
-            0
-            1rem;
-
+    padding: 0.5rem 0 1rem;
     text-align: center;
-
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     min-height: 100px;
-
     width: 100%;
-
     min-width: 0;
-
     box-sizing: border-box;
 }
-
 
 .areaEscritorios p {
     color: #888888;
-
     font-size: 0.95rem;
 }
 
-
-
 .gridEscritorios {
     display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fill,
-            minmax(
-                    min(280px, 100%),
-                    1fr
-            )
-        );
-
+    grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
     gap: 1.5rem;
-
     width: 100%;
-
     min-width: 0;
 }
-
-
 
 .cardEscritorio {
     background: #ffffff;
-
-    border:
-            1px
-            solid
-            #e8edf2;
-
+    border: 1px solid #e8edf2;
     border-radius: 12px;
-
     padding: 1.5rem;
-
     display: flex;
-
     flex-direction: column;
-
     justify-content: space-between;
-
     min-width: 0;
-
     box-sizing: border-box;
-
-    transition:
-            border-color 0.2s ease,
-            box-shadow 0.2s ease;
-
-    box-shadow:
-            0 2px 4px
-            rgba(
-                    0,
-                    0,
-                    0,
-                    0.02
-            );
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
 }
-
 
 .cardEscritorio:hover {
     border-color: #0047ab;
-
-    box-shadow:
-            0 4px 12px
-            rgba(
-                    0,
-                    71,
-                    171,
-                    0.08
-            );
+    box-shadow: 0 4px 12px rgba(0, 71, 171, 0.08);
 }
-
 
 .cardEscritorioHeader {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     gap: 0.5rem;
-
     margin-bottom: 1rem;
-
     min-width: 0;
 }
-
 
 .fotoEscritorio {
     width: 85px;
     height: 85px;
-
     border-radius: 50%;
-
     object-fit: cover;
-
-    border:
-            2px
-            solid
-            #e8edf2;
-
+    border: 2px solid #e8edf2;
     flex-shrink: 0;
 }
 
-
 .cardEscritorioInfo {
     width: 100%;
-
     min-width: 0;
-
     text-align: center;
 }
 
-
 .nomeEscritorio {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.05rem;
-
     font-weight: 700;
-
     color: #222222;
-
     margin: 0;
-
     line-height: 1.3;
-
     overflow-wrap: anywhere;
 }
 
-
 .tipoEscritorio {
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.75rem;
-
     color: #0047ab;
-
     background-color: #eef4fb;
-
-    padding:
-            2px
-            12px;
-
+    padding: 2px 12px;
     border-radius: 20px;
-
     display: inline-block;
-
     font-weight: 600;
-
     margin-top: 15px;
 }
 
-
 .botaoVerDetalhes {
     background: transparent;
-
     border: none;
-
     color: #0047ab;
-
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.85rem;
-
     font-weight: 600;
-
     cursor: pointer;
-
-    padding:
-            0.5rem
-            0;
-
+    padding: 0.5rem 0;
     text-align: left;
-
     width: fit-content;
-
     align-self: flex-start;
-
-    transition:
-            color
-            0.2s;
+    transition: color 0.2s;
 }
-
 
 .botaoVerDetalhes:hover {
     color: #003580;
-
     text-decoration: underline;
 }
 
-
-
-
 .gradeDupla {
     display: grid;
-
-    grid-template-columns:
-        minmax(0, 1fr)
-        minmax(0, 1fr);
-
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: 2rem;
-
     width: 100%;
-
     min-width: 0;
 }
-
 
 .cardDuplo {
     background: #ffffff;
-
     border-radius: 12px;
-
     padding: 1.5rem;
-
-    box-shadow:
-            0 2px 8px
-            rgba(
-                    0,
-                    0,
-                    0,
-                    0.04
-            );
-
-    border:
-            1px
-            solid
-            #eeeeee;
-
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    border: 1px solid #eeeeee;
     min-height: 180px;
-
     min-width: 0;
-
     box-sizing: border-box;
 }
 
-
 .cardDuploHeader {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
-
     flex-wrap: wrap;
-
     gap: 0.5rem;
-
     margin-bottom: 1rem;
 }
 
-
 .tituloCardDuplo {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.1rem;
-
     font-weight: 700;
-
     color: #333333;
-
     margin: 0;
 }
 
-
-
-
 .selectFiltro {
-    padding:
-            0.4rem
-            1.2rem;
-
-    border:
-            1px
-            solid
-            #dcdcdc;
-
+    padding: 0.4rem 1.2rem;
+    border: 1px solid #dcdcdc;
     border-radius: 6px;
-
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.8rem;
-
     background-color: #ffffff;
-
     color: #333333;
-
     cursor: pointer;
-
     outline: none;
-
-    transition:
-            border-color
-            0.2s;
+    transition: border-color 0.2s;
 }
-
 
 .selectFiltro:focus {
     border-color: #0047ab;
 }
 
-
-
 .placeholderGrafico {
     display: flex;
-
     align-items: center;
     justify-content: center;
-
     height: 100px;
-
     background: #fafafa;
-
     border-radius: 8px;
 }
 
-
 .textoPlaceholder {
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     color: #aaaaaa;
-
     font-size: 0.9rem;
-
     text-align: center;
 }
 
-
-
 .graficoContainer {
-    padding:
-            0.5rem
-            0;
-
+    padding: 0.5rem 0;
     width: 100%;
-
     min-width: 0;
 }
 
-
 .graficoLegenda {
     display: flex;
-
     gap: 1.5rem;
-
     margin-bottom: 1rem;
-
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.8rem;
 }
-
 
 .legendaRecebido {
     color: #28a745;
 }
 
-
 .legendaAReceber {
     color: #0047ab;
 }
 
-
 .graficoBarras {
     display: flex;
-
     justify-content: space-around;
-
     align-items: flex-end;
-
     height: 200px;
-
-    padding:
-            0.5rem
-            0;
-
-    border-bottom:
-            1px
-            solid
-            #e8edf2;
-
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #e8edf2;
     min-width: 0;
 }
-
 
 .barraGrupo {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     gap: 0.5rem;
-
     flex: 1;
-
     min-width: 0;
 }
 
-
 .barras {
     display: flex;
-
     align-items: flex-end;
-
     gap: 4px;
-
     height: 180px;
 }
 
-
 .barraRecebido {
     width: 20px;
-
     background: #28a745;
-
-    border-radius:
-            4px
-            4px
-            0
-            0;
-
+    border-radius: 4px 4px 0 0;
     min-height: 2px;
-
     position: relative;
-
     display: flex;
-
     align-items: flex-start;
     justify-content: center;
-
-    transition:
-            height
-            0.5s ease;
+    transition: height 0.5s ease;
 }
-
 
 .barraAReceber {
     width: 20px;
-
     background: #0047ab;
-
-    border-radius:
-            4px
-            4px
-            0
-            0;
-
+    border-radius: 4px 4px 0 0;
     min-height: 2px;
-
     position: relative;
-
     display: flex;
-
     align-items: flex-start;
     justify-content: center;
-
-    transition:
-            height
-            0.5s ease;
+    transition: height 0.5s ease;
 }
-
 
 .barraValor {
     position: absolute;
-
     top: -18px;
-
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.6rem;
-
     color: #333333;
-
     white-space: nowrap;
-
     opacity: 0;
-
-    transition:
-            opacity
-            0.3s;
+    transition: opacity 0.3s;
 }
-
 
 .barraRecebido:hover .barraValor,
 .barraAReceber:hover .barraValor {
     opacity: 1;
 }
 
-
 .barraLabel {
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.7rem;
-
     color: #666666;
-
     text-align: center;
 }
-
-
-
 
 .graficoTotais {
     display: flex;
-
     justify-content: center;
-
     gap: 3rem;
-
     margin-top: 1rem;
-
     padding-top: 1rem;
-
-    border-top:
-            1px
-            solid
-            #f0f0f0;
+    border-top: 1px solid #f0f0f0;
 }
-
 
 .totalItem {
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     gap: 0.2rem;
-
     min-width: 0;
 }
 
-
 .totalLabel {
-    font-family:
-            'Clear Sans',
-            sans-serif;
-
+    font-family: 'Clear Sans', sans-serif;
     font-size: 0.75rem;
-
     color: #888888;
 }
 
-
 .totalValor {
-    font-family:
-            'Glacial Indifference',
-            sans-serif;
-
+    font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.1rem;
-
     font-weight: 700;
-
     color: #333333;
-
     text-align: center;
 }
 
+.listaAgendamentos {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    margin-top: 1rem;
+    max-height: 260px;
+    overflow-y: auto;
+}
 
+.itemAgendamento {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.6rem 0.8rem;
+    border-radius: 8px;
+    background: #f8fbff;
+    border: 1px solid #dbe9f7;
+    min-width: 0;
+}
 
+.dataAgendamento {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: #d8e8ff;
+    border-radius: 6px;
+    padding: 0.4rem 0.6rem;
+    flex-shrink: 0;
+}
+
+.diaAgendamento {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0047ab;
+}
+
+.mesAgendamento {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    color: #0047ab;
+}
+
+.infoAgendamento {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+    flex: 1;
+}
+
+.horaAgendamento {
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #333333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.assuntoAgendamento {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #888888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.badgeAConfirmar {
+    background: #fff78b;
+    color: #e3a800;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.botaoVerDetalhesAgendamentos {
+    align-self: flex-start;
+    background: transparent;
+    border: none;
+    color: #0047ab;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 0.4rem 0;
+    transition: color 0.2s;
+}
+
+.botaoVerDetalhesAgendamentos:hover {
+    color: #003580;
+    text-decoration: underline;
+}
 
 @media (max-width: 769px) {
-
-
-
     .menuLateralContainer {
         display: none;
     }
-
 
     .layoutDashboard {
         padding: 0;
     }
 
-
     .conteudoPrincipal {
         width: 100%;
-
-        padding:
-                2rem
-                1.5rem;
-
+        padding: 2rem 1.5rem;
         box-sizing: border-box;
     }
-
-
-
 
     .topoSaudacao {
         min-width: 0;
     }
-
 
     .saudacaoTexto {
         min-width: 0;
     }
 
-
     .tituloSaudacao {
         overflow-wrap: anywhere;
     }
-
-
 
     .carrosselEstatisticas {
         width: 100%;
     }
 
-
     .estatisticasContainer {
         width: 100%;
-
         gap: 1.5rem;
-
         overflow: visible;
-
         scroll-snap-type: none;
     }
 
-
     .cardNovo {
         flex: 1 1 0;
-
         width: auto;
-
         min-width: 0;
-
         max-width: none;
-
         scroll-snap-align: none;
     }
-
 
     .botaoSetaEstatisticas {
         display: none;
     }
 
-
-
     .gridEscritorios {
         grid-template-columns: 1fr;
     }
 
-
-
-
     .gradeDupla {
         grid-template-columns: 1fr;
     }
-
 }
 
-
-
-
 @media (max-width: 426px) {
-
-
-
     .conteudoPrincipal {
         width: 100%;
-
-        padding:
-                1rem
-                4vw;
-
+        padding: 1rem 4vw;
         gap: 1.5rem;
-
         box-sizing: border-box;
     }
 
-
-
-
     .topoSaudacao {
         align-items: flex-start;
-
         gap: 0.5rem;
     }
 
-
     .tituloSaudacao {
         font-size: 1.8rem;
-
         line-height: 1.1;
-
         overflow-wrap: anywhere;
     }
-
 
     .btnConfiguracoes {
         padding: 3px;
     }
-
 
     .imgEngrenagem {
         width: 25px;
         height: 25px;
     }
 
-
-
-
     .carrosselEstatisticas {
         width: 100%;
-
         display: flex;
-
         align-items: center;
         justify-content: center;
-
         gap: 3px;
-
         box-sizing: border-box;
     }
-
 
     .estatisticasContainer {
         width: 100%;
-
         max-width: 100%;
-
         display: flex;
-
         align-items: stretch;
-
         justify-content: flex-start;
-
         gap: 0;
-
         overflow-x: hidden;
         overflow-y: hidden;
-
         scroll-behavior: smooth;
-
-        scroll-snap-type:
-                x
-                mandatory;
-
+        scroll-snap-type: x mandatory;
         scrollbar-width: none;
-
         flex: 1;
-
         min-width: 0;
-
         box-sizing: border-box;
     }
-
 
     .estatisticasContainer::-webkit-scrollbar {
         display: none;
     }
 
-
     .cardNovo {
-        flex:
-                0
-                0
-                calc(100% - 10px);
-
-        width:
-                calc(100% - 10px);
-
-        min-width:
-                calc(100% - 10px);
-
-        max-width:
-                calc(100% - 10px);
-
-        margin:
-                0
-                5px;
-
+        flex: 0 0 calc(100% - 10px);
+        width: calc(100% - 10px);
+        min-width: calc(100% - 10px);
+        max-width: calc(100% - 10px);
+        margin: 0 5px;
         box-sizing: border-box;
-
         scroll-snap-align: center;
-
-        padding:
-                1.6rem
-                1rem
-                1.4rem;
+        padding: 1.6rem 1rem 1.4rem;
     }
-
 
     .labelCardNovo {
         font-size: 1.2rem;
-
         max-width: 80%;
-
         margin-bottom: 1rem;
     }
-
 
     .numeroCardNovo {
         font-size: 2rem;
     }
 
-
     .botaoSetaEstatisticas {
         display: flex;
-
-        flex:
-                0
-                0
-                26px;
-
+        flex: 0 0 26px;
         width: 26px;
         height: 50px;
-
         padding: 0;
-
         margin: 0;
-
         font-size: 22px;
-
         align-items: center;
         justify-content: center;
     }
-
-
 
     .areaTitulo {
         gap: 0.75rem;
     }
 
-
     .tituloSecao {
         font-size: 1.2rem;
     }
 
-
     .botaoAdicionarEscritorio {
         width: 32px;
         height: 32px;
-
         font-size: 1.3rem;
     }
 
-
-
     .gridEscritorios {
         grid-template-columns: 1fr;
-
         gap: 1rem;
     }
-
 
     .cardEscritorio {
         padding: 1.25rem;
     }
-
 
     .fotoEscritorio {
         width: 75px;
         height: 75px;
     }
 
-
-
-
     .gradeDupla {
         grid-template-columns: 1fr;
-
         gap: 1.5rem;
     }
 
-
     .cardDuplo {
         padding: 1rem;
-
         min-width: 0;
-
         box-sizing: border-box;
     }
-
 
     .cardDuploHeader {
         gap: 0.8rem;
     }
 
-
-
-
     .graficoContainer {
         width: 100%;
-
         min-width: 0;
-
         overflow: hidden;
     }
 
-
     .graficoLegenda {
         flex-wrap: wrap;
-
-        gap:
-                0.5rem
-                1rem;
+        gap: 0.5rem 1rem;
     }
-
 
     .graficoBarras {
         overflow-x: auto;
         overflow-y: hidden;
-
         justify-content: flex-start;
-
         scrollbar-width: thin;
     }
 
-
     .barraGrupo {
-        flex:
-                0
-                0
-                65px;
-
+        flex: 0 0 65px;
         min-width: 65px;
     }
 
-
     .graficoTotais {
         gap: 1.5rem;
-
         flex-wrap: wrap;
     }
-
 
     .totalValor {
         font-size: 1rem;
     }
-
 }
