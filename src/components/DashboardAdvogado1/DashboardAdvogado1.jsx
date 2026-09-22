@@ -29,6 +29,8 @@ export default function DashboardAdvogado1({ api }) {
     const [carregandoGrafico, setCarregandoGrafico] = useState(false);
 
     const [filtroPeriodo, setFiltroPeriodo] = useState('mes');
+    const [menuColapsado, setMenuColapsado] = useState(false);
+
 
     const [totaisGrafico, setTotaisGrafico] = useState({
         recebido: 0,
@@ -38,7 +40,9 @@ export default function DashboardAdvogado1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
+
     const API_URL = api || 'http://10.92.11.30:5000';
+
 
     function limparSessaoERedirecionar() {
         localStorage.removeItem('nome');
@@ -48,6 +52,25 @@ export default function DashboardAdvogado1({ api }) {
 
         navigate('/login');
     }
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        };
+    }, []);
 
     function contarClientesMes(clientes) {
         const dataAtual = new Date();
@@ -386,7 +409,7 @@ export default function DashboardAdvogado1({ api }) {
 
             <div className={css.layoutDashboard}>
 
-                <div className={css.menuLateralContainer}>
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 

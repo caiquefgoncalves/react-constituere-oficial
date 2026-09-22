@@ -41,6 +41,7 @@ export default function ClientesLista1({ api }) {
 
     const [inativando, setInativando] = useState(false);
     const [ativando, setAtivando] = useState(false);
+    const [menuColapsado, setMenuColapsado] = useState(false);
 
     const API_URL = api || 'http://10.92.11.30:5000';
 
@@ -50,6 +51,25 @@ export default function ClientesLista1({ api }) {
         'PB', 'PR', 'PE', 'PI', 'RJ', 'RN', 'RS',
         'RO', 'RR', 'SC', 'SP', 'SE', 'TO'
     ];
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        };
+    }, []);
 
     function apenasNumeros(valor) {
         if (!valor) return '';
@@ -1865,7 +1885,8 @@ export default function ClientesLista1({ api }) {
                         clienteInativar.id
                             ? {
                                 ...c,
-                                status: 'inativo'
+                                status: 'inativo',
+                                status_financeiro: 'inativo'
                             }
                             : c
                     )
@@ -1878,7 +1899,8 @@ export default function ClientesLista1({ api }) {
                 setClienteSelecionado(
                     prev => ({
                         ...prev,
-                        status: 'inativo'
+                        status: 'inativo',
+                        status_financeiro: 'inativo'
                     })
                 );
             }
@@ -1994,7 +2016,7 @@ export default function ClientesLista1({ api }) {
 
             const statusMatch =
                 filtroStatus === 'todos' ||
-                cliente.status ===
+                cliente.status_financeiro ===
                 filtroStatus;
 
             const tipoMatch =
@@ -2012,8 +2034,8 @@ export default function ClientesLista1({ api }) {
     const ativos =
         clientes.filter(
             c =>
-                c.status === 'em_dia' ||
-                c.status === 'proximo_vencimento'
+                c.status_financeiro === 'em_dia' ||
+                c.status_financeiro === 'proximo_vencimento'
         ).length;
 
     const novosMes =
@@ -2024,7 +2046,7 @@ export default function ClientesLista1({ api }) {
     const inadimplentes =
         clientes.filter(
             c =>
-                c.status ===
+                c.status_financeiro ===
                 'inadimplente'
         ).length;
 
@@ -2092,7 +2114,7 @@ export default function ClientesLista1({ api }) {
 
             <div className={css.layoutDashboard}>
 
-                <div className={css.menuLateralContainer}>
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 
@@ -2354,18 +2376,18 @@ export default function ClientesLista1({ api }) {
                                         <td data-label="Status">
                                                 <span
                                                     className={`${css.statusBadge} ${
-                                                        css[cliente.status]
+                                                        css[cliente.status_financeiro]
                                                     }`}
                                                 >
-                                                    {cliente.status === 'em_dia' && 'Em dia'}
+                                                    {cliente.status_financeiro === 'em_dia' && 'Em dia'}
 
-                                                    {cliente.status === 'proximo_vencimento' && 'A vencer'}
+                                                    {cliente.status_financeiro === 'proximo_vencimento' && 'A vencer'}
 
-                                                    {cliente.status === 'inadimplente' && 'Inadimplente'}
+                                                    {cliente.status_financeiro === 'inadimplente' && 'Inadimplente'}
 
-                                                    {cliente.status === 'sem_parcelas' && 'Sem cobranças'}
+                                                    {cliente.status_financeiro === 'sem_parcelas' && 'Sem cobranças'}
 
-                                                    {cliente.status === 'inativo' && 'Inativo'}
+                                                    {cliente.status_financeiro === 'inativo' && 'Inativo'}
                                                 </span>
                                         </td>
 

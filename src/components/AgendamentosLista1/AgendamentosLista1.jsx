@@ -21,6 +21,7 @@ export default function AgendamentosLista1({ api }) {
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
     const [motivo, setMotivo] = useState('');
     const [enviando, setEnviando] = useState(false);
+    const [menuColapsado, setMenuColapsado] = useState(false);
 
     function deslogar() {
         localStorage.removeItem('nome');
@@ -29,6 +30,25 @@ export default function AgendamentosLista1({ api }) {
         localStorage.removeItem('id_usuario');
         navigate('/login');
     }
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        };
+    }, []);
 
     function abrirModal(tipo, agendamento) {
         setModalTipo(tipo);
@@ -212,7 +232,7 @@ export default function AgendamentosLista1({ api }) {
 
             <div className={css.layoutDashboard}>
 
-                <div className={css.menuLateralContainer}>
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 

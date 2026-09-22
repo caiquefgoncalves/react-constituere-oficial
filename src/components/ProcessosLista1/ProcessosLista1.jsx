@@ -58,6 +58,8 @@ export default function ProcessosLista1({ api }) {
     const [modalExitoAberto, setModalExitoAberto] = useState(false);
     const [processoExito, setProcessoExito] = useState(null);
     const [carregandoExito, setCarregandoExito] = useState(false);
+    const [menuColapsado, setMenuColapsado] = useState(false);
+
 
     const [dadosExito, setDadosExito] = useState({
         tipo_pagamento: '',
@@ -84,6 +86,26 @@ export default function ProcessosLista1({ api }) {
         localStorage.removeItem('id_usuario');
         navigate('/login');
     }
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        };
+    }, []);
+
 
     function limparTodasMensagens() {
         setMensagem('');
@@ -1616,7 +1638,7 @@ export default function ProcessosLista1({ api }) {
             <Header api={API_URL} />
 
             <div className={css.layoutDashboard}>
-                <div className={css.menuLateralContainer}>
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 

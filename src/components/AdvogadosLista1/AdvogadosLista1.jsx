@@ -39,6 +39,8 @@ export default function AdvogadosLista1({ api }) {
 
     const [modalAlterarCargoAberto, setModalAlterarCargoAberto] = useState(false);
     const [dadosAlterarCargo, setDadosAlterarCargo] = useState(null);
+    const [menuColapsado, setMenuColapsado] = useState(false);
+
 
     function mostrarMensagem(texto, tipo = 'sucesso') {
         setMensagem(texto);
@@ -49,6 +51,28 @@ export default function AdvogadosLista1({ api }) {
             setTipoMensagem('');
         }, 3000);
     }
+
+
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        };
+    }, []);
+
 
     function deslogar() {
         localStorage.removeItem('nome');
@@ -808,14 +832,8 @@ export default function AdvogadosLista1({ api }) {
                 }
             >
 
-                <div
-                    className={
-                        css.menuLateralContainer
-                    }
-                >
-                    <MenuLateralAdvogado
-                        api={API_URL}
-                    />
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
+                    <MenuLateralAdvogado api={API_URL} />
                 </div>
 
                 <main

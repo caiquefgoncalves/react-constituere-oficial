@@ -889,7 +889,18 @@
     text-align: center;
 }
 
+.menuLateralContainer {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 0.5rem;
+    transition: width 0.25s ease;
+}
 
+.menuLateralColapsado {
+    width: 60px;
+}
 
 @keyframes fadeIn {
     from {

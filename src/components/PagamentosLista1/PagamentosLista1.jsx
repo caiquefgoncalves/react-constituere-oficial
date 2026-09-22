@@ -23,6 +23,8 @@ export default function PagamentosLista1({ api }) {
     const [modalBaixaAberto, setModalBaixaAberto] = useState(false);
     const [parcelaBaixar, setParcelaBaixar] = useState(null);
     const [baixando, setBaixando] = useState(false);
+    const [menuColapsado, setMenuColapsado] = useState(false);
+
 
     const API_URL = api || 'http://10.92.11.30:5000';
     const debounceTimer = useRef(null);
@@ -57,6 +59,26 @@ export default function PagamentosLista1({ api }) {
             console.error('Erro ao buscar totais:', error);
         }
     }, [API_URL]);
+
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+        };
+    }, []);
 
     const buscarPagamentos = useCallback(async (paginaAtual = 1) => {
         const token = localStorage.getItem('token');
@@ -235,7 +257,7 @@ export default function PagamentosLista1({ api }) {
             <Header api={API_URL} />
 
             <div className={css.layoutDashboard}>
-                <div className={css.menuLateralContainer}>
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 

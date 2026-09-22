@@ -420,6 +420,19 @@
     transform: scale(0.98);
 }
 
+.menuLateralContainer {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-right: 1px solid #e0e0e0;
+    padding-right: 0.5rem;
+    transition: width 0.25s ease;
+}
+
+.menuLateralColapsado {
+    width: 60px;
+}
+
 @media (max-width: 769px) {
     .overlay {
         padding: 20px;

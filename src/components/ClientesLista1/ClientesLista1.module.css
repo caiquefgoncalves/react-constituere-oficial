@@ -24,6 +24,12 @@
     background-color: #ffffff;
     border-right: 1px solid #e0e0e0;
     padding-right: 0.5rem;
+    transition: width 0.25s ease;
+}
+
+.menuLateralColapsado {
+    width: 60px;
+    padding-right: 0;
 }
 
 .conteudoPrincipal {
@@ -230,7 +236,7 @@
     background: #ffffff;
     width: 100%;
     min-width: 0;
-    overflow: visible;
+    overflow-x: auto;
 }
 
 .tabela {
@@ -242,12 +248,12 @@
 }
 
 .tabela th {
-    text-align: left;
     padding: 1rem 0.75rem;
     border-bottom: 2px solid #e8edf2;
     color: #000000;
     font-weight: 700;
     vertical-align: middle;
+    white-space: nowrap;
 }
 
 .tabela td {
@@ -255,6 +261,7 @@
     border-bottom: 1px solid #e8edf2;
     color: #333333;
     vertical-align: middle;
+    word-break: break-word;
     overflow-wrap: anywhere;
 }
 
@@ -265,37 +272,51 @@
 .tabela th:nth-child(1),
 .tabela td:nth-child(1) {
     width: 18%;
+    text-align: left;
 }
 
 .tabela th:nth-child(2),
 .tabela td:nth-child(2) {
     width: 16%;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .tabela th:nth-child(3),
 .tabela td:nth-child(3) {
-    width: 23%;
+    width: 24%;
+    text-align: left;
 }
 
 .tabela th:nth-child(4),
 .tabela td:nth-child(4) {
-    width: 15%;
+    width: 14%;
+    text-align: left;
+    white-space: nowrap;
 }
 
 .tabela th:nth-child(5),
 .tabela td:nth-child(5) {
     width: 12%;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .tabela th:nth-child(6),
 .tabela td:nth-child(6) {
     width: 16%;
+    text-align: center;
+    white-space: nowrap;
 }
 
 .nomeCliente {
     font-family: 'Clear Sans', sans-serif;
     font-weight: 600;
     color: #333333;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .statusBadge {
@@ -793,7 +814,6 @@
     from {
         opacity: 0;
     }
-
     to {
         opacity: 1;
     }
@@ -804,7 +824,6 @@
         transform: translateY(30px);
         opacity: 0;
     }
-
     to {
         transform: translateY(0);
         opacity: 1;
@@ -994,7 +1013,6 @@
     .campoMetade {
         width: calc(50% - 1rem) !important;
     }
-
 }
 
 @media (max-width: 426px) {
@@ -1241,5 +1259,4 @@
         padding: 0.8rem 1rem;
         box-sizing: border-box;
     }
-
 }

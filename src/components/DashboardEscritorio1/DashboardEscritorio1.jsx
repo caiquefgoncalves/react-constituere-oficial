@@ -33,6 +33,7 @@ export default function DashboardEscritorio1({ api }) {
     const [processosAtivos, setProcessosAtivos] = useState([]);
 
     const [rendimentos, setRendimentos] = useState([]);
+    const [menuColapsado, setMenuColapsado] = useState(false);
 
     const [totaisRendimentos, setTotaisRendimentos] = useState({
         recebido: 0,
@@ -76,6 +77,26 @@ export default function DashboardEscritorio1({ api }) {
 
         return () => {
             window.removeEventListener('resize', atualizarQuantidadeItens);
+        };
+    }, []);
+
+
+    useEffect(() => {
+        function aplicarEstadoMenu(e) {
+            const colapsado = e?.detail?.colapsado ?? false;
+            setMenuColapsado(colapsado);
+        }
+
+        aplicarEstadoMenu({
+            detail: {
+                colapsado: localStorage.getItem('menu_colapsado') === 'true'
+            }
+        });
+
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
+
+        return () => {
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
         };
     }, []);
 
@@ -581,7 +602,7 @@ export default function DashboardEscritorio1({ api }) {
 
             <div className={css.layoutDashboard}>
 
-                <div className={css.menuLateralContainer}>
+                <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 

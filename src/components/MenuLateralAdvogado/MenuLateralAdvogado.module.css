@@ -5,11 +5,55 @@
     padding-top: 2.5rem;
     padding-left: 0;
     gap: 1.5rem;
-    width: 14.5vw;
-    height: 100%;
+    width: 220px;
     box-sizing: border-box;
+    position: sticky;
+    top: 0;
+    align-self: flex-start;
+    max-height: calc(100vh - 80px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    transition: width 0.25s ease;
+}
 
+.containerColapsado {
+    width: 60px;
+}
 
+.botaoToggle {
+    position: absolute;
+    top: 0.5rem;
+    right: 5px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    color: #0047ab;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    z-index: 3;
+    padding: 0;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.botaoToggle:hover {
+    background-color: #0047ab;
+    color: #ffffff;
+}
+
+.iconeToggle {
+    font-size: 0.75rem;
+    line-height: 1;
+    display: inline-block;
+    transition: transform 0.25s ease;
+}
+
+.iconeToggleVirado {
+    transform: rotate(180deg);
 }
 
 .funcoes {
@@ -24,7 +68,7 @@
     border-radius: 6px;
     transition: background-color 0.3s ease;
     white-space: nowrap;
-
+    overflow: hidden;
 }
 
 .funcoes:hover {
@@ -45,7 +89,46 @@
     flex-shrink: 0;
 }
 
+.containerColapsado .funcoes {
+    justify-content: center;
+    padding: 8px 0;
+}
 
-.container::-webkit-scrollbar { width: 4px; }
-.container::-webkit-scrollbar-track { background: transparent; }
-.container::-webkit-scrollbar-thumb { background: #ccc; border-radius: 4px; }
+.containerColapsado .desktop {
+    display: none;
+}
+
+.funcoesSair {
+    margin-top: 2rem;
+    border-top: 1px solid #e0e0e0;
+    padding-top: 1rem;
+
+}
+
+.textoSair {
+    color: #d32f2f;
+}
+
+.iconeSair {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    display: none;
+}
+
+.containerColapsado .iconeSair {
+    display: block;
+}
+
+.container::-webkit-scrollbar {
+    width: 4px;
+}
+
+.container::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.container::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
