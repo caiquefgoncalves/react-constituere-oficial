@@ -553,6 +553,20 @@
     min-width: 0;
 }
 
+
+.btnConfiguracoes:hover .imgEngrenagem {
+    animation: girarEngrenagem 2s linear infinite;
+}
+
+@keyframes girarEngrenagem {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 .dataAgendamento {
     display: flex;
     flex-direction: column;
