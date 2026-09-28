@@ -31,7 +31,6 @@ export default function DashboardAdvogado1({ api }) {
     const [filtroPeriodo, setFiltroPeriodo] = useState('mes');
     const [menuColapsado, setMenuColapsado] = useState(false);
 
-
     const [totaisGrafico, setTotaisGrafico] = useState({
         recebido: 0,
         aReceber: 0
@@ -40,9 +39,7 @@ export default function DashboardAdvogado1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-
     const API_URL = api || 'http://10.92.11.37:5000';
-
 
     function limparSessaoERedirecionar() {
         localStorage.removeItem('nome');
@@ -736,6 +733,24 @@ export default function DashboardAdvogado1({ api }) {
                                             {agendamento.status === 'a_confirmar' && (
                                                 <span className={css.badgeAConfirmar}>
                                                     A confirmar
+                                                </span>
+                                            )}
+
+                                            {agendamento.status === 'confirmado' && (
+                                                <span className={css.badgeConfirmado}>
+                                                    Confirmado
+                                                </span>
+                                            )}
+
+                                            {agendamento.status === 'recusado' && (
+                                                <span className={css.badgeRecusado}>
+                                                    Recusado
+                                                </span>
+                                            )}
+
+                                            {agendamento.status === 'cancelado' && (
+                                                <span className={css.badgeCancelado}>
+                                                    Desmarcado
                                                 </span>
                                             )}
                                         </div>

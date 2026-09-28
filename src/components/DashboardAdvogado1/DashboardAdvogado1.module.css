@@ -24,6 +24,11 @@
     background-color: #ffffff;
     border-right: 1px solid #e0e0e0;
     padding-right: 0.5rem;
+    transition: width 0.25s ease;
+}
+
+.menuLateralColapsado {
+    width: 60px;
 }
 
 .conteudoPrincipal {
@@ -612,6 +617,42 @@
     flex-shrink: 0;
 }
 
+.badgeConfirmado {
+    background: #b7e4c7;
+    color: #1b4332;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badgeRecusado {
+    background: #ffb3b3;
+    color: #8a0000;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.badgeCancelado {
+    background: #e0e0e0;
+    color: #666666;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
 .botaoVerDetalhesAgendamentos {
     align-self: flex-start;
     background: transparent;
@@ -628,19 +669,6 @@
 .botaoVerDetalhesAgendamentos:hover {
     color: #003580;
     text-decoration: underline;
-}
-
-.menuLateralContainer {
-    width: 220px;
-    flex-shrink: 0;
-    background-color: #ffffff;
-    border-right: 1px solid #e0e0e0;
-    padding-right: 0.5rem;
-    transition: width 0.25s ease;
-}
-
-.menuLateralColapsado {
-    width: 60px;
 }
 
 @media (max-width: 769px) {

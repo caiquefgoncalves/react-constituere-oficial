@@ -80,7 +80,6 @@ export default function DashboardEscritorio1({ api }) {
         };
     }, []);
 
-
     useEffect(() => {
         function aplicarEstadoMenu(e) {
             const colapsado = e?.detail?.colapsado ?? false;
@@ -892,6 +891,24 @@ export default function DashboardEscritorio1({ api }) {
                                             {agendamento.status === 'a_confirmar' && (
                                                 <span className={css.badgeAConfirmar}>
                                                     A confirmar
+                                                </span>
+                                            )}
+
+                                            {agendamento.status === 'confirmado' && (
+                                                <span className={css.badgeConfirmado}>
+                                                    Confirmado
+                                                </span>
+                                            )}
+
+                                            {agendamento.status === 'recusado' && (
+                                                <span className={css.badgeRecusado}>
+                                                    Recusado
+                                                </span>
+                                            )}
+
+                                            {agendamento.status === 'cancelado' && (
+                                                <span className={css.badgeCancelado}>
+                                                    Desmarcado
                                                 </span>
                                             )}
                                         </div>
