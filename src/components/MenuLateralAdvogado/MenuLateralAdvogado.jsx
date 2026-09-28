@@ -1,9 +1,11 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import css from './MenuLateralAdvogado.module.css';
+import ChatVeritas from '../ChatVeritas/ChatVeritas.jsx';
 
 export default function MenuLateralAdvogado({ api }) {
     const navigate = useNavigate();
+    const [chatAberto, setChatAberto] = useState(false);
 
     const [colapsado, setColapsado] = useState(() => {
         try {
@@ -107,6 +109,15 @@ export default function MenuLateralAdvogado({ api }) {
 
             <div
                 className={css.funcoes}
+                onClick={() => setChatAberto(true)}
+                name="menu-veritas"
+            >
+                <img src={'/veritas.png'} alt="Veritas.AI"/>
+                <h2 className={css.desktop}>Veritas.AI</h2>
+            </div>
+
+            <div
+                className={css.funcoes}
                 onClick={fazerLogout}
                 style={{
                     marginTop: '2rem',
@@ -140,6 +151,11 @@ export default function MenuLateralAdvogado({ api }) {
                     Sair
                 </h2>
             </div>
+
+            <ChatVeritas
+                aberto={chatAberto}
+                onFechar={() => setChatAberto(false)}
+            />
         </div>
     );
 }
