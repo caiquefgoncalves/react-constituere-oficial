@@ -26,7 +26,7 @@ export default function PagamentosLista1({ api }) {
     const [menuColapsado, setMenuColapsado] = useState(false);
 
 
-    const API_URL = api || 'http://10.92.11.30:5000';
+    const API_URL = api || 'http://10.92.11.37:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 

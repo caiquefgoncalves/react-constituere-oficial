@@ -46,7 +46,7 @@ export default function DashboardEscritorio1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.30:5000';
+    const API_URL = api || 'http://10.92.11.37:5000';
 
     useEffect(() => {
         function atualizarQuantidadeItens() {
