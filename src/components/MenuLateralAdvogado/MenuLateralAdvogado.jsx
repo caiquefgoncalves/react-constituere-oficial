@@ -1,12 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import css from './MenuLateralAdvogado.module.css';
-import ChatVeritas from '../ChatVeritas/ChatVeritas.jsx';
 
 export default function MenuLateralAdvogado({ api }) {
     const navigate = useNavigate();
-    const [chatAberto, setChatAberto] = useState(false);
-
     const [colapsado, setColapsado] = useState(() => {
         try {
             return localStorage.getItem('menu_colapsado') === 'true';
@@ -109,7 +106,7 @@ export default function MenuLateralAdvogado({ api }) {
 
             <div
                 className={css.funcoes}
-                onClick={() => setChatAberto(true)}
+                onClick={() => window.dispatchEvent(new CustomEvent('veritas:abrir'))}
                 name="menu-veritas"
             >
                 <img src={'/veritas.png'} alt="Veritas.AI"/>
@@ -151,12 +148,6 @@ export default function MenuLateralAdvogado({ api }) {
                     Sair
                 </h2>
             </div>
-
-            <ChatVeritas
-                aberto={chatAberto}
-                onFechar={() => setChatAberto(false)}
-                api={api}
-            />
         </div>
     );
 }

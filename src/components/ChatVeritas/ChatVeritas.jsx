@@ -5,7 +5,7 @@ import css from './ChatVeritas.module.css';
 const MENSAGEM_INICIAL = {
     id: 1,
     autor: 'veritas',
-    texto: 'Ola! Sou a Veritas.AI, sua assistente juridica. Como posso ajudar voce hoje?'
+    texto: 'Olá! Sou a Veritas.AI. Posso ajudar com perguntas jurídicas e com estes serviços:\n\n1. Consultar, criar, editar, confirmar, recusar e desmarcar agendamentos.\n2. Localizar clientes e advogados parceiros por nome, CPF, CNPJ ou e-mail.\n3. Listar seus clientes e advogados parceiros.\n4. Consultar processos e cadastrar atualizações de processos ou projetos.\n\nComo posso ajudar?'
 };
 
 function formatarTexto(texto) {
@@ -28,7 +28,12 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
 
         try {
             const salvo = JSON.parse(localStorage.getItem(`veritas_historico_${idUsuario}`));
-            return Array.isArray(salvo) && salvo.length ? salvo : [MENSAGEM_INICIAL];
+            if (!Array.isArray(salvo) || !salvo.length) {
+                return [MENSAGEM_INICIAL];
+            }
+
+            const somenteMensagemInicial = salvo.length === 1 && salvo[0]?.id === 1 && salvo[0]?.autor === 'veritas';
+            return somenteMensagemInicial ? [MENSAGEM_INICIAL] : salvo;
         } catch {
             return [MENSAGEM_INICIAL];
         }
@@ -110,6 +115,8 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
         ]);
         setInput('');
         setDigitando(true);
+        const inicioRequisicao = performance.now();
+        let diagnosticoTempo = null;
 
         try {
             const resposta = await fetch(`${API_URL}/ai/veritas`, {
@@ -135,6 +142,7 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
             } catch {
                 dados = {};
             }
+            diagnosticoTempo = dados.diagnostico_tempo || null;
 
             if (resposta.status === 401) {
                 localStorage.removeItem('nome');
@@ -180,6 +188,11 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
             ]);
 
         } finally {
+            const totalMs = Math.round(performance.now() - inicioRequisicao);
+            console.info('Veritas: tempo da requisição', {
+                navegador_ms: totalMs,
+                servidor: diagnosticoTempo
+            });
             setDigitando(false);
         }
     }
@@ -192,6 +205,59 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
         setExecutandoAcao(true);
 
         try {
+            if (acao.tipo === 'verificar_exito') {
+                const resposta = await fetch(`${API_URL}${acao.endpoint}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
+                const dados = await resposta.json().catch(() => ({}));
+
+                if (!resposta.ok) {
+                    throw new Error(dados.error || 'Não foi possível consultar os honorários de êxito.');
+                }
+
+                const exito = dados.dados || {};
+                const possuiExito = Boolean(exito.tipo_pagamento || exito.tipo_exito);
+                const dinheiro = (valor) => valor === null || valor === undefined || valor === ''
+                    ? 'Não informado'
+                    : Number(valor).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+                const tipoExito = {
+                    SALARIOS_BENEFICIO: 'Salários de benefício',
+                    PERCENTUAL: 'Percentual'
+                }[exito.tipo_pagamento || exito.tipo_exito] || 'Não informado';
+                const distribuicao = {
+                    AVISTA: 'À vista',
+                    PARCELADO: 'Parcelado',
+                    ENTRADA_PARCELAS: 'Entrada + parcelas',
+                    RETIDO_FONTE: 'Retido na fonte'
+                }[exito.distribuicao] || 'Não informado';
+                const detalhesExito = [
+                    `Tipo de êxito: ${tipoExito}`,
+                    `Quantidade de salários: ${exito.quantidade || 'Não informado'}`,
+                    `Valor do salário: ${dinheiro(exito.valor_salario)}`,
+                    `Percentual de êxito: ${exito.valor_exito ? `${exito.valor_exito}%` : 'Não informado'}`,
+                    `Valor da causa: ${dinheiro(exito.valor_causa)}`,
+                    `Distribuição: ${distribuicao}`,
+                    `Valor da entrada: ${dinheiro(exito.valor_entrada)}`,
+                    `Número de parcelas: ${exito.num_parcelas || 'Não informado'}`,
+                    `Dia de vencimento: ${exito.dia_vencimento || 'Não informado'}`,
+                    `Mês de início: ${exito.mes_inicio || 'Não informado'}`,
+                    `Forma de pagamento: ${exito.forma_pagamento || 'Não informado'}`
+                ].map((linha, indice) => `${indice + 1}. ${linha}`).join('\n');
+                setMensagens(prev => prev.map(msg => (
+                    msg.id === idMensagem ? { ...msg, acao: null } : msg
+                )));
+                setMensagens(prev => [...prev, {
+                    id: Date.now(),
+                    autor: 'veritas',
+                    texto: possuiExito
+                        ? `Os honorários de êxito atuais são:\n\n${detalhesExito}\n\nInforme apenas os campos que deseja alterar antes de concluir o processo.`
+                        : 'Não há honorários de êxito cadastrados para este processo. Nenhuma configuração de êxito será exigida para a conclusão.'
+                }]);
+                return;
+            }
+
             const resposta = await fetch(`${API_URL}${acao.endpoint}`, {
                 method: acao.metodo,
                 credentials: 'include',

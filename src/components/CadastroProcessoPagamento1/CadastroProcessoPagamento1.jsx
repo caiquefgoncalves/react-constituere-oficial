@@ -57,6 +57,7 @@ export default function CadastroProcessoPagamento1({ api }) {
 
     const [exito, setExito] = useState('');
     const [qtdSalariosExito, setQtdSalariosExito] = useState('');
+    const [valorSalarioExito, setValorSalarioExito] = useState('');
     const [percentual, setPercentual] = useState('');
     const [juros, setJuros] = useState('');
 
@@ -177,6 +178,7 @@ export default function CadastroProcessoPagamento1({ api }) {
     function alterarExito(valorSelecionado) {
         setExito(valorSelecionado);
         setQtdSalariosExito('');
+        setValorSalarioExito('');
         setPercentual('');
         setDistribuicaoExito('');
         setEntradaExito('');
@@ -218,6 +220,7 @@ export default function CadastroProcessoPagamento1({ api }) {
 
         if (exito === 'salarios') {
             if (!qtdSalariosExito) camposFaltando.push('Quantidade de salários do êxito');
+            if (!valorSalarioExito) camposFaltando.push('Valor do salário do êxito');
             if (!distribuicaoExito) camposFaltando.push('Distribuição do êxito');
             if (distribuicaoExito === 'parcelado' && !qtdParcelasExito) camposFaltando.push('Quantidade de parcelas do êxito');
             if (distribuicaoExito === 'entrada' && !entradaExito) camposFaltando.push('Valor da entrada do êxito');
@@ -305,7 +308,7 @@ export default function CadastroProcessoPagamento1({ api }) {
             dia_vencimento_exito: exito !== '' ? Number(diaVencimentoExito) : null,
             mes_inicio_exito: mesInicioExito,
             forma_pagamento_exito: exito !== '' ? formaPagamentoExito : null,
-            valor_salario_exito: exito === 'salarios' ? (valorSalario ? converterDinheiro(valorSalario) : null) : null,
+            valor_salario_exito: exito === 'salarios' ? converterDinheiro(valorSalarioExito) : null,
             valor_causa_exito: exito === 'percentual' ? (valorCausaExito ? converterDinheiro(valorCausaExito) : null) : null,
             quantidade_exito: exito === 'salarios' ? Number(qtdSalariosExito) : (exito === 'percentual' ? Number(percentual) : null)
         };
@@ -581,19 +584,35 @@ export default function CadastroProcessoPagamento1({ api }) {
                         </div>
 
                         {exito === 'salarios' && (
-                            <div className={css.campoMetade}>
-                                <label className={css.label}>Quantidade de salários *</label>
-                                <input
-                                    type="number"
-                                    min="1"
-                                    className={css.input}
-                                    placeholder="Digite"
-                                    value={qtdSalariosExito}
-                                    onChange={(e) => setQtdSalariosExito(apenasNumeros(e.target.value))}
-                                    tabIndex={12}
-                                    name="quantidadeSalariosExito"
-                                />
-                            </div>
+                            <>
+                                <div className={css.campoMetade}>
+                                    <label className={css.label}>Quantidade de salários *</label>
+                                    <input
+                                        type="number"
+                                        min="1"
+                                        className={css.input}
+                                        placeholder="Digite"
+                                        value={qtdSalariosExito}
+                                        onChange={(e) => setQtdSalariosExito(apenasNumeros(e.target.value))}
+                                        tabIndex={12}
+                                        name="quantidadeSalariosExito"
+                                    />
+                                </div>
+
+                                <div className={css.campoMetade}>
+                                    <label className={css.label}>Valor do salário *</label>
+                                    <input
+                                        type="text"
+                                        className={css.input}
+                                        placeholder="R$ 0,00"
+                                        value={valorSalarioExito}
+                                        onChange={(e) => setValorSalarioExito(formatarDinheiro(e.target.value))}
+                                        maxLength={25}
+                                        tabIndex={13}
+                                        name="valor_salario_exito"
+                                    />
+                                </div>
+                            </>
                         )}
 
 
