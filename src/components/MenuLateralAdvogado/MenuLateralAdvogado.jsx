@@ -155,6 +155,7 @@ export default function MenuLateralAdvogado({ api }) {
             <ChatVeritas
                 aberto={chatAberto}
                 onFechar={() => setChatAberto(false)}
+                api={api}
             />
         </div>
     );
