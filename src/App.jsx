@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home';
 import Cadastro from './pages/Cadastro';
@@ -21,6 +22,7 @@ import PagamentosLista from "./pages/PagamentosLista.jsx";
 import AgendamentosLista from "./pages/AgendamentosLista.jsx";
 import Agendar from "./pages/Agendar.jsx";
 import Reagendar from "./pages/Reagendar.jsx";
+import ChatVeritas from './components/ChatVeritas/ChatVeritas.jsx';
 
 
 
@@ -29,6 +31,15 @@ import Reagendar from "./pages/Reagendar.jsx";
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
 function App() {
+    const [chatVeritasAberto, setChatVeritasAberto] = useState(false);
+
+    useEffect(() => {
+        const abrirChat = () => setChatVeritasAberto(true);
+        window.addEventListener('veritas:abrir', abrirChat);
+
+        return () => window.removeEventListener('veritas:abrir', abrirChat);
+    }, []);
+
     return (
         <Router>
             <Routes>
@@ -55,6 +66,11 @@ function App() {
                 <Route path="/agendar" element={<Agendar api={API_URL} />} />
                 <Route path="/reagendar" element={<Reagendar api={API_URL} />} />
             </Routes>
+            <ChatVeritas
+                aberto={chatVeritasAberto}
+                onFechar={() => setChatVeritasAberto(false)}
+                api={API_URL}
+            />
         </Router>
     )
 }
