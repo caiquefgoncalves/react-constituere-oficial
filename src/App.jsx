@@ -22,14 +22,15 @@ import PagamentosLista from "./pages/PagamentosLista.jsx";
 import AgendamentosLista from "./pages/AgendamentosLista.jsx";
 import Agendar from "./pages/Agendar.jsx";
 import Reagendar from "./pages/Reagendar.jsx";
-import LogsAuditoria from "./pages/LogsAuditoria.jsx";
 import ChatVeritas from './components/ChatVeritas/ChatVeritas.jsx';
+import ModelosDocumentos from "./pages/ModelosDocumentos.jsx";
+import CadastroModeloDocumento from "./pages/CadastroModeloDocumento.jsx";
 
 
 
 
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://10.92.11.60:5000';
 
 function App() {
     const [chatVeritasAberto, setChatVeritasAberto] = useState(false);
@@ -66,7 +67,15 @@ function App() {
                 <Route path="/agendamentos" element={<AgendamentosLista api={API_URL} />} />
                 <Route path="/agendar" element={<Agendar api={API_URL} />} />
                 <Route path="/reagendar" element={<Reagendar api={API_URL} />} />
-                <Route path="/auditoria" element={<LogsAuditoria api={API_URL} />} />
+                <Route
+                    path="/escritorio/:id/modelos_documentos"
+                    element={<ModelosDocumentos api={API_URL} />}
+                />
+
+                <Route
+                    path="/escritorio/:id/cadastro_modelo_documento"
+                    element={<CadastroModeloDocumento api={API_URL} />}
+                />
             </Routes>
             <ChatVeritas
                 aberto={chatVeritasAberto}
