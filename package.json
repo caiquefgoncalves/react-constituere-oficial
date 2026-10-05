@@ -1,3 +1,4 @@
+
 {
   "name": "front-end-constituere",
   "private": true,
@@ -10,6 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "docx-preview": "^0.4.1",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router-dom": "^7.18.2",
