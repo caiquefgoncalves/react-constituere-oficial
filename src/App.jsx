@@ -22,6 +22,7 @@ import PagamentosLista from "./pages/PagamentosLista.jsx";
 import AgendamentosLista from "./pages/AgendamentosLista.jsx";
 import Agendar from "./pages/Agendar.jsx";
 import Reagendar from "./pages/Reagendar.jsx";
+import LogsAuditoria from "./pages/LogsAuditoria.jsx";
 import ChatVeritas from './components/ChatVeritas/ChatVeritas.jsx';
 
 
@@ -65,6 +66,7 @@ function App() {
                 <Route path="/agendamentos" element={<AgendamentosLista api={API_URL} />} />
                 <Route path="/agendar" element={<Agendar api={API_URL} />} />
                 <Route path="/reagendar" element={<Reagendar api={API_URL} />} />
+                <Route path="/auditoria" element={<LogsAuditoria api={API_URL} />} />
             </Routes>
             <ChatVeritas
                 aberto={chatVeritasAberto}
