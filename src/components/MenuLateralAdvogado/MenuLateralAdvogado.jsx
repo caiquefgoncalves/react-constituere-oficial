@@ -4,6 +4,8 @@ import css from './MenuLateralAdvogado.module.css';
 
 export default function MenuLateralAdvogado({ api }) {
     const navigate = useNavigate();
+    const API_URL = api || 'http://localhost:5000';
+    const [podeVerLog, setPodeVerLog] = useState(false);
     const [colapsado, setColapsado] = useState(() => {
         try {
             return localStorage.getItem('menu_colapsado') === 'true';
@@ -23,6 +25,26 @@ export default function MenuLateralAdvogado({ api }) {
             })
         );
     }, [colapsado]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        async function verificarProprietario() {
+            try {
+                const resposta = await fetch(`${API_URL}/meu_escritorio`, {
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
+                const dados = await resposta.json();
+                setPodeVerLog(Boolean(resposta.ok && dados.escritorio?.id));
+            } catch {
+                setPodeVerLog(false);
+            }
+        }
+
+        verificarProprietario();
+    }, [API_URL]);
 
     function fazerLogout() {
         localStorage.removeItem('token');
@@ -103,6 +125,17 @@ export default function MenuLateralAdvogado({ api }) {
                 <img src={'/pagamento.png'} alt="Pagamentos"/>
                 <h2 className={css.desktop}>Pagamentos</h2>
             </div>
+
+            {podeVerLog && (
+                <div
+                    className={css.funcoes}
+                    onClick={() => navigate('/auditoria')}
+                    name="menu-auditoria"
+                >
+                    <img src="/Log.png" alt="Log" />
+                    <h2 className={css.desktop}>Log</h2>
+                </div>
+            )}
 
             <div
                 className={css.funcoes}

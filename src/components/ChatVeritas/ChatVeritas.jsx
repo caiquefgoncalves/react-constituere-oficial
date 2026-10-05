@@ -5,7 +5,7 @@ import css from './ChatVeritas.module.css';
 const MENSAGEM_INICIAL = {
     id: 1,
     autor: 'veritas',
-    texto: 'Olá! Sou a Veritas.AI. Posso ajudar com perguntas jurídicas e com estes serviços:\n\n1. Consultar, criar, editar, confirmar, recusar e desmarcar agendamentos.\n2. Localizar clientes e advogados parceiros por nome, CPF, CNPJ ou e-mail.\n3. Listar seus clientes e advogados parceiros.\n4. Consultar processos e cadastrar atualizações de processos ou projetos.\n\nComo posso ajudar?'
+    texto: 'Olá! Sou a Veritas.AI. Posso ajudar com perguntas jurídicas e com estes serviços:\n\n1. Consultar, criar, editar, confirmar, recusar e desmarcar agendamentos.\n2. Localizar clientes e advogados parceiros por nome, CPF, CNPJ ou e-mail.\n3. Listar seus clientes e advogados parceiros.\n4. Consultar processos e cadastrar atualizações de processos ou projetos.\n5. Preparar o download do relatório em PDF de um processo.\n\nComo posso ajudar?'
 };
 
 function formatarTexto(texto) {
@@ -258,6 +258,42 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                 return;
             }
 
+            if (acao.tipo === 'baixar_relatorio') {
+                const resposta = await fetch(`${API_URL}${acao.endpoint}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
+
+                if (!resposta.ok) {
+                    const dados = await resposta.json().catch(() => ({}));
+                    throw new Error(dados.error || 'Nao foi possivel gerar o relatorio.');
+                }
+
+                const arquivo = await resposta.blob();
+                const url = URL.createObjectURL(arquivo);
+                const link = document.createElement('a');
+                const nomeArquivo = resposta.headers
+                    .get('Content-Disposition')
+                    ?.match(/filename="?([^";]+)"?/)?.[1] || 'relatorio_processo.pdf';
+
+                link.href = url;
+                link.download = nomeArquivo;
+                document.body.appendChild(link);
+                link.click();
+                link.remove();
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                setMensagens(prev => prev.map(msg => (
+                    msg.id === idMensagem ? { ...msg, acao: null } : msg
+                )));
+                setMensagens(prev => [...prev, {
+                    id: Date.now(),
+                    autor: 'veritas',
+                    texto: 'O download do relatorio foi iniciado.'
+                }]);
+                return;
+            }
+
             const resposta = await fetch(`${API_URL}${acao.endpoint}`, {
                 method: acao.metodo,
                 credentials: 'include',
@@ -353,7 +389,11 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                                             onClick={() => confirmarAcao(msg.id, msg.acao)}
                                             disabled={executandoAcao}
                                         >
-                                            {executandoAcao ? 'Executando...' : 'Confirmar ação'}
+                                            {executandoAcao
+                                                ? 'Executando...'
+                                                : msg.acao.tipo === 'baixar_relatorio'
+                                                    ? 'Baixar relatorio'
+                                                    : 'Confirmar ação'}
                                         </button>
                                     </div>
                                 )}

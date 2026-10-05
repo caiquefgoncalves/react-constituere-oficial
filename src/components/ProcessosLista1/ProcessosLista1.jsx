@@ -171,6 +171,55 @@ export default function ProcessosLista1({ api }) {
         return processo.clientes || '--';
     }
 
+    async function gerarDocumentoProcesso() {
+        if (!processoSelecionado) return;
+
+        const token = localStorage.getItem('token');
+        if (!token) {
+            deslogar();
+            return;
+        }
+
+        try {
+            const response = await fetch(
+                `${API_URL}/processo/${processoSelecionado.id}/documento`,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                }
+            );
+
+            if (response.status === 401) {
+                deslogar();
+                return;
+            }
+
+            if (!response.ok) {
+                const resultado = await response.json().catch(() => ({}));
+                mostrarMensagemModal(resultado.error || 'Erro ao gerar o PDF do processo.', 'erro');
+                return;
+            }
+
+            const arquivo = await response.blob();
+            const url = URL.createObjectURL(arquivo);
+            const link = document.createElement('a');
+            const numero = processoSelecionado.numero_processo || processoSelecionado.numero || processoSelecionado.id;
+            const nomeSeguro = String(numero).replace(/[^a-zA-Z0-9_-]/g, '_');
+
+            link.href = url;
+            link.download = `processo_${nomeSeguro}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+            mostrarMensagemModal('PDF do processo gerado com sucesso.', 'sucesso');
+        } catch (error) {
+            console.error('Erro ao gerar PDF do processo:', error);
+            mostrarMensagemModal('Erro de conexao ao gerar o PDF do processo.', 'erro');
+        }
+    }
+
     function normalizarTexto(texto) {
         return (texto || '')
             .normalize('NFD')
@@ -2540,13 +2589,24 @@ export default function ProcessosLista1({ api }) {
                                                 </button>
                                             </>
                                         ) : (
-                                            <button
-                                                className={css.botaoEditar}
-                                                type="button"
-                                                onClick={() => setEditando(true)}
-                                            >
-                                                Editar
-                                            </button>
+                                            <>
+                                                <button
+                                                    className={css.botaoDocumento}
+                                                    type="button"
+                                                    onClick={gerarDocumentoProcesso}
+                                                    disabled={carregandoAtualizacoes}
+                                                >
+                                                    {carregandoAtualizacoes ? 'Carregando atualizacoes...' : 'Gerar PDF'}
+                                                </button>
+
+                                                <button
+                                                    className={css.botaoEditar}
+                                                    type="button"
+                                                    onClick={() => setEditando(true)}
+                                                >
+                                                    Editar
+                                                </button>
+                                            </>
                                         )}
                                     </div>
                                 </form>

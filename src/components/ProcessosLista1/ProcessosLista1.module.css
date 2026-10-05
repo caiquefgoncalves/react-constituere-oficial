@@ -672,6 +672,28 @@
     background-color: #003580;
 }
 
+.botaoDocumento {
+    font-family: 'Clear Sans', sans-serif;
+    background-color: #ffffff;
+    color: #0047ab;
+    border: 1px solid #0047ab;
+    border-radius: 50px;
+    padding: 14px 24px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.botaoDocumento:hover {
+    background-color: #edf4ff;
+}
+
+.botaoDocumento:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
 .modalInativacao {
     background: #ffffff;
     border-radius: 16px;
