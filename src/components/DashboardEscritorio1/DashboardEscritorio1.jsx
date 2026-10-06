@@ -405,6 +405,10 @@ export default function DashboardEscritorio1({ api }) {
         navigate('/agendamentos');
     }
 
+    function irParaModelosDocumentos() {
+        navigate(`/escritorio/${id}/modelos_documentos`);
+    }
+
     function fecharModal() {
         setModalAberto(false);
         setMensagem('');
@@ -513,6 +517,13 @@ export default function DashboardEscritorio1({ api }) {
             icone: '+',
             acao: irParaNovoAdvogado,
             name: 'btn-novo-advogado'
+        },
+        {
+            id: 6,
+            texto: 'Modelos padrões',
+            icone: '+',
+            acao: irParaModelosDocumentos,
+            name: 'btn-modelos-documentos'
         }
     ];
 

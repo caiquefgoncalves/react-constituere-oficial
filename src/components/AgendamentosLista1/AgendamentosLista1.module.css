@@ -145,21 +145,6 @@
     border-color: #0047ab;
 }
 
-.botaoRelatorio {
-    padding: 0.75rem 1rem;
-    border: none;
-    border-radius: 8px;
-    background: #0047ab;
-    color: #ffffff;
-    font-family: 'Clear Sans', sans-serif;
-    font-weight: 700;
-    cursor: pointer;
-}
-
-.botaoRelatorio:hover {
-    background: #003580;
-}
-
 .listaAgendamentos {
     display: flex;
     flex-direction: column;

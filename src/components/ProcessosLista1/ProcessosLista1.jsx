@@ -42,6 +42,34 @@ export default function ProcessosLista1({ api }) {
 
     const [opcao, setOpcao] = useState("info");
 
+    const [
+        modelosDocumento,
+        setModelosDocumento
+    ] = useState([]);
+
+
+    const [
+        modeloDocumentoSelecionado,
+        setModeloDocumentoSelecionado
+    ] = useState('');
+
+
+    const [
+        carregandoModelosDocumento,
+        setCarregandoModelosDocumento
+    ] = useState(false);
+
+
+    const [
+        gerandoDocumento,
+        setGerandoDocumento
+    ] = useState(false);
+
+    const [
+        tipoDocumentoSelecionado,
+        setTipoDocumentoSelecionado
+    ] = useState('');
+
     const [novaAtualizacao, setNovaAtualizacao] = useState(false);
     const [data, setData] = useState('');
     const [titulo, setTitulo] = useState('');
@@ -60,6 +88,21 @@ export default function ProcessosLista1({ api }) {
     const [carregandoExito, setCarregandoExito] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
+    const tiposDocumentoDisponiveis = [
+        ...new Set(
+            modelosDocumento.map(
+                modelo => modelo.tipo
+            )
+        )
+    ];
+
+
+    const modelosDocumentoFiltrados =
+        modelosDocumento.filter(
+            modelo =>
+                modelo.tipo ===
+                tipoDocumentoSelecionado
+        );
 
     const [dadosExito, setDadosExito] = useState({
         tipo_pagamento: '',
@@ -152,7 +195,7 @@ export default function ProcessosLista1({ api }) {
 
     function formatarStatus(status) {
         const map = {
-            em_andamento: 'Em Andamento',
+            em_andamento: 'Andamento',
             concluido: 'Concluído',
             suspenso: 'Suspenso',
             inativo: 'Inativo'
@@ -584,6 +627,131 @@ export default function ProcessosLista1({ api }) {
             console.error('Erro ao buscar atualizações:', error);
         } finally {
             setCarregandoAtualizacoes(false);
+        }
+    }
+
+    async function buscarModelosDocumento(
+        idProcesso
+    ) {
+
+        const token =
+            localStorage.getItem(
+                'token'
+            );
+
+
+        if (!token) {
+
+            deslogar();
+
+            return;
+        }
+
+
+        setCarregandoModelosDocumento(
+            true
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    `${API_URL}/processo/${idProcesso}/modelos-documentos`,
+
+                    {
+                        method: 'GET',
+
+                        credentials:
+                            'include',
+
+                        headers: {
+
+                            'X-Access-Token':
+                            token
+                        }
+                    }
+
+                );
+
+
+            let resultado = {};
+
+
+            try {
+
+                resultado =
+                    await response.json();
+
+            } catch {
+
+                resultado = {};
+
+            }
+
+
+            if (
+                response.status === 401
+            ) {
+
+                deslogar();
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                mostrarMensagemModal(
+
+                    resultado.error
+                    ||
+                    'Erro ao carregar os modelos de documentos.',
+
+                    'erro'
+                );
+
+                return;
+            }
+
+            console.log(
+                'MODELOS RECEBIDOS:',
+                resultado.modelos
+            );
+
+
+            setModelosDocumento(
+                resultado.modelos || []
+            );
+
+            setTipoDocumentoSelecionado('');
+
+
+            setModeloDocumentoSelecionado(
+                ''
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao buscar modelos:',
+                error
+            );
+
+
+            mostrarMensagemModal(
+                'Erro de conexão ao carregar os modelos.',
+                'erro'
+            );
+
+
+        } finally {
+
+            setCarregandoModelosDocumento(
+                false
+            );
         }
     }
 
@@ -1151,6 +1319,7 @@ export default function ProcessosLista1({ api }) {
         setModalExitoAberto(false);
         setProcessoExito(null);
         setTemExitoProcesso(false);
+        setTipoDocumentoSelecionado('');
 
         setDadosExito({
             tipo_pagamento: '',
@@ -1167,6 +1336,13 @@ export default function ProcessosLista1({ api }) {
         });
 
         limparTodasMensagens();
+        setModelosDocumento([]);
+
+        setModeloDocumentoSelecionado('');
+
+        setCarregandoModelosDocumento(false);
+
+        setGerandoDocumento(false);
     }
 
     function handleEditChange(e) {
@@ -1656,6 +1832,254 @@ export default function ProcessosLista1({ api }) {
         setTipoMensagemAtualizacao('');
     }
 
+    function abrirAbaDocumentos() {
+
+        setOpcao(
+            'documentos'
+        );
+
+
+        if (
+            processoSelecionado
+        ) {
+
+            buscarModelosDocumento(
+                processoSelecionado.id
+            );
+        }
+    }
+
+    async function gerarDocumentoModelo() {
+
+        if (!processoSelecionado) {
+
+            return;
+        }
+
+
+        if (
+            !modeloDocumentoSelecionado
+        ) {
+
+            mostrarMensagemModal(
+                'Selecione um modelo de documento.',
+                'erro'
+            );
+
+            return;
+        }
+
+
+        const token =
+            localStorage.getItem(
+                'token'
+            );
+
+
+        if (!token) {
+
+            deslogar();
+
+            return;
+        }
+
+
+        setGerandoDocumento(
+            true
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    `${API_URL}/processo/${processoSelecionado.id}/documentos/gerar`,
+
+                    {
+                        method: 'POST',
+
+                        credentials:
+                            'include',
+
+                        headers: {
+
+                            'Content-Type':
+                                'application/json',
+
+                            'X-Access-Token':
+                            token
+                        },
+
+                        body:
+                            JSON.stringify({
+
+                                id_modelo:
+                                modeloDocumentoSelecionado
+                            })
+                    }
+
+                );
+
+
+            if (
+                response.status === 401
+            ) {
+
+                deslogar();
+
+                return;
+            }
+
+
+            if (!response.ok) {
+
+                let resultado = {};
+
+
+                try {
+
+                    resultado =
+                        await response.json();
+
+                } catch {
+
+                    resultado = {};
+
+                }
+
+
+                mostrarMensagemModal(
+
+                    resultado.error
+                    ||
+                    'Erro ao gerar documento.',
+
+                    'erro'
+                );
+
+                return;
+            }
+
+
+            const arquivo =
+                await response.blob();
+
+
+            const url =
+                window.URL.createObjectURL(
+                    arquivo
+                );
+
+
+            const modelo =
+                modelosDocumento.find(
+
+                    item =>
+                        String(item.id) ===
+                        String(
+                            modeloDocumentoSelecionado
+                        )
+                );
+
+
+            const nomeModelo =
+                modelo?.nome
+                ||
+                'documento';
+
+
+            const numeroProcesso =
+                processoSelecionado.numero_processo
+                ||
+                processoSelecionado.numero
+                ||
+                processoSelecionado.id;
+
+
+            const nomeSeguroModelo =
+                String(
+                    nomeModelo
+                )
+                    .normalize('NFD')
+                    .replace(
+                        /[\u0300-\u036f]/g,
+                        ''
+                    )
+                    .replace(
+                        /[^a-zA-Z0-9_-]/g,
+                        '_'
+                    );
+
+
+            const numeroSeguro =
+                String(
+                    numeroProcesso
+                )
+                    .replace(
+                        /[^a-zA-Z0-9_-]/g,
+                        '_'
+                    );
+
+
+            const link =
+                document.createElement(
+                    'a'
+                );
+
+
+            link.href =
+                url;
+
+
+            link.download =
+                `${nomeSeguroModelo}_${numeroSeguro}.docx`;
+
+
+            document.body.appendChild(
+                link
+            );
+
+
+            link.click();
+
+
+            link.remove();
+
+
+            window.URL.revokeObjectURL(
+                url
+            );
+
+
+            mostrarMensagemModal(
+                'Documento gerado com sucesso!',
+                'sucesso'
+            );
+
+
+        } catch (error) {
+
+            console.error(
+                'Erro ao gerar documento:',
+                error
+            );
+
+
+            mostrarMensagemModal(
+                'Erro de conexão ao gerar o documento.',
+                'erro'
+            );
+
+
+        } finally {
+
+            setGerandoDocumento(
+                false
+            );
+        }
+    }
+
     const processosFiltrados = processos.filter(processo => {
         const numeroMatch = (processo.numero || '').toLowerCase().includes(filtroNumero.toLowerCase());
         const statusMatch = filtroStatus === 'todos' || processo.status === filtroStatus;
@@ -1885,24 +2309,68 @@ export default function ProcessosLista1({ api }) {
                             )}
 
                             <div className={css.secaoTitulo}>
+
                                 <a
-                                    className={`${css.secaoSubtitulo} ${opcao === "info" ? css.ativoInfo : ''}`}
-                                    onClick={() => setOpcao("info")}
+                                    className={`
+            ${css.secaoSubtitulo}
+            ${
+                                        opcao === "info"
+                                            ? css.ativoInfo
+                                            : ''
+                                    }
+        `}
+                                    onClick={() =>
+                                        setOpcao(
+                                            "info"
+                                        )
+                                    }
                                 >
                                     Informações
                                 </a>
 
+
                                 <a
-                                    className={`${css.secaoSubtitulo} ${opcao === "atualizacao" ? css.ativoInfo : ''}`}
-                                    onClick={() => setOpcao("atualizacao")}
+                                    className={`
+            ${css.secaoSubtitulo}
+            ${
+                                        opcao === "atualizacao"
+                                            ? css.ativoInfo
+                                            : ''
+                                    }
+        `}
+                                    onClick={() =>
+                                        setOpcao(
+                                            "atualizacao"
+                                        )
+                                    }
                                 >
                                     Atualizações
                                 </a>
+
+
+                                <a
+                                    className={`
+            ${css.secaoSubtitulo}
+            ${
+                                        opcao === "documentos"
+                                            ? css.ativoInfo
+                                            : ''
+                                    }
+        `}
+                                    onClick={
+                                        abrirAbaDocumentos
+                                    }
+                                >
+                                    Documentos
+                                </a>
+
                             </div>
 
                             {opcao === "info" && (
                                 <form className={css.formulario} onSubmit={(e) => e.preventDefault()}>
-                                    <h3 className={css.subtituloSecao}>Dados do Processo</h3>
+                                    <div className={css.documentosCabecalho}>
+                                        <h3 className={css.documentosTitulo}>Dados do Processo</h3>
+                                    </div>
 
                                     <div className={css.linha}>
                                         <div className={css.campoMetade}>
@@ -2679,6 +3147,343 @@ export default function ProcessosLista1({ api }) {
                                         </button>
                                     </div>
                                 </div>
+                            )}
+                            {opcao === "documentos" && (
+
+                                <div
+                                    className={
+                                        css.documentosContainer
+                                    }
+                                >
+
+                                    <div
+                                        className={
+                                            css.documentosCabecalho
+                                        }
+                                    >
+
+                                        <h3
+                                            className={
+                                                css.documentosTitulo
+                                            }
+                                        >
+                                            Gerar documento
+                                        </h3>
+
+                                    </div>
+
+
+                                    {carregandoModelosDocumento ? (
+
+                                        <div
+                                            className={
+                                                css.documentosCarregando
+                                            }
+                                        >
+                                            Carregando modelos...
+                                        </div>
+
+                                    ) : modelosDocumento.length === 0 ? (
+
+                                        <div
+                                            className={
+                                                css.semModelosDocumento
+                                            }
+                                        >
+
+                                            <p>
+                                                Nenhum modelo ativo disponível
+                                                para este escritório.
+                                            </p>
+
+                                        </div>
+
+                                    ) : (
+
+                                        <>
+
+                                            <div
+                                                className={
+                                                    css.campoDocumento
+                                                }
+                                            >
+
+                                                <label
+                                                    className={
+                                                        css.label
+                                                    }
+                                                >
+                                                    Tipo do documento
+                                                </label>
+
+
+                                                <select
+                                                    className={
+                                                        css.input
+                                                    }
+                                                    value={
+                                                        tipoDocumentoSelecionado
+                                                    }
+                                                    onChange={(e) => {
+
+                                                        setTipoDocumentoSelecionado(
+                                                            e.target.value
+                                                        );
+
+                                                        setModeloDocumentoSelecionado(
+                                                            ''
+                                                        );
+                                                    }}
+                                                >
+
+                                                    <option value="">
+                                                        Selecione o tipo
+                                                    </option>
+
+
+                                                    {tiposDocumentoDisponiveis.map(
+                                                        tipo => (
+
+                                                            <option
+                                                                key={tipo}
+                                                                value={tipo}
+                                                            >
+
+                                                                {
+                                                                    tipo === 'CONTRATO'
+                                                                        ? 'Contrato'
+
+                                                                        : tipo === 'PETICAO_INICIAL'
+                                                                            ? 'Petição inicial'
+
+                                                                            : tipo === 'HIPOSSUFICIENCIA'
+                                                                                ? 'Declaração de hipossuficiência'
+
+                                                                                : tipo
+                                                                }
+
+                                                            </option>
+
+                                                        )
+                                                    )}
+
+                                                </select>
+
+                                            </div>
+
+
+                                            <div
+                                                className={
+                                                    css.campoDocumento
+                                                }
+                                            >
+
+                                                <label
+                                                    className={
+                                                        css.label
+                                                    }
+                                                >
+                                                    Modelo do documento
+                                                </label>
+
+
+                                                <select
+                                                    className={
+                                                        css.input
+                                                    }
+                                                    value={
+                                                        modeloDocumentoSelecionado
+                                                    }
+                                                    disabled={
+                                                        !tipoDocumentoSelecionado
+                                                    }
+                                                    onChange={(e) =>
+                                                        setModeloDocumentoSelecionado(
+                                                            e.target.value
+                                                        )
+                                                    }
+                                                >
+
+                                                    <option value="">
+                                                        {
+                                                            tipoDocumentoSelecionado
+                                                                ? 'Selecione um modelo'
+                                                                : 'Selecione primeiro o tipo'
+                                                        }
+                                                    </option>
+
+
+                                                    {modelosDocumentoFiltrados.map(
+                                                        modelo => (
+
+                                                            <option
+                                                                key={
+                                                                    modelo.id
+                                                                }
+                                                                value={
+                                                                    modelo.id
+                                                                }
+                                                            >
+
+                                                                {
+                                                                    modelo.nome
+                                                                }
+
+                                                            </option>
+
+                                                        )
+                                                    )}
+
+                                                </select>
+
+                                            </div>
+
+
+                                            {
+                                                modeloDocumentoSelecionado
+                                                &&
+                                                (
+                                                    <div
+                                                        className={
+                                                            css.modeloSelecionadoInfo
+                                                        }
+                                                    >
+
+                                                        {(() => {
+
+                                                            const modelo =
+                                                                modelosDocumento.find(
+
+                                                                    item =>
+                                                                        String(
+                                                                            item.id
+                                                                        ) ===
+                                                                        String(
+                                                                            modeloDocumentoSelecionado
+                                                                        )
+
+                                                                );
+
+
+                                                            if (!modelo) {
+
+                                                                return null;
+                                                            }
+
+
+                                                            return (
+
+                                                                <>
+
+                                                                    <div
+                                                                        className={
+                                                                            css.modeloSelecionadoLinha
+                                                                        }
+                                                                    >
+
+                                            <span
+                                                className={
+                                                    css.modeloSelecionadoRotulo
+                                                }
+                                            >
+                                                Tipo
+                                            </span>
+
+                                                                        <span>
+                                                {
+                                                    modelo.tipo === 'CONTRATO'
+                                                        ? 'Contrato'
+
+                                                        : modelo.tipo === 'PETICAO_INICIAL'
+                                                            ? 'Petição inicial'
+
+                                                            : modelo.tipo === 'HIPOSSUFICIENCIA'
+                                                                ? 'Declaração de hipossuficiência'
+
+                                                                : modelo.tipo
+                                                }
+                                            </span>
+
+                                                                    </div>
+
+
+                                                                    {
+                                                                        modelo.descricao
+                                                                        &&
+                                                                        (
+                                                                            <div
+                                                                                className={
+                                                                                    css.modeloSelecionadoLinha
+                                                                                }
+                                                                            >
+
+                                                    <span
+                                                        className={
+                                                            css.modeloSelecionadoRotulo
+                                                        }
+                                                    >
+                                                        Descrição
+                                                    </span>
+
+                                                                                <span>
+                                                        {
+                                                            modelo.descricao
+                                                        }
+                                                    </span>
+
+                                                                            </div>
+                                                                        )
+                                                                    }
+
+                                                                </>
+
+                                                            );
+
+                                                        })()
+                                                        }
+
+                                                    </div>
+                                                )
+                                            }
+
+
+                                            <div
+                                                className={
+                                                    css.botaoGerarDocumentoContainer
+                                                }
+                                            >
+
+                                                <button
+                                                    type="button"
+                                                    className={
+                                                        css.botaoGerarDocumento
+                                                    }
+                                                    onClick={
+                                                        gerarDocumentoModelo
+                                                    }
+                                                    disabled={
+                                                        !modeloDocumentoSelecionado
+                                                        ||
+                                                        gerandoDocumento
+                                                    }
+                                                >
+
+                                                    {
+                                                        gerandoDocumento
+                                                            ? 'Gerando documento...'
+                                                            : 'Gerar documento'
+                                                    }
+
+                                                </button>
+
+                                            </div>
+
+                                        </>
+
+                                    )}
+
+                                </div>
+
                             )}
                         </div>
                     </div>

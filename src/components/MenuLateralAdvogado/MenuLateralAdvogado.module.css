@@ -140,3 +140,10 @@
     place-items: center;
     font-size: 1.65rem;
 }
+
+.iconeDocumento {
+    width: 2rem;
+    height: 2rem;
+
+    flex-shrink: 0;
+}

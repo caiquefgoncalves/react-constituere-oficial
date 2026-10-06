@@ -2,24 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import css from './ChatVeritas.module.css';
 
-const MENSAGEM_INICIAL_ADVOGADO = {
+const MENSAGEM_INICIAL = {
     id: 1,
     autor: 'veritas',
     texto: 'Olá! Sou a Veritas.AI. Posso ajudar com perguntas jurídicas e com estes serviços:\n\n1. Consultar, criar, editar, confirmar, recusar e desmarcar agendamentos.\n2. Localizar clientes e advogados parceiros por nome, CPF, CNPJ ou e-mail.\n3. Listar seus clientes e advogados parceiros.\n4. Consultar processos e cadastrar atualizações de processos ou projetos.\n5. Preparar o download do relatório em PDF de um processo.\n\nComo posso ajudar?'
 };
-
-const MENSAGEM_INICIAL_CLIENTE = {
-    id: 1,
-    autor: 'veritas',
-    texto: 'Olá! Sou a Veritas.AI. Posso ajudar com perguntas jurídicas e com estes serviços:\n\n1. Esclarecer dúvidas jurídicas gerais.\n2. Solicitar uma reunião com um advogado do seu escritório.\n\nComo posso ajudar?'
-};
-
-function mensagemInicialPorTipo() {
-    const tipo = Number(localStorage.getItem('tipo'));
-    return tipo === 2 || tipo === 3
-        ? MENSAGEM_INICIAL_CLIENTE
-        : MENSAGEM_INICIAL_ADVOGADO;
-}
 
 function formatarTexto(texto) {
     return String(texto || '').split(/(\*\*[^*]+\*\*)/g).map((parte, index) => {
@@ -33,39 +20,28 @@ function formatarTexto(texto) {
 
 export default function ChatVeritas({ aberto, onFechar, api }) {
     const API_URL = api || ' http://10.92.11.26:5000';
-    const mensagemInicial = mensagemInicialPorTipo();
 
     const [mensagens, setMensagens] = useState(() => {
         const idUsuario = localStorage.getItem('id_usuario');
 
-        if (!idUsuario) return [mensagemInicial];
+        if (!idUsuario) return [MENSAGEM_INICIAL];
 
         try {
             const salvo = JSON.parse(localStorage.getItem(`veritas_historico_${idUsuario}`));
             if (!Array.isArray(salvo) || !salvo.length) {
-                return [mensagemInicial];
+                return [MENSAGEM_INICIAL];
             }
 
             const somenteMensagemInicial = salvo.length === 1 && salvo[0]?.id === 1 && salvo[0]?.autor === 'veritas';
-            return somenteMensagemInicial ? [mensagemInicial] : salvo;
+            return somenteMensagemInicial ? [MENSAGEM_INICIAL] : salvo;
         } catch {
-            return [mensagemInicial];
+            return [MENSAGEM_INICIAL];
         }
     });
     const [input, setInput] = useState('');
     const [digitando, setDigitando] = useState(false);
     const [executandoAcao, setExecutandoAcao] = useState(false);
-    const [gravandoAudio, setGravandoAudio] = useState(false);
-    const [vozAtivada, setVozAtivada] = useState(() => {
-        return localStorage.getItem('veritas_voz_ativada') === 'true';
-    });
-    const [velocidadeVoz, setVelocidadeVoz] = useState(() => {
-        return Number(localStorage.getItem('veritas_velocidade_voz')) || 1.15;
-    });
     const fimRef = useRef(null);
-    const reconhecimentoRef = useRef(null);
-    const primeiraLeituraRef = useRef(true);
-    const ultimaMensagemLidaRef = useRef(null);
 
     useEffect(() => {
         if (fimRef.current) {
@@ -96,44 +72,6 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
         };
     }, [aberto]);
 
-    useEffect(() => () => {
-        reconhecimentoRef.current?.stop();
-        window.speechSynthesis?.cancel();
-    }, []);
-
-    useEffect(() => {
-        localStorage.setItem('veritas_voz_ativada', String(vozAtivada));
-        if (!vozAtivada) window.speechSynthesis?.cancel();
-    }, [vozAtivada]);
-
-    useEffect(() => {
-        localStorage.setItem('veritas_velocidade_voz', String(velocidadeVoz));
-    }, [velocidadeVoz]);
-
-    useEffect(() => {
-        const ultimaMensagem = mensagens[mensagens.length - 1];
-        if (primeiraLeituraRef.current) {
-            primeiraLeituraRef.current = false;
-            ultimaMensagemLidaRef.current = ultimaMensagem?.id;
-            return;
-        }
-        if (!vozAtivada || ultimaMensagem?.autor !== 'veritas' || ultimaMensagem.id === ultimaMensagemLidaRef.current) return;
-
-        ultimaMensagemLidaRef.current = ultimaMensagem.id;
-        if (!window.speechSynthesis || !window.SpeechSynthesisUtterance) return;
-        window.speechSynthesis.cancel();
-        const fala = new SpeechSynthesisUtterance(ultimaMensagem.texto.replace(/\*\*/g, ''));
-        fala.lang = 'pt-BR';
-        fala.rate = velocidadeVoz;
-        fala.pitch = 1.12;
-        const vozes = window.speechSynthesis.getVoices();
-        fala.voice = vozes.find(voz => (
-            voz.lang.toLowerCase().startsWith('pt-br')
-            && /(female|feminina|maria|francisca|helena|luciana|google portugu)/i.test(voz.name)
-        )) || vozes.find(voz => voz.lang.toLowerCase().startsWith('pt-br')) || null;
-        window.speechSynthesis.speak(fala);
-    }, [mensagens, vozAtivada, velocidadeVoz]);
-
     function apagarHistorico() {
         const idUsuario = localStorage.getItem('id_usuario');
 
@@ -141,13 +79,13 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
             localStorage.removeItem(`veritas_historico_${idUsuario}`);
         }
 
-        setMensagens([mensagemInicial]);
+        setMensagens([MENSAGEM_INICIAL]);
     }
 
-    async function enviarMensagem(e, textoTranscrito = null) {
-        e?.preventDefault();
+    async function enviarMensagem(e) {
+        e.preventDefault();
 
-        const texto = (textoTranscrito ?? input).trim();
+        const texto = input.trim();
 
         if (!texto || digitando) {
             return;
@@ -259,56 +197,6 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
         }
     }
 
-    function gravarAudio() {
-        window.speechSynthesis?.cancel();
-
-        if (gravandoAudio) {
-            reconhecimentoRef.current?.stop();
-            return;
-        }
-
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        if (!SpeechRecognition) {
-            setMensagens(prev => [...prev, {
-                id: Date.now(), autor: 'veritas',
-                texto: 'O reconhecimento de voz nao e compativel com este navegador. Use Chrome ou Edge para gravar mensagens.'
-            }]);
-            return;
-        }
-
-        const reconhecimento = new SpeechRecognition();
-        reconhecimento.lang = 'pt-BR';
-        reconhecimento.continuous = false;
-        reconhecimento.interimResults = true;
-        reconhecimentoRef.current = reconhecimento;
-        let textoFinal = '';
-
-        reconhecimento.onstart = () => setGravandoAudio(true);
-        reconhecimento.onresult = evento => {
-            let textoParcial = '';
-            for (let indice = evento.resultIndex; indice < evento.results.length; indice += 1) {
-                const resultado = evento.results[indice];
-                if (resultado.isFinal) textoFinal += resultado[0].transcript;
-                else textoParcial += resultado[0].transcript;
-            }
-            setInput((textoFinal || textoParcial).trim());
-        };
-        reconhecimento.onerror = evento => {
-            if (evento.error !== 'aborted' && evento.error !== 'no-speech') {
-                setMensagens(prev => [...prev, {
-                    id: Date.now(), autor: 'veritas',
-                    texto: 'Nao foi possivel reconhecer o audio. Verifique a permissao do microfone e tente novamente.'
-                }]);
-            }
-        };
-        reconhecimento.onend = () => {
-            setGravandoAudio(false);
-            reconhecimentoRef.current = null;
-            if (textoFinal.trim()) enviarMensagem(null, textoFinal);
-        };
-        reconhecimento.start();
-    }
-
     async function confirmarAcao(idMensagem, acao) {
         const token = localStorage.getItem('token');
 
@@ -370,7 +258,7 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                 return;
             }
 
-            if (acao.tipo === 'baixar_relatorio' || acao.tipo === 'baixar_pdf_log' || acao.tipo === 'baixar_relatorio_agendamentos') {
+            if (acao.tipo === 'baixar_relatorio') {
                 const resposta = await fetch(`${API_URL}${acao.endpoint}`, {
                     method: 'GET',
                     credentials: 'include',
@@ -387,11 +275,7 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                 const link = document.createElement('a');
                 const nomeArquivo = resposta.headers
                     .get('Content-Disposition')
-                    ?.match(/filename="?([^";]+)"?/)?.[1] || (
-                        acao.tipo === 'baixar_pdf_log' ? 'log-escritorio.pdf'
-                            : acao.tipo === 'baixar_relatorio_agendamentos' ? 'relatorio-agendamentos.pdf'
-                                : 'relatorio_processo.pdf'
-                    );
+                    ?.match(/filename="?([^";]+)"?/)?.[1] || 'relatorio_processo.pdf';
 
                 link.href = url;
                 link.download = nomeArquivo;
@@ -405,11 +289,7 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                 setMensagens(prev => [...prev, {
                     id: Date.now(),
                     autor: 'veritas',
-                    texto: acao.tipo === 'baixar_pdf_log'
-                        ? 'O download do PDF do Log foi iniciado.'
-                        : acao.tipo === 'baixar_relatorio_agendamentos'
-                            ? 'O download do relatório de agendamentos foi iniciado.'
-                            : 'O download do relatorio foi iniciado.'
+                    texto: 'O download do relatorio foi iniciado.'
                 }]);
                 return;
             }
@@ -465,32 +345,6 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                     <div className={css.acoesCabecalho}>
                         <button
                             type="button"
-                            className={`${css.botaoVoz} ${vozAtivada ? css.botaoVozAtiva : ''}`}
-                            onClick={() => setVozAtivada(ativa => !ativa)}
-                            aria-label={vozAtivada ? 'Desligar voz da Veritas' : 'Ligar voz da Veritas'}
-                            title={vozAtivada ? 'Desligar voz da Veritas' : 'Ligar voz da Veritas'}
-                        >
-                            {vozAtivada ? 'Voz ligada' : 'Voz desligada'}
-                        </button>
-                        <label className={css.controleVelocidade} title="Velocidade da voz">
-                            <span>Velocidade</span>
-                            <select
-                                value={velocidadeVoz}
-                                onChange={e => setVelocidadeVoz(Number(e.target.value))}
-                                disabled={!vozAtivada}
-                                aria-label="Velocidade da voz"
-                            >
-                                <option value={0.9}>0,9x</option>
-                                <option value={1}>1x</option>
-                                <option value={1.15}>1,15x</option>
-                                <option value={1.3}>1,3x</option>
-                                <option value={1.5}>1,5x</option>
-                                <option value={1.75}>1,75x</option>
-                                <option value={2}>2x</option>
-                            </select>
-                        </label>
-                        <button
-                            type="button"
                             className={css.botaoLimparHistorico}
                             onClick={apagarHistorico}
                             aria-label="Apagar histórico da conversa"
@@ -537,8 +391,8 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                                         >
                                             {executandoAcao
                                                 ? 'Executando...'
-                                                : (msg.acao.tipo === 'baixar_relatorio' || msg.acao.tipo === 'baixar_pdf_log' || msg.acao.tipo === 'baixar_relatorio_agendamentos')
-                                                    ? 'Baixar PDF'
+                                                : msg.acao.tipo === 'baixar_relatorio'
+                                                    ? 'Baixar relatorio'
                                                     : 'Confirmar ação'}
                                         </button>
                                     </div>
@@ -565,16 +419,6 @@ export default function ChatVeritas({ aberto, onFechar, api }) {
                 </div>
 
                 <form className={css.formulario} onSubmit={enviarMensagem}>
-                    <button
-                        type="button"
-                        className={`${css.botaoMicrofone} ${gravandoAudio ? css.botaoMicrofoneGravando : ''}`}
-                        onClick={gravarAudio}
-                        aria-label={gravandoAudio ? 'Parar gravacao' : 'Gravar mensagem por voz'}
-                        title={gravandoAudio ? 'Parar gravacao' : 'Gravar mensagem por voz'}
-                        disabled={digitando || executandoAcao}
-                    >
-                        <img src="/microfone.png" alt="" />
-                    </button>
                     <input
                         type="text"
                         value={input}

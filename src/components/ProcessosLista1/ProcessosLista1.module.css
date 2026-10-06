@@ -943,3 +943,248 @@
         opacity: 1;
     }
 }
+
+/* ========================================================= */
+/* DOCUMENTOS DO PROCESSO */
+/* ========================================================= */
+
+.documentosContainer {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 1.5rem;
+
+    padding: 0.5rem 0;
+
+    box-sizing: border-box;
+}
+
+
+.documentosCabecalho {
+    width: 100%;
+}
+
+
+.documentosTitulo {
+    margin:
+            0 0 0.35rem;
+
+    font-family:
+            'Glacial Indifference',
+            sans-serif;
+
+    font-size: 1.4rem;
+    font-weight: 700;
+
+    color: #0047ab;
+}
+
+
+.documentosDescricao {
+    margin: 0;
+
+    max-width: 650px;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    font-size: 0.9rem;
+
+    line-height: 1.5;
+
+    color: #777777;
+}
+
+
+.campoDocumento {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.5rem;
+}
+
+
+.documentosCarregando {
+    width: 100%;
+
+    padding: 2rem;
+
+    background-color: #f7f7f7;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    color: #777777;
+}
+
+
+.semModelosDocumento {
+    width: 100%;
+
+    padding: 2rem;
+
+    background-color: #f7f7f7;
+
+    border:
+            1px solid #e7e7e7;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+}
+
+
+.semModelosDocumento p {
+    margin: 0;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    font-size: 0.9rem;
+
+    color: #777777;
+}
+
+
+/* ========================================================= */
+/* MODELO SELECIONADO */
+/* ========================================================= */
+
+.modeloSelecionadoInfo {
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+
+    gap: 0.9rem;
+
+    padding: 1rem 1.2rem;
+
+    background-color: #f8fbff;
+
+    border:
+            1px solid #d9e8ff;
+
+    border-radius: 10px;
+
+    box-sizing: border-box;
+}
+
+
+.modeloSelecionadoLinha {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 0.2rem;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    font-size: 0.9rem;
+
+    color: #444444;
+}
+
+
+.modeloSelecionadoRotulo {
+    font-family:
+            'Glacial Indifference',
+            sans-serif;
+
+    font-weight: 700;
+
+    color: #0047ab;
+}
+
+
+/* ========================================================= */
+/* GERAR */
+/* ========================================================= */
+
+.botaoGerarDocumentoContainer {
+    width: 100%;
+
+    display: flex;
+
+    justify-content: flex-end;
+
+    padding-top: 0.5rem;
+}
+
+
+.botaoGerarDocumento {
+    min-width: 190px;
+
+    padding:
+            0.8rem
+            1.6rem;
+
+    border: none;
+    border-radius: 50px;
+
+    background-color: #ffbf00;
+
+    color: #ffffff;
+
+    font-family:
+            'Clear Sans',
+            sans-serif;
+
+    font-size: 1rem;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+            background-color 0.2s ease,
+            transform 0.1s ease;
+}
+
+
+.botaoGerarDocumento:hover:not(:disabled) {
+    background-color: #d69f00;
+}
+
+
+.botaoGerarDocumento:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+
+.botaoGerarDocumento:disabled {
+    background-color: #cccccc;
+
+    cursor: not-allowed;
+}
+
+select.input {
+    appearance: none;
+
+    background-image:
+            url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23a0a0a0%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.4-12.8z%22%2F%3E%3C%2Fsvg%3E");
+
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65rem auto;
+
+    cursor: pointer;
+    color: #333333;
+}
+

@@ -25,12 +25,13 @@ import Reagendar from "./pages/Reagendar.jsx";
 import ChatVeritas from './components/ChatVeritas/ChatVeritas.jsx';
 import ModelosDocumentos from "./pages/ModelosDocumentos.jsx";
 import CadastroModeloDocumento from "./pages/CadastroModeloDocumento.jsx";
+import DocumentosGerados from "./pages/DocumentosGerados.jsx";
 
 
 
 
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://10.92.11.60:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
 
 function App() {
     const [chatVeritasAberto, setChatVeritasAberto] = useState(false);
@@ -75,6 +76,14 @@ function App() {
                 <Route
                     path="/escritorio/:id/cadastro_modelo_documento"
                     element={<CadastroModeloDocumento api={API_URL} />}
+                />
+                <Route
+                    path="/documentos"
+                    element={
+                        <DocumentosGerados
+                            api={API_URL}
+                        />
+                    }
                 />
             </Routes>
             <ChatVeritas

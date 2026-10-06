@@ -311,10 +311,48 @@ export default function CadastroModeloDocumento1({ api }) {
                 {
                     nome: 'E-mail',
                     valor: '{{escritorio.email}}'
-                }
+                },
+
+                {
+                    nome: 'Cidade',
+                    valor: '{{escritorio.cidade}}'
+                },
+
+                {
+                    nome: 'Estado',
+                    valor: '{{escritorio.estado}}'
+                },
+
+                {
+                    nome: 'CEP',
+                    valor: '{{escritorio.cep}}'
+                },
 
             ]
-        }
+        },
+
+        {
+            titulo: 'Data',
+            variaveis: [
+                {
+                    nome: 'Data completa',
+                    valor: '{{data.completa}}'
+                },
+
+                {
+                    nome: 'Dia',
+                    valor: '{{data.dia}}'
+                },
+                {
+                    nome: 'Mês',
+                    valor: '{{data.mes}}'
+                },
+                {
+                    nome: 'Ano',
+                    valor: '{{data.ano}}'
+                }
+
+        ]}
 
     ];
 

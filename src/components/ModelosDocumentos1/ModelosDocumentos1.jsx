@@ -575,12 +575,6 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    function voltarParaEscritorio() {
-
-        navigate(
-            `/escritorio/${id}`
-        );
-    }
 
 
     // =====================================================
@@ -1196,36 +1190,6 @@ export default function ModelosDocumentos1({ api }) {
                             }
                         >
 
-                            <button
-                                className={
-                                    css.botaoVoltar
-                                }
-                                onClick={
-                                    voltarParaEscritorio
-                                }
-                                type="button"
-                                aria-label="Voltar"
-                            >
-
-                                <svg
-                                    width="20"
-                                    height="20"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                >
-
-                                    <path
-                                        d="M15 18L9 12L15 6"
-                                        stroke="#0047ab"
-                                        strokeWidth="3"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                    />
-
-                                </svg>
-
-                            </button>
-
 
                             <h1
                                 className={
@@ -1767,6 +1731,7 @@ export default function ModelosDocumentos1({ api }) {
                                     </label>
 
 
+
                                     <select
                                         className={
                                             css.input
@@ -1779,7 +1744,16 @@ export default function ModelosDocumentos1({ api }) {
                                                 e.target.value
                                             )
                                         }
+                                        name="tipo-documento"
                                     >
+
+                                        <option
+                                            value=""
+                                            disabled
+                                        >
+                                            Selecionar tipo
+                                        </option>
+
 
                                         <option
                                             value="CONTRATO"
@@ -1787,11 +1761,13 @@ export default function ModelosDocumentos1({ api }) {
                                             Contrato
                                         </option>
 
+
                                         <option
                                             value="PETICAO_INICIAL"
                                         >
                                             Petição inicial
                                         </option>
+
 
                                         <option
                                             value="HIPOSSUFICIENCIA"
@@ -2051,7 +2027,7 @@ export default function ModelosDocumentos1({ api }) {
                                                     css.subtituloPreviewModal
                                                 }
                                             >
-                                                Confira o documento cadastrado.
+                                                Por ser uma visualização prévia, algumas fontes podem aparecer alteradas, porém as fontes originais do seu documento foram salvas e serão utilizadas quando você gerar um documento usando esse modelo.
                                             </p>
 
                                         </div>
