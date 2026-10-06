@@ -27,12 +27,9 @@ import ModelosDocumentos from "./pages/ModelosDocumentos.jsx";
 import CadastroModeloDocumento from "./pages/CadastroModeloDocumento.jsx";
 import DocumentosGerados from "./pages/DocumentosGerados.jsx";
 import LogsAuditoria from "./pages/LogsAuditoria.jsx";
+import DashboardFinanceiroEscritorio from "./pages/DashboardFinanceiroEscritorio.jsx";
 
-
-
-
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://10.92.11.25:5000';
 
 function App() {
     const [chatVeritasAberto, setChatVeritasAberto] = useState(false);
@@ -54,6 +51,7 @@ function App() {
                 <Route path="/editar_perfil_advogado" element={<EditarPerfilAdvogado api={API_URL} />} />
                 <Route path="/cadastro_escritorio" element={<CadastroEscritorio api={API_URL} />} />
                 <Route path="/escritorio/:id" element={<DashboardEscritorio api={API_URL} />} />
+                <Route path="/escritorio/:id/financeiro" element={<DashboardFinanceiroEscritorio api={API_URL} />} />
                 <Route path="/clientes" element={<ClientesLista api={API_URL} />} />
                 <Route path="/cadastro_cliente_fisico" element={<CadastroClienteFisico api={API_URL} />} />
                 <Route path="/cadastro_cliente_juridico" element={<CadastroClienteJuridico api={API_URL} />} />
@@ -74,20 +72,16 @@ function App() {
                     path="/escritorio/:id/modelos_documentos"
                     element={<ModelosDocumentos api={API_URL} />}
                 />
-
                 <Route
                     path="/escritorio/:id/cadastro_modelo_documento"
                     element={<CadastroModeloDocumento api={API_URL} />}
                 />
                 <Route
                     path="/documentos"
-                    element={
-                        <DocumentosGerados
-                            api={API_URL}
-                        />
-                    }
+                    element={<DocumentosGerados api={API_URL} />}
                 />
             </Routes>
+
             <ChatVeritas
                 aberto={chatVeritasAberto}
                 onFechar={() => setChatVeritasAberto(false)}
