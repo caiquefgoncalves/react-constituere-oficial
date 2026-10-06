@@ -26,6 +26,7 @@ import ChatVeritas from './components/ChatVeritas/ChatVeritas.jsx';
 import ModelosDocumentos from "./pages/ModelosDocumentos.jsx";
 import CadastroModeloDocumento from "./pages/CadastroModeloDocumento.jsx";
 import DocumentosGerados from "./pages/DocumentosGerados.jsx";
+import LogsAuditoria from "./pages/LogsAuditoria.jsx";
 
 
 
@@ -68,6 +69,7 @@ function App() {
                 <Route path="/agendamentos" element={<AgendamentosLista api={API_URL} />} />
                 <Route path="/agendar" element={<Agendar api={API_URL} />} />
                 <Route path="/reagendar" element={<Reagendar api={API_URL} />} />
+                <Route path="/log" element={<LogsAuditoria api={API_URL} />} />
                 <Route
                     path="/escritorio/:id/modelos_documentos"
                     element={<ModelosDocumentos api={API_URL} />}
