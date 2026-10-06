@@ -171,7 +171,9 @@ select.input {
     background-color: #ffffff;
     box-sizing: border-box;
     cursor: pointer;
-    height: 50px;
+    color: #a0a0a0;
+    line-height: 1.2;
+    min-height: 50px;
     display: flex;
     align-items: center;
 }
@@ -225,12 +227,7 @@ select.input {
     }
 }
 
-
-
-
-
 @media (max-width: 900px) {
-
     .formulario {
         padding: 0 2rem;
     }
@@ -252,15 +249,11 @@ select.input {
     }
 }
 
-
-
 @media (max-width: 768px) {
-
     .topArea {
         flex-direction: column;
         gap: 1rem;
     }
-
 
     .botaoVoltar {
         position: relative;
@@ -282,7 +275,6 @@ select.input {
         gap: 0;
     }
 
-
     .campoMetade {
         width: 100% !important;
     }
@@ -297,9 +289,7 @@ select.input {
     }
 }
 
-
 @media (max-width: 360px) {
-
     .formulario {
         padding: 0 1rem;
     }
@@ -324,14 +314,11 @@ select.input {
         font-size: 0.9rem;
     }
 
-
     .campoMetade,
     .campoInteiro {
         min-width: 0;
     }
 }
-
-
 
 .botaoCadastro,
 .botaoLogin {
@@ -342,12 +329,10 @@ select.input {
     line-height: 1.2;
 }
 
-
 .botaoCadastro {
     max-width: 100%;
     white-space: nowrap;
 }
-
 
 .topArea {
     margin-top: 1.5rem;
@@ -360,7 +345,6 @@ select.input {
 }
 
 @media (max-width: 900px) {
-
     .topArea {
         margin-top: 1rem;
     }
@@ -379,14 +363,12 @@ select.input {
 }
 
 @media (max-width: 768px) {
-
     .topArea {
         flex-direction: column;
         align-items: center;
         gap: 0.5rem;
         margin-top: 0.5rem;
     }
-
 
     .botaoVoltar {
         position: relative;
@@ -408,7 +390,6 @@ select.input {
 }
 
 @media (max-width: 360px) {
-
     .topArea {
         margin-top: 0.3rem;
     }
@@ -423,7 +404,6 @@ select.input {
         font-size: 0.85rem;
         white-space: normal;
     }
-
 
     .formulario,
     .linha,

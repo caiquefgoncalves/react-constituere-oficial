@@ -81,6 +81,7 @@ export default function Login1({ api }) {
                 localStorage.setItem('nome', dados.nome);
                 localStorage.setItem('tipo', dados.tipo);
                 localStorage.setItem('id_usuario', dados.id_usuario);
+                localStorage.removeItem('veritas_eh_proprietario');
 
                 setMensagem('Login realizado com sucesso! Redirecionando...');
                 setTipoMensagem('sucesso');

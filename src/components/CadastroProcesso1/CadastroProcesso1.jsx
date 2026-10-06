@@ -17,13 +17,16 @@ export default function CadastroProcesso1({ api }) {
     const [instancia, setInstancia] = useState('');
     const [data, setData] = useState('');
     const [cliente, setCliente] = useState('');
+    const [escritorio, setEscritorio] = useState('');
 
     const [clientes, setClientes] = useState([]);
+    const [escritorios, setEscritorios] = useState([]);
 
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
     const [carregandoClientes, setCarregandoClientes] = useState(false);
+    const [carregandoEscritorios, setCarregandoEscritorios] = useState(false);
     const [verificandoNumero, setVerificandoNumero] = useState(false);
 
     const API_URL = api || 'http://10.92.11.22:5000';
@@ -232,6 +235,33 @@ export default function CadastroProcesso1({ api }) {
         }
     }
 
+    async function buscarEscritorios() {
+        setCarregandoEscritorios(true);
+        try {
+            const token = localStorage.getItem('token');
+            const response = await fetch(`${API_URL}/meus_escritorios`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
+            const dados = await response.json();
+            if (response.status === 401) {
+                deslogar();
+                return;
+            }
+            if (!response.ok) {
+                mostrarMensagem(dados.error || 'Erro ao carregar escritórios.');
+                return;
+            }
+            setEscritorios((dados.escritorios || []).filter(item => item.ativo));
+        } catch (erro) {
+            console.error('Erro ao carregar escritórios:', erro);
+            mostrarMensagem('Erro de conexão ao carregar escritórios.');
+        } finally {
+            setCarregandoEscritorios(false);
+        }
+    }
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) {
@@ -242,6 +272,7 @@ export default function CadastroProcesso1({ api }) {
         sessionStorage.removeItem('parte_contraria_temp');
         sessionStorage.removeItem('honorarios_temp');
         buscarClientes();
+        buscarEscritorios();
     }, [API_URL]);
 
     async function handleCadastro(e) {
@@ -269,6 +300,9 @@ export default function CadastroProcesso1({ api }) {
         }
         if (!cliente) {
             camposFaltando.push('Cliente');
+        }
+        if (!escritorio) {
+            camposFaltando.push('Escritório');
         }
 
         if (camposFaltando.length > 0) {
@@ -330,7 +364,8 @@ export default function CadastroProcesso1({ api }) {
             vara: vara.trim() || null,
             instancia: Number(instancia),
             data_inicio: dataFinal,
-            id_cliente: Number(cliente)
+            id_cliente: Number(cliente),
+            id_escritorio: Number(escritorio)
         };
 
         sessionStorage.setItem('processo_temp', JSON.stringify(dadosProcesso));
@@ -513,6 +548,34 @@ export default function CadastroProcesso1({ api }) {
                             )}
                         </div>
 
+                        <div className={css.campoMetade}>
+                            <label className={css.label}>Escritório *</label>
+                            <select
+                                className={css.input}
+                                value={escritorio}
+                                onChange={(e) => setEscritorio(e.target.value)}
+                                tabIndex={10}
+                                name="escritorio"
+                                disabled={carregandoEscritorios}
+                            >
+                                <option value="" disabled>
+                                    {carregandoEscritorios ? 'Carregando escritórios...' : 'Selecione o escritório'}
+                                </option>
+                                {escritorios.map(item => {
+                                    const nome = item.nome_fantasia || item.razao_social || 'Escritório';
+                                    const cargo = String(item.status || '').toUpperCase() === 'PROPRIETARIO'
+                                        ? 'Proprietário'
+                                        : String(item.status || '').toUpperCase() === 'PARCEIRO'
+                                            ? 'Parceiro'
+                                            : item.status || 'Associado';
+                                    return <option key={item.id} value={item.id}>{nome} — {cargo}</option>;
+                                })}
+                            </select>
+                            {!carregandoEscritorios && escritorios.length === 0 && (
+                                <small>Nenhum escritório ativo encontrado.</small>
+                            )}
+                        </div>
+
                         <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>
                             <p className={css.obsCampos}>* Campos obrigatórios</p>
                         </div>
@@ -522,8 +585,8 @@ export default function CadastroProcesso1({ api }) {
                         <button
                             className={css.botaoCadastro}
                             type="submit"
-                            disabled={carregando || carregandoClientes || verificandoNumero}
-                            tabIndex={10}
+                            disabled={carregando || carregandoClientes || carregandoEscritorios || verificandoNumero}
+                            tabIndex={11}
                             name="btn-cadastrar"
                         >
                             {verificandoNumero ? 'Verificando...' : carregando ? 'Carregando...' : 'Parte Contrária ➝'}

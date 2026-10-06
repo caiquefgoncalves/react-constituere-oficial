@@ -182,6 +182,47 @@
     background: rgba(255, 255, 255, 0.7);
 }
 
+.botaoVoz {
+    border: 1px solid rgba(43, 34, 0, 0.35);
+    border-radius: 7px;
+    padding: 5px 8px;
+    background: rgba(255, 255, 255, 0.45);
+    color: #2b2200;
+    cursor: pointer;
+    font: inherit;
+    font-size: 0.76rem;
+}
+
+.botaoVozAtiva {
+    background: #0047ab;
+    border-color: #0047ab;
+    color: #ffffff;
+}
+
+.controleVelocidade {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    color: #2b2200;
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.controleVelocidade select {
+    border: 1px solid rgba(43, 34, 0, 0.35);
+    border-radius: 6px;
+    padding: 4px;
+    background: rgba(255, 255, 255, 0.55);
+    color: #2b2200;
+    font: inherit;
+    cursor: pointer;
+}
+
+.controleVelocidade select:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
 .acaoProposta {
     display: flex;
     flex-direction: column;
@@ -263,6 +304,35 @@
     background: #ffffff;
 }
 
+.botaoMicrofone {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: 1px solid #e0e0e0;
+    background: #ffffff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.botaoMicrofone img {
+    width: 22px;
+    height: 22px;
+    object-fit: contain;
+}
+
+.botaoMicrofoneGravando {
+    border-color: #d32f2f;
+    background: #fff0f0;
+    animation: pulsarMicrofone 1s infinite;
+}
+
+@keyframes pulsarMicrofone {
+    50% { transform: scale(1.06); }
+}
+
 .botaoEnviar {
     width: 44px;
     height: 44px;
@@ -287,7 +357,8 @@
 }
 
 .botaoEnviar:disabled,
-.input:disabled {
+.input:disabled,
+.botaoMicrofone:disabled {
     cursor: not-allowed;
     opacity: 0.65;
 }

@@ -37,9 +37,12 @@ export default function MenuLateralAdvogado({ api }) {
                     headers: { 'X-Access-Token': token }
                 });
                 const dados = await resposta.json();
-                setPodeVerLog(Boolean(resposta.ok && dados.escritorio?.id));
+                const proprietario = Boolean(resposta.ok && dados.escritorio?.id);
+                setPodeVerLog(proprietario);
+                localStorage.setItem('veritas_eh_proprietario', String(proprietario));
             } catch {
                 setPodeVerLog(false);
+                localStorage.setItem('veritas_eh_proprietario', 'false');
             }
         }
 
@@ -51,6 +54,7 @@ export default function MenuLateralAdvogado({ api }) {
         localStorage.removeItem('nome');
         localStorage.removeItem('tipo');
         localStorage.removeItem('id_usuario');
+        localStorage.removeItem('veritas_eh_proprietario');
         navigate('/');
     }
 
@@ -186,7 +190,7 @@ export default function MenuLateralAdvogado({ api }) {
             {podeVerLog && (
                 <div
                     className={css.funcoes}
-                    onClick={() => navigate('/auditoria')}
+                    onClick={() => navigate('/log')}
                     name="menu-auditoria"
                 >
                     <img src="/Log.png" alt="Log" />

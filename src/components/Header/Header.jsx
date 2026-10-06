@@ -55,7 +55,7 @@ export default function Header({ api, fotoPerfil }) {
         buscarNotificacoes();
 
         const socket = io(API_URL, {
-            transports: ['websocket', 'polling']
+            transports: ['polling']
         });
 
         socket.on('connect', () => {

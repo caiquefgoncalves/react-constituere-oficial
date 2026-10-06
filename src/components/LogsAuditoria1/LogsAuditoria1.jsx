@@ -71,6 +71,8 @@ export default function LogsAuditoria1({ api }) {
     const [dataFim, setDataFim] = useState('');
     const [advogado, setAdvogado] = useState('');
     const [idEscritorio, setIdEscritorio] = useState(null);
+    const [logParaExcluir, setLogParaExcluir] = useState(null);
+    const [excluindoLog, setExcluindoLog] = useState(false);
 
     useEffect(() => {
         const aplicarEstadoMenu = evento => setMenuColapsado(evento?.detail?.colapsado ?? false);
@@ -135,6 +137,31 @@ export default function LogsAuditoria1({ api }) {
         } catch (e) { setErro(e.message); }
     }
 
+    function abrirModalExcluir(log) {
+        setLogParaExcluir(log);
+    }
+
+    function fecharModalExcluir() {
+        if (!excluindoLog) setLogParaExcluir(null);
+    }
+
+    async function excluirLog() {
+        if (!idEscritorio || !logParaExcluir) return;
+        const token = localStorage.getItem('token');
+        try {
+            setExcluindoLog(true);
+            const resposta = await fetch(`${API_URL}/escritorio/${idEscritorio}/logs/${logParaExcluir.id_log}`, {
+                method: 'DELETE', credentials: 'include', headers: { 'X-Access-Token': token }
+            });
+            const dados = await resposta.json().catch(() => ({}));
+            if (!resposta.ok) throw new Error(dados.error || 'Não foi possível excluir o registro.');
+            setLogs(atual => atual.filter(item => item.id_log !== logParaExcluir.id_log));
+            if (detalheAberto?.id_log === logParaExcluir.id_log) setDetalheAberto(null);
+            setLogParaExcluir(null);
+        } catch (e) { setErro(e.message); }
+        finally { setExcluindoLog(false); }
+    }
+
     return <div className={css.paginaCompleta}>
         <Header api={API_URL} />
         <div className={css.layoutDashboard}>
@@ -159,7 +186,7 @@ export default function LogsAuditoria1({ api }) {
                         <td>{separarDataHora(log.data_hora).data}</td><td>{separarDataHora(log.data_hora).hora}</td>
                         <td>{log.tabela_afetada}{log.id_registro_afetado ? ` #${log.id_registro_afetado}` : ''}</td>
                         <td>{log.campo || '-'}</td><td>{log.valor_antigo || '-'}</td><td>{log.valor_novo || '-'}</td><td>{log.maquina || '-'}</td>
-                        <td><button type="button" onClick={() => setDetalheAberto(log)}>Ver detalhes</button></td>
+                        <td className={css.acoesTabela}><button type="button" onClick={() => setDetalheAberto(log)}>Ver detalhes</button><button className={css.botaoExcluir} type="button" onClick={() => abrirModalExcluir(log)}>Excluir</button></td>
                     </tr>)}</tbody>
                     </table></div>}</>}
             </main>
@@ -180,6 +207,17 @@ export default function LogsAuditoria1({ api }) {
             <h3 className={css.subtitulo}>Informacoes adicionais</h3>
             <CamposDetalhes dados={dadosLegiveis(detalheAberto.detalhes)} />
         </section></div>}
+        {logParaExcluir && <div className={css.modalOverlay} onClick={e => { if (e.target === e.currentTarget && !excluindoLog) fecharModalExcluir(); }}>
+            <div className={css.modalInativacao}>
+                <button className={css.modalFecharIconeLeft} onClick={fecharModalExcluir} type="button" disabled={excluindoLog}>X</button>
+                <h2 className={css.tituloInativacao}>Certeza que gostaria de<br />excluir?</h2>
+                <p className={css.subtituloInativacao}>Confirme para excluir o registro de <strong>{logParaExcluir.nome_usuario || 'Sistema'}</strong> do Log.<br />Esta ação não poderá ser desfeita.</p>
+                <div className={css.botoesInativacao}>
+                    <button className={css.btnCancelarInativacao} onClick={fecharModalExcluir} type="button" disabled={excluindoLog}>Cancelar</button>
+                    <button className={css.btnConfirmarInativacao} onClick={excluirLog} type="button" disabled={excluindoLog}>{excluindoLog ? 'Excluindo...' : 'Excluir'}</button>
+                </div>
+            </div>
+        </div>}
         <Footer />
     </div>;
 }

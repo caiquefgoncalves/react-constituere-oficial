@@ -35,6 +35,25 @@ export default function AgendamentosLista1({ api }) {
         navigate('/login');
     }
 
+    async function baixarRelatorioAgendamentos() {
+        const token = localStorage.getItem('token');
+        if (!token) return deslogar();
+        const params = new URLSearchParams();
+        if (dataInicio) params.set('data_inicio', dataInicio);
+        if (dataFim) params.set('data_fim', dataFim);
+        if (filtroStatus && filtroStatus !== 'todos') params.set('status', filtroStatus);
+        const resposta = await fetch(`${API_URL}/agendamentos/relatorio?${params}`, {
+            credentials: 'include', headers: { 'X-Access-Token': token }
+        });
+        if (!resposta.ok) return;
+        const url = URL.createObjectURL(await resposta.blob());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'relatorio-agendamentos.pdf';
+        link.click();
+        URL.revokeObjectURL(url);
+    }
+
     useEffect(() => {
         function aplicarEstadoMenu(e) {
             const colapsado = e?.detail?.colapsado ?? false;
@@ -645,6 +664,14 @@ export default function AgendamentosLista1({ api }) {
                                 Recusado
                             </option>
                         </select>
+
+                        <button
+                            type="button"
+                            className={css.botaoRelatorio}
+                            onClick={baixarRelatorioAgendamentos}
+                        >
+                            Baixar PDF
+                        </button>
 
                     </div>
 

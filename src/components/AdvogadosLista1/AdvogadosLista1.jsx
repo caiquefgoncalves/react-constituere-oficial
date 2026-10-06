@@ -1140,6 +1140,10 @@ export default function AdvogadosLista1({ api }) {
                                         E-mail
                                     </th>
 
+                                    <th>
+                                        Área de atuação
+                                    </th>
+
                                     <th
                                         className={
                                             css.colunaEscritorios
@@ -1192,6 +1196,13 @@ export default function AdvogadosLista1({ api }) {
                                             <td data-label="E-mail">
                                                 {
                                                     advogado.email ||
+                                                    '--'
+                                                }
+                                            </td>
+
+                                            <td data-label="Área de atuação">
+                                                {
+                                                    advogado.area_atuacao ||
                                                     '--'
                                                 }
                                             </td>
