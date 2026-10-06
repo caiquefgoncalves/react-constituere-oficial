@@ -1,16 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import css from './DashboardAdvogado1.module.css';
-import Header from "../Header/Header.jsx";
-import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx";
+import Header from "../../components/Header/Header.jsx";
+import MenuLateralAdvogado from "../../components/MenuLateralAdvogado/MenuLateralAdvogado.jsx";
 import { useNavigate } from 'react-router-dom';
-import Footer from "../Footer/Footer.jsx";
+import Footer from "../../components/Footer/Footer.jsx";
 
 export default function DashboardAdvogado1({ api }) {
     const navigate = useNavigate();
     const estatisticasRef = useRef(null);
 
     const [nome, setNome] = useState('Carregando...');
-
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
 
@@ -20,9 +19,7 @@ export default function DashboardAdvogado1({ api }) {
     const [totalClientes, setTotalClientes] = useState(0);
     const [clientesMes, setClientesMes] = useState(0);
     const [clientesAtivos, setClientesAtivos] = useState(0);
-
     const [carregandoEstatisticas, setCarregandoEstatisticas] = useState(true);
-
     const [paginaEstatisticas, setPaginaEstatisticas] = useState(0);
 
     const [dadosGrafico, setDadosGrafico] = useState([]);
@@ -31,15 +28,12 @@ export default function DashboardAdvogado1({ api }) {
     const [filtroPeriodo, setFiltroPeriodo] = useState('mes');
     const [menuColapsado, setMenuColapsado] = useState(false);
 
-    const [totaisGrafico, setTotaisGrafico] = useState({
-        recebido: 0,
-        aReceber: 0
-    });
+    const [totaisGrafico, setTotaisGrafico] = useState({ recebido: 0, aReceber: 0 });
 
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.22:5000';
+    const API_URL = api || 'http://10.92.11.25:5000';
 
     function limparSessaoERedirecionar() {
         localStorage.removeItem('nome');
@@ -57,9 +51,7 @@ export default function DashboardAdvogado1({ api }) {
         }
 
         aplicarEstadoMenu({
-            detail: {
-                colapsado: localStorage.getItem('menu_colapsado') === 'true'
-            }
+            detail: { colapsado: localStorage.getItem('menu_colapsado') === 'true' }
         });
 
         window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
@@ -71,21 +63,15 @@ export default function DashboardAdvogado1({ api }) {
 
     function contarClientesMes(clientes) {
         const dataAtual = new Date();
-
         const mesAtual = dataAtual.getMonth();
         const anoAtual = dataAtual.getFullYear();
 
         return clientes.filter(cliente => {
-            if (!cliente.data_cadastro) {
-                return false;
-            }
+            if (!cliente.data_cadastro) return false;
 
             try {
                 const partes = cliente.data_cadastro.split('/');
-
-                if (partes.length !== 3) {
-                    return false;
-                }
+                if (partes.length !== 3) return false;
 
                 const dia = parseInt(partes[0], 10);
                 const mes = parseInt(partes[1], 10) - 1;
@@ -93,12 +79,8 @@ export default function DashboardAdvogado1({ api }) {
 
                 const data = new Date(ano, mes, dia);
 
-                return (
-                    data.getMonth() === mesAtual &&
-                    data.getFullYear() === anoAtual
-                );
-
-            } catch (error) {
+                return data.getMonth() === mesAtual && data.getFullYear() === anoAtual;
+            } catch {
                 return false;
             }
         }).length;
@@ -106,42 +88,29 @@ export default function DashboardAdvogado1({ api }) {
 
     async function buscarDadosGrafico(periodo) {
         const token = localStorage.getItem('token');
-
-        if (!token) {
-            return;
-        }
+        if (!token) return;
 
         setCarregandoGrafico(true);
 
         try {
-            const response = await fetch(
-                `${API_URL}/dashboard/rendimentos?periodo=${periodo}`,
-                {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
-                }
-            );
+            const response = await fetch(`${API_URL}/dashboard/rendimentos?periodo=${periodo}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
 
             if (response.ok) {
                 const data = await response.json();
-
                 setDadosGrafico(data.dados || []);
-
                 setTotaisGrafico({
                     recebido: data.totais?.recebido || 0,
                     aReceber: data.totais?.a_receber || 0
                 });
-
             } else if (response.status === 401) {
                 limparSessaoERedirecionar();
             }
-
         } catch (error) {
             console.error('Erro ao buscar dados do gráfico:', error);
-
         } finally {
             setCarregandoGrafico(false);
         }
@@ -149,36 +118,25 @@ export default function DashboardAdvogado1({ api }) {
 
     async function buscarAgendamentos() {
         const token = localStorage.getItem('token');
-
-        if (!token) {
-            return;
-        }
+        if (!token) return;
 
         setCarregandoAgendamentos(true);
 
         try {
-            const response = await fetch(
-                `${API_URL}/agendamentos?limite=3`,
-                {
-                    method: 'GET',
-                    credentials: 'include',
-                    headers: {
-                        'X-Access-Token': token
-                    }
-                }
-            );
+            const response = await fetch(`${API_URL}/agendamentos?limite=3`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
 
             if (response.ok) {
                 const data = await response.json();
                 setAgendamentos(data.agendamentos || []);
-
             } else if (response.status === 401) {
                 limparSessaoERedirecionar();
             }
-
         } catch (error) {
             console.error('Erro ao buscar agendamentos:', error);
-
         } finally {
             setCarregandoAgendamentos(false);
         }
@@ -195,30 +153,22 @@ export default function DashboardAdvogado1({ api }) {
 
         async function buscarDados() {
             try {
-                const response = await fetch(
-                    `${API_URL}/meus_dados`,
-                    {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            'X-Access-Token': token
-                        }
-                    }
-                );
+                const response = await fetch(`${API_URL}/meus_dados`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
 
                 const data = await response.json();
 
                 if (response.ok) {
                     setNome(data.usuario?.nome || 'Advogado');
-
                 } else if (response.status === 401) {
                     limparSessaoERedirecionar();
-
                 } else {
                     setMensagem(data.error || 'Erro ao carregar dados');
                     setTipoMensagem('erro');
                 }
-
             } catch (error) {
                 console.error('Erro ao buscar dados do usuário:', error);
                 setMensagem('Erro de conexão com o servidor');
@@ -228,28 +178,20 @@ export default function DashboardAdvogado1({ api }) {
 
         async function buscarEscritorios() {
             try {
-                const response = await fetch(
-                    `${API_URL}/meus_escritorios`,
-                    {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            'X-Access-Token': token
-                        }
-                    }
-                );
+                const response = await fetch(`${API_URL}/meus_escritorios`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
 
                 if (response.ok) {
                     const data = await response.json();
                     setEscritorios(data.escritorios || []);
-
                 } else if (response.status === 401) {
                     limparSessaoERedirecionar();
                 }
-
             } catch (error) {
                 console.error('Erro ao buscar escritórios:', error);
-
             } finally {
                 setCarregandoEscritorios(false);
             }
@@ -257,35 +199,24 @@ export default function DashboardAdvogado1({ api }) {
 
         async function buscarClientes() {
             try {
-                const response = await fetch(
-                    `${API_URL}/clientes`,
-                    {
-                        method: 'GET',
-                        credentials: 'include',
-                        headers: {
-                            'X-Access-Token': token
-                        }
-                    }
-                );
+                const response = await fetch(`${API_URL}/clientes`, {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: { 'X-Access-Token': token }
+                });
 
                 if (response.ok) {
                     const data = await response.json();
-
                     const clientes = data.clientes || [];
 
                     setTotalClientes(clientes.length);
                     setClientesMes(contarClientesMes(clientes));
-                    setClientesAtivos(
-                        clientes.filter(cliente => cliente.status === 'ativo').length
-                    );
-
+                    setClientesAtivos(clientes.filter(c => c.status === 'ativo').length);
                 } else if (response.status === 401) {
                     limparSessaoERedirecionar();
                 }
-
             } catch (error) {
                 console.error('Erro ao buscar clientes:', error);
-
             } finally {
                 setCarregandoEstatisticas(false);
             }
@@ -296,19 +227,14 @@ export default function DashboardAdvogado1({ api }) {
         buscarClientes();
         buscarDadosGrafico('mes');
         buscarAgendamentos();
-
     }, [API_URL, navigate]);
 
     useEffect(() => {
         function verificarTamanhoTela() {
             if (window.innerWidth > 426) {
                 setPaginaEstatisticas(0);
-
                 if (estatisticasRef.current) {
-                    estatisticasRef.current.scrollTo({
-                        left: 0,
-                        behavior: 'auto'
-                    });
+                    estatisticasRef.current.scrollTo({ left: 0, behavior: 'auto' });
                 }
             }
         }
@@ -322,9 +248,7 @@ export default function DashboardAdvogado1({ api }) {
 
     function handleFiltroChange(event) {
         const novoFiltro = event.target.value;
-
         setFiltroPeriodo(novoFiltro);
-
         buscarDadosGrafico(novoFiltro);
     }
 
@@ -340,30 +264,21 @@ export default function DashboardAdvogado1({ api }) {
         navigate(`/escritorio/${idEscritorio}`);
     }
 
-    function irParaAgendamentos() {
-        navigate('/agendamentos');
-    }
-
     function getFotoEscritorio(idEscritorio) {
         return `${API_URL}/uploads/Escritorios/escritorio_${idEscritorio}.jpeg`;
     }
 
     function formatarMoeda(valor) {
-        return new Intl.NumberFormat(
-            'pt-BR',
-            {
-                style: 'currency',
-                currency: 'BRL'
-            }
-        ).format(Number(valor) || 0);
+        return new Intl.NumberFormat('pt-BR', {
+            style: 'currency',
+            currency: 'BRL'
+        }).format(Number(valor) || 0);
     }
 
     const totalEstatisticas = 3;
 
     function irParaEstatistica(pagina) {
-        if (!estatisticasRef.current) {
-            return;
-        }
+        if (!estatisticasRef.current) return;
 
         estatisticasRef.current.scrollTo({
             left: estatisticasRef.current.clientWidth * pagina,
@@ -386,39 +301,27 @@ export default function DashboardAdvogado1({ api }) {
     }
 
     const podeRolarEstatisticasEsquerda = paginaEstatisticas > 0;
-
     const podeRolarEstatisticasDireita = paginaEstatisticas < totalEstatisticas - 1;
 
     const maxValor = Math.max(
         ...dadosGrafico.map(item =>
-            Math.max(
-                Number(item.recebido) || 0,
-                Number(item.a_receber) || 0
-            )
+            Math.max(Number(item.recebido) || 0, Number(item.a_receber) || 0)
         ),
         1
     );
 
     return (
         <div className={css.paginaCompleta}>
-
             <Header api={API_URL} />
 
             <div className={css.layoutDashboard}>
-
                 <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 
                 <main className={css.conteudoPrincipal}>
-
                     {mensagem && (
-                        <div
-                            className={`
-                                ${css.mensagemContainer}
-                                ${tipoMensagem === 'erro' ? css.erro : css.sucesso}
-                            `}
-                        >
+                        <div className={`${css.mensagemContainer} ${tipoMensagem === 'erro' ? css.erro : css.sucesso}`}>
                             {mensagem}
                         </div>
                     )}
@@ -426,10 +329,7 @@ export default function DashboardAdvogado1({ api }) {
                     <div className={css.topoSaudacao}>
                         <div className={css.saudacaoTexto}>
                             <h1 className={css.tituloSaudacao}>
-                                Olá,{' '}
-                                <span className={css.nomeDestaque}>
-                                    {nome}!
-                                </span>
+                                Olá, <span className={css.nomeDestaque}>{nome}!</span>
                             </h1>
                         </div>
 
@@ -440,18 +340,11 @@ export default function DashboardAdvogado1({ api }) {
                             name="btn-configuracoes"
                             aria-label="Configurações"
                         >
-                            <img
-                                src="/engrenagem_1.png"
-                                alt=""
-                                className={css.imgEngrenagem}
-                            />
+                            <img src="/engrenagem_1.png" alt="" className={css.imgEngrenagem} />
                         </button>
                     </div>
 
-                    <section
-                        className={css.carrosselEstatisticas}
-                        aria-label="Estatísticas de clientes"
-                    >
+                    <section className={css.carrosselEstatisticas} aria-label="Estatísticas de clientes">
                         {podeRolarEstatisticasEsquerda && (
                             <button
                                 className={css.botaoSetaEstatisticas}
@@ -465,12 +358,8 @@ export default function DashboardAdvogado1({ api }) {
                         )}
 
                         <div className={css.estatisticasContainer} ref={estatisticasRef}>
-
                             <div className={css.cardNovo}>
-                                <span className={css.labelCardNovo}>
-                                    Clientes cadastrados
-                                </span>
-
+                                <span className={css.labelCardNovo}>Clientes cadastrados</span>
                                 <div className={css.bolinhaVerde}>
                                     <span className={css.numeroCardNovo}>
                                         {carregandoEstatisticas ? '...' : totalClientes}
@@ -479,10 +368,7 @@ export default function DashboardAdvogado1({ api }) {
                             </div>
 
                             <div className={css.cardNovo}>
-                                <span className={css.labelCardNovo}>
-                                    Novos clientes (este mês)
-                                </span>
-
+                                <span className={css.labelCardNovo}>Novos clientes (este mês)</span>
                                 <div className={css.bolinhaVerde}>
                                     <span className={css.numeroCardNovo}>
                                         {carregandoEstatisticas ? '...' : clientesMes}
@@ -491,17 +377,13 @@ export default function DashboardAdvogado1({ api }) {
                             </div>
 
                             <div className={css.cardNovo}>
-                                <span className={css.labelCardNovo}>
-                                    Clientes ativos
-                                </span>
-
+                                <span className={css.labelCardNovo}>Clientes ativos</span>
                                 <div className={css.bolinhaVerde}>
                                     <span className={css.numeroCardNovo}>
                                         {carregandoEstatisticas ? '...' : clientesAtivos}
                                     </span>
                                 </div>
                             </div>
-
                         </div>
 
                         {podeRolarEstatisticasDireita && (
@@ -518,9 +400,7 @@ export default function DashboardAdvogado1({ api }) {
                     </section>
 
                     <div className={css.areaTitulo}>
-                        <h2 className={css.tituloSecao}>
-                            Meus escritórios
-                        </h2>
+                        <h2 className={css.tituloSecao}>Meus escritórios</h2>
 
                         <button
                             className={css.botaoAdicionarEscritorio}
@@ -542,7 +422,6 @@ export default function DashboardAdvogado1({ api }) {
                             <div className={css.gridEscritorios}>
                                 {escritorios.map(escritorio => (
                                     <article key={escritorio.id} className={css.cardEscritorio}>
-
                                         <div className={css.cardEscritorioHeader}>
                                             <img
                                                 src={getFotoEscritorio(escritorio.id)}
@@ -561,11 +440,9 @@ export default function DashboardAdvogado1({ api }) {
 
                                                 <span className={css.tipoEscritorio}>
                                                     {escritorio.ativo
-                                                        ? (
-                                                            escritorio.status === 'PROPRIETARIO'
-                                                                ? 'Proprietário'
-                                                                : 'Parceiro'
-                                                        )
+                                                        ? (escritorio.status === 'PROPRIETARIO'
+                                                            ? 'Proprietário'
+                                                            : 'Parceiro')
                                                         : 'Inativo'}
                                                 </span>
                                             </div>
@@ -581,7 +458,6 @@ export default function DashboardAdvogado1({ api }) {
                                                 Ver Detalhes →
                                             </button>
                                         )}
-
                                     </article>
                                 ))}
                             </div>
@@ -589,12 +465,9 @@ export default function DashboardAdvogado1({ api }) {
                     </section>
 
                     <div className={css.gradeDupla}>
-
                         <section className={css.cardDuplo}>
                             <div className={css.cardDuploHeader}>
-                                <h3 className={css.tituloCardDuplo}>
-                                    Rendimentos
-                                </h3>
+                                <h3 className={css.tituloCardDuplo}>Rendimentos</h3>
 
                                 <select
                                     className={css.selectFiltro}
@@ -610,20 +483,14 @@ export default function DashboardAdvogado1({ api }) {
 
                             {dadosGrafico.length === 0 && !carregandoGrafico ? (
                                 <div className={css.placeholderGrafico}>
-                                    <p className={css.textoPlaceholder}>
-                                        Nenhum dado disponível
-                                    </p>
+                                    <p className={css.textoPlaceholder}>Nenhum dado disponível</p>
                                 </div>
                             ) : (
                                 <>
                                     <div className={css.graficoContainer}>
                                         <div className={css.graficoLegenda}>
-                                            <span className={css.legendaRecebido}>
-                                                ■ Recebido
-                                            </span>
-                                            <span className={css.legendaAReceber}>
-                                                ■ A Receber
-                                            </span>
+                                            <span className={css.legendaRecebido}>■ Recebido</span>
+                                            <span className={css.legendaAReceber}>■ A Receber</span>
                                         </div>
 
                                         <div className={css.graficoBarras}>
@@ -656,9 +523,7 @@ export default function DashboardAdvogado1({ api }) {
                                                             </div>
                                                         </div>
 
-                                                        <span className={css.barraLabel}>
-                                                            {item.label}
-                                                        </span>
+                                                        <span className={css.barraLabel}>{item.label}</span>
                                                     </div>
                                                 );
                                             })}
@@ -667,18 +532,14 @@ export default function DashboardAdvogado1({ api }) {
 
                                     <div className={css.graficoTotais}>
                                         <div className={css.totalItem}>
-                                            <span className={css.totalLabel}>
-                                                Recebido
-                                            </span>
+                                            <span className={css.totalLabel}>Recebido</span>
                                             <span className={css.totalValor}>
                                                 {formatarMoeda(totaisGrafico.recebido)}
                                             </span>
                                         </div>
 
                                         <div className={css.totalItem}>
-                                            <span className={css.totalLabel}>
-                                                A Receber
-                                            </span>
+                                            <span className={css.totalLabel}>A Receber</span>
                                             <span className={css.totalValor}>
                                                 {formatarMoeda(totaisGrafico.aReceber)}
                                             </span>
@@ -689,36 +550,23 @@ export default function DashboardAdvogado1({ api }) {
                         </section>
 
                         <section className={css.cardDuplo}>
-                            <h3 className={css.tituloCardDuplo}>
-                                Agendamentos
-                            </h3>
+                            <h3 className={css.tituloCardDuplo}>Agendamentos</h3>
 
                             {carregandoAgendamentos ? (
                                 <div className={css.placeholderGrafico}>
-                                    <p className={css.textoPlaceholder}>
-                                        Carregando agendamentos...
-                                    </p>
+                                    <p className={css.textoPlaceholder}>Carregando agendamentos...</p>
                                 </div>
                             ) : agendamentos.length === 0 ? (
                                 <div className={css.placeholderGrafico}>
-                                    <p className={css.textoPlaceholder}>
-                                        Nenhum agendamento
-                                    </p>
+                                    <p className={css.textoPlaceholder}>Nenhum agendamento</p>
                                 </div>
                             ) : (
                                 <div className={css.listaAgendamentos}>
                                     {agendamentos.map(agendamento => (
-                                        <div
-                                            key={agendamento.id}
-                                            className={css.itemAgendamento}
-                                        >
+                                        <div key={agendamento.id} className={css.itemAgendamento}>
                                             <div className={css.dataAgendamento}>
-                                                <span className={css.diaAgendamento}>
-                                                    {agendamento.dia}
-                                                </span>
-                                                <span className={css.mesAgendamento}>
-                                                    {agendamento.mes}
-                                                </span>
+                                                <span className={css.diaAgendamento}>{agendamento.dia}</span>
+                                                <span className={css.mesAgendamento}>{agendamento.mes}</span>
                                             </div>
 
                                             <div className={css.infoAgendamento}>
@@ -731,41 +579,30 @@ export default function DashboardAdvogado1({ api }) {
                                             </div>
 
                                             {agendamento.status === 'a_confirmar' && (
-                                                <span className={css.badgeAConfirmar}>
-                                                    A confirmar
-                                                </span>
+                                                <span className={css.badgeAConfirmar}>A confirmar</span>
                                             )}
 
                                             {agendamento.status === 'confirmado' && (
-                                                <span className={css.badgeConfirmado}>
-                                                    Confirmado
-                                                </span>
+                                                <span className={css.badgeConfirmado}>Confirmado</span>
                                             )}
 
                                             {agendamento.status === 'recusado' && (
-                                                <span className={css.badgeRecusado}>
-                                                    Recusado
-                                                </span>
+                                                <span className={css.badgeRecusado}>Recusado</span>
                                             )}
 
                                             {agendamento.status === 'cancelado' && (
-                                                <span className={css.badgeCancelado}>
-                                                    Desmarcado
-                                                </span>
+                                                <span className={css.badgeCancelado}>Desmarcado</span>
                                             )}
                                         </div>
                                     ))}
                                 </div>
                             )}
                         </section>
-
                     </div>
-
                 </main>
             </div>
 
             <Footer />
-
         </div>
     );
 }

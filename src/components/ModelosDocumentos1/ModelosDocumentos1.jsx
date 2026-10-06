@@ -485,6 +485,9 @@ export default function ModelosDocumentos1({ api }) {
             CONTRATO:
                 'Contrato',
 
+            PROCURACAO:
+                'Procuração',
+
             PETICAO_INICIAL:
                 'Petição inicial',
 
@@ -1340,6 +1343,12 @@ export default function ModelosDocumentos1({ api }) {
                                 </option>
 
                                 <option
+                                    value="PROCURACAO"
+                                >
+                                    Procuração
+                                </option>
+
+                                <option
                                     value="PETICAO_INICIAL"
                                 >
                                     Petição inicial
@@ -1759,6 +1768,12 @@ export default function ModelosDocumentos1({ api }) {
                                             value="CONTRATO"
                                         >
                                             Contrato
+                                        </option>
+
+                                        <option
+                                            value="PROCURACAO"
+                                        >
+                                            Procuração
                                         </option>
 
 

@@ -393,6 +393,9 @@ export default function DocumentosGerados1({
             CONTRATO:
                 'Contrato',
 
+            PROCURACAO:
+                'Procuração',
+
             PETICAO_INICIAL:
                 'Petição inicial',
 
@@ -410,7 +413,6 @@ export default function DocumentosGerados1({
             '--'
         );
     }
-
 
     // =====================================================
     // ESCRITÓRIOS PARA O FILTRO
@@ -1160,6 +1162,12 @@ export default function DocumentosGerados1({
                                     value="CONTRATO"
                                 >
                                     Contrato
+                                </option>
+
+                                <option
+                                    value="PROCURACAO"
+                                >
+                                    Procuração
                                 </option>
 
                                 <option

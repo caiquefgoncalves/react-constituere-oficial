@@ -1,0 +1,1057 @@
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clear-sans');
+
+.paginaCompleta {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.layoutDashboard {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.menuLateralContainer {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    transition: width 0.25s ease;
+}
+
+.menuLateralColapsado {
+    width: 60px;
+}
+
+.conteudoPrincipal {
+    flex: 1;
+    min-width: 0;
+    padding: 2.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    box-sizing: border-box;
+}
+
+.topArea {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    width: 100%;
+    padding-bottom: 1.2rem;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.botaoVoltar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    width: 38px;
+    height: 38px;
+    flex-shrink: 0;
+    transition: background-color 0.2s;
+    margin-top: 2px;
+}
+
+.botaoVoltar:hover {
+    background-color: #f0f0f0;
+}
+
+.topoSaudacao {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex: 1;
+    min-width: 0;
+    gap: 1.5rem;
+}
+
+.saudacaoTexto {
+    min-width: 0;
+}
+
+.subtitulo {
+    margin: 0 0 0.4rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #0047ab;
+}
+
+.tituloPagina {
+    margin: 0;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1.2;
+    color: #222222;
+}
+
+.descricao {
+    margin: 0.5rem 0 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #777777;
+}
+
+.botaoNovoLancamento {
+    flex-shrink: 0;
+    padding: 0.75rem 1.2rem;
+    background-color: #0047ab;
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.botaoNovoLancamento:hover {
+    background-color: #003580;
+}
+
+.filtroPeriodo {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.4rem 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.filtroTitulo {
+    min-width: 0;
+}
+
+.filtroTitulo h2 {
+    margin: 0 0 0.35rem;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.filtroTitulo p {
+    margin: 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #888888;
+}
+
+.filtroControles {
+    display: flex;
+    align-items: flex-end;
+    justify-content: flex-end;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.campoFiltro {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.campoFiltro label {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #555555;
+}
+
+.campoFiltro select,
+.campoFiltro input {
+    height: 38px;
+    min-width: 150px;
+    padding: 0 0.8rem;
+    background-color: #ffffff;
+    border: 1px solid #d6dce3;
+    border-radius: 7px;
+    color: #333333;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.campoFiltro select:focus,
+.campoFiltro input:focus {
+    border-color: #0047ab;
+}
+
+.areaFormulario {
+    width: 100%;
+    padding: 1.4rem;
+    background: #f8fbff;
+    border: 1px solid #dbe9f7;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.bloco {
+    width: 100%;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-sizing: border-box;
+}
+
+.tituloBloco {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.2rem;
+    flex-wrap: wrap;
+}
+
+.tituloBloco h2 {
+    margin: 0;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.tituloBloco p {
+    margin: 0.3rem 0 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #888888;
+}
+
+.legenda {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.legendaRecebido {
+    color: #28a745;
+}
+
+.legendaAReceber {
+    color: #0047ab;
+}
+
+.legendaDespesas {
+    color: #c0392b;
+}
+
+.grafico {
+    width: 100%;
+    min-height: 260px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    gap: 4rem;
+    padding: 1rem 2rem 0;
+    box-sizing: border-box;
+}
+
+.coluna {
+    flex: 1;
+    max-width: 150px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+.valor {
+    min-height: 20px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #444444;
+    text-align: center;
+}
+
+.areaBarra {
+    width: 60px;
+    height: 180px;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    background-color: #f5f7fa;
+    border-radius: 7px 7px 0 0;
+    overflow: hidden;
+}
+
+.barra {
+    width: 100%;
+    min-height: 2px;
+    border-radius: 7px 7px 0 0;
+    transition: height 0.5s ease;
+}
+
+.barraRecebida {
+    background-color: #28a745;
+}
+
+.barraAReceber {
+    background-color: #0047ab;
+}
+
+.barraDespesas {
+    background-color: #c0392b;
+}
+
+.label {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #666666;
+}
+
+.graficoTotais {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4rem;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid #eeeeee;
+    flex-wrap: wrap;
+}
+
+.totalItem {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.totalLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #888888;
+}
+
+.totalValor {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.blocoSaude {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.7rem 1.8rem;
+    background-color: #f8fbff;
+    border: 1px solid #dbe9f7;
+    border-radius: 12px;
+    box-sizing: border-box;
+}
+
+.saudeTexto {
+    flex: 1;
+    min-width: 0;
+}
+
+.subtituloSaude {
+    margin: 0 0 0.5rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    color: #0047ab;
+}
+
+.saudeTexto h2 {
+    margin: 0 0 0.5rem;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.saudeTexto > p:last-child {
+    margin: 0;
+    max-width: 600px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #666666;
+}
+
+.percentualContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+}
+
+.percentual {
+    width: 105px;
+    height: 105px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: conic-gradient(#0047ab var(--pct), #e3edf8 var(--pct));
+    position: relative;
+}
+
+.percentual::before {
+    content: "";
+    position: absolute;
+    width: 78px;
+    height: 78px;
+    background-color: #f8fbff;
+    border-radius: 50%;
+}
+
+.percentual span {
+    position: relative;
+    z-index: 1;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #0047ab;
+}
+
+.percentualLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    color: #777777;
+    text-align: center;
+}
+
+.situacoes {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.situacaoCard {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    padding: 1.1rem;
+    background-color: #fafafa;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.situacaoCardAtiva {
+    border-color: #0047ab;
+    background-color: #f8fbff;
+}
+
+.ponto {
+    width: 9px;
+    height: 9px;
+    margin-top: 5px;
+    border-radius: 50%;
+    background-color: #b8b8b8;
+    flex-shrink: 0;
+}
+
+.situacaoCardAtiva .ponto {
+    background-color: #0047ab;
+}
+
+.situacaoCard h3 {
+    margin: 0 0 0.4rem;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.situacaoCard p {
+    margin: 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    line-height: 1.5;
+    color: #777777;
+}
+
+.filtrosLancamentos {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+}
+
+.botaoFiltroTipo {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d6dce3;
+    border-radius: 20px;
+    background: #ffffff;
+    color: #555555;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.botaoFiltroTipo:hover {
+    border-color: #0047ab;
+    color: #0047ab;
+}
+
+.botaoFiltroAtivo {
+    background: #0047ab;
+    border-color: #0047ab;
+    color: #ffffff;
+}
+
+.tabelaContainer {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.tabela {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+}
+
+.tabela th {
+    padding: 0.8rem 0.6rem;
+    border-bottom: 2px solid #e8edf2;
+    color: #333333;
+    font-weight: 700;
+    text-align: left;
+    white-space: nowrap;
+}
+
+.tabela td {
+    padding: 0.8rem 0.6rem;
+    border-bottom: 1px solid #e8edf2;
+    color: #444444;
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+.tabela tr:hover td {
+    background-color: #fcfcfc;
+}
+
+.badgeStatus {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.badgeReceita {
+    background: #e5f6e0;
+    color: #1b4332;
+}
+
+.badgeDespesa {
+    background: #ffe5e5;
+    color: #8a0000;
+}
+
+.valorReceitaCelula {
+    color: #28a745;
+    font-weight: 700;
+}
+
+.valorDespesaCelula {
+    color: #c0392b;
+    font-weight: 700;
+}
+
+.textoVazio {
+    padding: 1.5rem;
+    text-align: center;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #888888;
+}
+
+.resumo {
+    width: 100%;
+}
+
+.linha,
+.linhaFinal {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid #eeeeee;
+}
+
+.linha span,
+.linhaFinal span {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    color: #666666;
+}
+
+.linha strong,
+.linhaFinal strong {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333333;
+}
+
+.valorRecebido {
+    color: #28a745 !important;
+}
+
+.valorAReceber {
+    color: #0047ab !important;
+}
+
+.linhaFinal {
+    padding-top: 1.1rem;
+    border-bottom: none;
+}
+
+.linhaFinal span {
+    font-weight: 700;
+    color: #333333;
+}
+
+.linhaFinal strong {
+    font-size: 1.2rem;
+    color: #0047ab;
+}
+
+.valorAtraso {
+    color: #c0392b !important;
+}
+
+.valorPendente {
+    color: #b8860b !important;
+}
+
+.badgeStatusInfo {
+    display: inline-block;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    background: #eef4fb;
+    color: #0047ab;
+}
+
+.badgePago {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.badgePendente {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.badgeAtrasado {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.blocoResultado {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding: 1.7rem 1.8rem;
+    border-radius: 12px;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+}
+
+.blocoLucro {
+    background-color: #eafaf1;
+    border-color: #b7e4c7;
+}
+
+.blocoPrejuizo {
+    background-color: #fdecea;
+    border-color: #f5c6cb;
+}
+
+.blocoNeutro {
+    background-color: #f5f5f5;
+    border-color: #e0e0e0;
+}
+
+.resultadoIcone {
+    width: 52px;
+    height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-size: 1.4rem;
+    font-weight: 700;
+    flex-shrink: 0;
+    color: #ffffff;
+}
+
+.blocoLucro .resultadoIcone {
+    background-color: #28a745;
+}
+
+.blocoPrejuizo .resultadoIcone {
+    background-color: #c0392b;
+}
+
+.blocoNeutro .resultadoIcone {
+    background-color: #888888;
+}
+
+.resultadoTexto {
+    flex: 1;
+    min-width: 0;
+}
+
+.resultadoSubtitulo {
+    margin: 0 0 0.4rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    color: #666666;
+}
+
+.resultadoTexto h2 {
+    margin: 0 0 0.4rem;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+.blocoLucro .resultadoTexto h2 {
+    color: #1b7a3d;
+}
+
+.blocoPrejuizo .resultadoTexto h2 {
+    color: #a12a1e;
+}
+
+.blocoNeutro .resultadoTexto h2 {
+    color: #555555;
+}
+
+.resultadoTexto p {
+    margin: 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    color: #555555;
+}
+
+.resultadoTexto p strong {
+    font-weight: 700;
+}
+
+.resultadoValor {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.3rem;
+    flex-shrink: 0;
+}
+
+.resultadoValorLabel {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.75rem;
+    color: #777777;
+}
+
+.resultadoValorNumero {
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.blocoLucro .resultadoValorNumero {
+    color: #28a745;
+}
+
+.blocoPrejuizo .resultadoValorNumero {
+    color: #c0392b;
+}
+
+.blocoNeutro .resultadoValorNumero {
+    color: #777777;
+}
+
+.paginacao {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+    padding-top: 1.2rem;
+    border-top: 1px solid #eeeeee;
+    flex-wrap: wrap;
+}
+
+.botaoPagina {
+    padding: 0.5rem 1.5rem;
+    border: 1px solid #8eb4e6;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0047ab;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.botaoPagina:hover:not(:disabled) {
+    background-color: #0047ab;
+    color: #ffffff;
+    border-color: #0047ab;
+}
+
+.botaoPagina:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.infoPagina {
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.95rem;
+    color: #333333;
+}
+
+@media (max-width: 1000px) {
+    .conteudoPrincipal {
+        padding: 2rem;
+    }
+
+    .filtroPeriodo {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .filtroControles {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .situacoes {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 769px) {
+    .menuLateralContainer {
+        width: 60px;
+    }
+
+    .conteudoPrincipal {
+        padding: 1.5rem;
+    }
+
+    .topArea {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+    }
+
+    .topoSaudacao {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.8rem;
+        width: 100%;
+    }
+
+    .botaoNovoLancamento {
+        width: 100%;
+    }
+
+    .grafico {
+        gap: 1.5rem;
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .graficoTotais {
+        gap: 2rem;
+    }
+
+    .blocoSaude {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .percentualContainer {
+        align-self: center;
+    }
+
+    .blocoResultado {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .resultadoValor {
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 600px) {
+    .conteudoPrincipal {
+        padding: 1rem;
+    }
+
+    .tituloPagina {
+        font-size: 1.7rem;
+    }
+
+    .filtroPeriodo {
+        padding: 1.1rem;
+    }
+
+    .filtroControles {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .campoFiltro {
+        width: 100%;
+    }
+
+    .campoFiltro select,
+    .campoFiltro input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .bloco {
+        padding: 1.1rem;
+    }
+
+    .tituloBloco {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .legenda {
+        flex-wrap: wrap;
+        gap: 0.7rem;
+    }
+
+    .grafico {
+        min-height: 220px;
+        gap: 0.8rem;
+    }
+
+    .areaBarra {
+        width: 45px;
+        height: 150px;
+    }
+
+    .graficoTotais {
+        gap: 1rem;
+        justify-content: space-between;
+    }
+
+    .situacoes {
+        grid-template-columns: 1fr;
+    }
+
+    .linha,
+    .linhaFinal {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 0.3rem;
+    }
+
+    .tabela th,
+    .tabela td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.8rem;
+    }
+
+    .paginacao {
+        gap: 0.75rem;
+    }
+
+    .botaoPagina {
+        padding: 0.5rem 1rem;
+        font-size: 0.85rem;
+    }
+
+    .infoPagina {
+        width: 100%;
+        order: -1;
+        text-align: center;
+    }
+}
+
+@media (max-width: 426px) {
+    .conteudoPrincipal {
+        padding: 0.8rem;
+    }
+
+    .tituloPagina {
+        font-size: 1.5rem;
+    }
+
+    .descricao {
+        font-size: 0.8rem;
+    }
+
+    .filtroTitulo h2 {
+        font-size: 1rem;
+    }
+
+    .blocoSaude {
+        padding: 1.2rem;
+    }
+
+    .saudeTexto h2 {
+        font-size: 1.5rem;
+    }
+
+    .percentual {
+        width: 90px;
+        height: 90px;
+    }
+
+    .percentual::before {
+        width: 68px;
+        height: 68px;
+    }
+}

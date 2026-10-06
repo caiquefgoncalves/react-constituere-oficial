@@ -1,8 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
 @import url('https://fonts.cdnfonts.com/css/clear-sans');
 
-
-
 .paginaCompleta {
     display: flex;
     flex-direction: column;
@@ -19,55 +17,42 @@
 
 .topArea {
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
+    margin-top: 3rem;
+    margin-bottom: 2.5rem;
+    padding: 0;
     position: relative;
-
-    margin-top: 2rem;
-    margin-bottom: 2rem;
-    padding: 0 1rem;
+    width: 100%;
 }
 
 .botaoVoltar {
     position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-
+    left: 3rem;
+    background-color: #0047ab;
+    border: none;
+    border-radius: 50%;
     width: 45px;
     height: 45px;
-    border-radius: 50%;
-    background-color: #0047ab;
-
     display: flex;
     align-items: center;
     justify-content: center;
-
-    z-index: 10;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
 .botaoVoltar:hover {
     background-color: #003580;
-}
-
-.botaoVoltar svg {
-    width: 20px;
-    height: 20px;
-}
-
-.botaoVoltar svg path {
-    stroke: #ffffff;
-    stroke-width: 3;
 }
 
 .titulo {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 3.5rem;
     font-weight: bold;
-    color: #ffbf00;
     text-align: center;
     margin: 0;
+    color: #ffbf00;
 }
-
 
 .formulario {
     display: flex;
@@ -89,7 +74,6 @@
     column-gap: 4rem;
     row-gap: 0;
 }
-
 
 .campoMetade {
     display: flex !important;
@@ -124,7 +108,6 @@
     transition: border-color 0.3s ease;
     background-color: #ffffff;
     box-sizing: border-box;
-    color: #333333;
 }
 
 select.input {
@@ -139,7 +122,6 @@ select.input {
 
 .input:focus {
     border-color: #0047ab;
-    box-shadow: 0 0 0 2px rgba(0, 71, 171, 0.1);
 }
 
 .input::placeholder {
@@ -153,7 +135,29 @@ select.input {
     margin: 0;
 }
 
+.botaoContainer {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-top: 3rem;
+}
 
+.botaoCadastro {
+    font-family: 'Clear Sans', sans-serif;
+    background-color: #ffbf00;
+    color: #ffffff;
+    border: none;
+    border-radius: 50px;
+    padding: 14px 50px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.botaoCadastro:hover {
+    background-color: #d69f00;
+}
 
 .inputFile {
     width: 100%;
@@ -211,45 +215,6 @@ select.input {
     border-color: #0047ab;
 }
 
-
-
-.botaoContainer {
-    display: flex;
-    justify-content: center;
-    width: 100%;
-    margin-top: 3rem;
-}
-
-.botaoCadastro {
-    font-family: 'Clear Sans', sans-serif;
-    background-color: #ffbf00;
-    color: #ffffff;
-    border: none;
-    border-radius: 50px;
-    padding: 14px 50px;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.botaoCadastro:hover {
-    background-color: #d69f00;
-    transform: scale(1.02);
-}
-
-.botaoCadastro:active {
-    transform: scale(0.98);
-}
-
-.botaoCadastro:disabled {
-    background-color: #cccccc;
-    cursor: not-allowed;
-    transform: none;
-}
-
-
-
 .mensagemContainer {
     padding: 16px 24px;
     margin: 0 auto 2.5rem auto;
@@ -277,54 +242,6 @@ select.input {
 }
 
 
-
-.loadingOverlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-    backdrop-filter: blur(4px);
-}
-
-.loadingContent {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    text-align: center;
-    padding: 30px;
-}
-
-.loadingImage {
-    width: 100px;
-    height: 100px;
-    animation: spin 1.2s linear infinite;
-}
-
-.loadingText {
-    color: white;
-    font-size: 1.2rem;
-    font-family: 'Clear Sans', sans-serif;
-    font-weight: bold;
-}
-
-.loadingAviso {
-    color: #ffc107;
-    font-size: 1rem;
-    font-family: 'Clear Sans', sans-serif;
-    font-weight: bold;
-    margin-top: 10px;
-    max-width: 400px;
-}
-
-
-
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -336,17 +253,25 @@ select.input {
     }
 }
 
-@keyframes spin {
-    from {
-        transform: rotate(0deg);
+
+@media (min-width: 1400px) {
+    .formulario {
+        max-width: 1300px;
     }
-    to {
-        transform: rotate(360deg);
+
+    .titulo {
+        font-size: 3.8rem;
+    }
+
+    .mensagemContainer {
+        max-width: 800px;
     }
 }
 
 
-@media (max-width: 1200px) {
+
+@media (max-width: 1024px) {
+
     .formulario {
         padding: 0 2rem;
     }
@@ -354,72 +279,74 @@ select.input {
     .linha {
         column-gap: 2rem;
     }
-}
 
+    .campoMetade {
+        width: calc(50% - 1rem) !important;
+    }
 
-@media (max-width: 992px) {
     .titulo {
         font-size: 2.5rem;
     }
 
-    .campoMetade {
-        width: 100% !important;
-    }
-
-    .linha {
-        column-gap: 0;
-    }
-
     .botaoVoltar {
         left: 1.5rem;
-        top: -10px;
     }
 }
 
 
+
 @media (max-width: 768px) {
+
     .topArea {
         flex-direction: column;
-        margin-top: 2rem;
-        gap: 1rem;
+        align-items: center;
+        margin-top: 1rem;
+        gap: 0.5rem;
     }
 
-    @media (max-width: 768px) {
-        .topArea {
-            margin-top: 2rem;
-        }
 
-        .botaoVoltar {
-            top: -10px;
-            left: 1rem;
-        }
+    .botaoVoltar {
+        position: relative;
+        left: 0;
+        align-self: flex-start;
+        margin-bottom: 0.5rem;
+    }
 
-        .titulo {
-            font-size: 2rem;
-        }
+    .titulo {
+        font-size: 2rem;
     }
 
     .formulario {
         padding: 0 1.5rem;
     }
 
+    .linha {
+        flex-direction: column;
+    }
+
+
+    .campoMetade {
+        width: 100% !important;
+    }
+
     .botaoCadastro {
         width: 100%;
-        padding: 12px;
-        font-size: 1rem;
+        max-width: 300px;
     }
 
-    .input {
-        font-size: 0.95rem;
-    }
-
-    .label {
-        font-size: 0.95rem;
+    .mensagemContainer {
+        margin: 0 1rem 2rem 1rem;
     }
 }
 
 
+
 @media (max-width: 480px) {
+
+    .containerSection {
+        padding-top: 0.5rem;
+    }
+
     .titulo {
         font-size: 1.6rem;
     }
@@ -428,60 +355,52 @@ select.input {
         padding: 0 1rem;
     }
 
-    .inputFile {
-        font-size: 0.8rem;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 6px;
+    .label {
+        font-size: 0.9rem;
     }
 
-    .inputFile::file-selector-button {
-        width: 100%;
-        margin-right: 0;
+    .input,
+    .inputFile {
+        font-size: 0.9rem;
+        padding: 0.7rem;
     }
 
     .botaoCadastro {
+        width: 100%;
+        padding: 12px;
         font-size: 0.95rem;
+    }
+}
+
+
+
+@media (max-width: 360px) {
+
+    .titulo {
+        font-size: 1.4rem;
+    }
+
+    .botaoCadastro {
+        font-size: 0.85rem;
         padding: 10px;
+        white-space: normal;
     }
 
     .mensagemContainer {
         font-size: 0.9rem;
         padding: 12px;
     }
-}
 
 
-@media (max-width: 320px) {
-    .titulo {
-        font-size: 1.3rem;
+    .formulario,
+    .linha,
+    .campoMetade,
+    .campoInteiro {
+        min-width: 0;
     }
 
-    .formulario {
-        padding: 0 0.7rem;
-    }
-
-    .input {
-        font-size: 0.85rem;
-        padding: 0.6rem;
-    }
-
+    .input,
     .inputFile {
-        font-size: 0.75rem;
-    }
-
-    .botaoCadastro {
         font-size: 0.85rem;
-        padding: 8px;
-    }
-
-    .botaoVoltar {
-        width: 38px;
-        height: 38px;
-    }
-
-    .botaoVoltar svg {
-        width: 16px;
-        height: 16px;
     }
 }

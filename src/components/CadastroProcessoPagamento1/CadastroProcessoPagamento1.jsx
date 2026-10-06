@@ -73,6 +73,51 @@ export default function CadastroProcessoPagamento1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState('');
     const [carregando, setCarregando] = useState(false);
 
+    const [
+        modalDocumentosAberta,
+        setModalDocumentosAberta
+    ] = useState(false);
+
+    const [
+        idProcessoCriado,
+        setIdProcessoCriado
+    ] = useState(null);
+
+    const [
+        numeroProcessoCriado,
+        setNumeroProcessoCriado
+    ] = useState('');
+
+    const [
+        modelosIniciais,
+        setModelosIniciais
+    ] = useState([]);
+
+    const [
+        modelosSelecionados,
+        setModelosSelecionados
+    ] = useState([]);
+
+    const [
+        carregandoModelos,
+        setCarregandoModelos
+    ] = useState(false);
+
+    const [
+        gerandoDocumentos,
+        setGerandoDocumentos
+    ] = useState(false);
+
+    const [
+        mensagemDocumentos,
+        setMensagemDocumentos
+    ] = useState('');
+
+    const [
+        buscaModeloInicial,
+        setBuscaModeloInicial
+    ] = useState('');
+
     const API_URL = api || 'http://10.92.11.22:5000';
 
     const dias = Array.from({ length: 31 }, (_, index) => index + 1);
@@ -160,6 +205,495 @@ export default function CadastroProcessoPagamento1({ api }) {
         localStorage.removeItem('token');
         localStorage.removeItem('id_usuario');
         navigate('/login');
+    }
+
+    function formatarTipoModelo(tipo) {
+
+        if (tipo === 'PROCURACAO') {
+            return 'Procuração';
+        }
+
+        if (tipo === 'HIPOSSUFICIENCIA') {
+            return 'Declaração de justiça gratuita';
+        }
+
+        if (tipo === 'CONTRATO') {
+            return 'Contrato de honorários';
+        }
+
+        return tipo;
+    }
+
+
+    function irParaProcessos() {
+
+        setModalDocumentosAberta(false);
+
+        navigate('/processos');
+    }
+
+
+    function alternarModeloInicial(
+        idModelo
+    ) {
+
+        const id =
+            String(
+                idModelo
+            );
+
+
+        setModelosSelecionados(
+            anteriores => {
+
+                if (
+                    anteriores.includes(
+                        id
+                    )
+                ) {
+
+                    return anteriores.filter(
+                        item =>
+                            item !== id
+                    );
+                }
+
+
+                return [
+                    ...anteriores,
+                    id
+                ];
+            }
+        );
+    }
+
+
+    async function buscarModelosIniciais(
+        idProcesso
+    ) {
+
+        const token =
+            localStorage.getItem(
+                'token'
+            );
+
+
+        if (!token) {
+
+            deslogar();
+
+            return;
+        }
+
+
+        setCarregandoModelos(
+            true
+        );
+
+        setMensagemDocumentos(
+            ''
+        );
+
+        setModelosSelecionados(
+            []
+        );
+
+
+        try {
+
+            const response =
+                await fetch(
+
+                    `${API_URL}/processo/${idProcesso}/modelos-documentos`,
+
+                    {
+                        method: 'GET',
+
+                        credentials:
+                            'include',
+
+                        headers: {
+                            'X-Access-Token':
+                            token
+                        }
+                    }
+
+                );
+
+
+            if (
+                response.status === 401
+            ) {
+
+                deslogar();
+
+                return;
+            }
+
+
+            const dados =
+                await response.json();
+
+
+            if (!response.ok) {
+
+                setModelosIniciais(
+                    []
+                );
+
+                setMensagemDocumentos(
+                    dados.error
+                    ||
+                    'Não foi possível carregar os modelos de documentos.'
+                );
+
+                return;
+            }
+
+
+            const tiposIniciais = [
+                'PROCURACAO',
+                'HIPOSSUFICIENCIA',
+                'CONTRATO'
+            ];
+
+
+            const modelos =
+                (
+                    dados.modelos
+                    ||
+                    []
+                ).filter(
+                    modelo => {
+
+                        const tipo =
+                            String(
+                                modelo.tipo
+                                ||
+                                ''
+                            )
+                                .trim()
+                                .toUpperCase();
+
+
+                        return (
+                            modelo.ativo !== false
+                            &&
+                            tiposIniciais.includes(
+                                tipo
+                            )
+                        );
+                    }
+                );
+
+
+            setModelosIniciais(
+                modelos
+            );
+
+
+        } catch (erro) {
+
+            console.error(
+                'Erro ao carregar modelos iniciais:',
+                erro
+            );
+
+
+            setModelosIniciais(
+                []
+            );
+
+
+            setMensagemDocumentos(
+                'Processo cadastrado, mas não foi possível carregar os modelos de documentos.'
+            );
+
+
+        } finally {
+
+            setCarregandoModelos(
+                false
+            );
+        }
+    }
+
+
+    async function gerarDocumentosIniciais() {
+
+        if (
+            modelosSelecionados.length === 0
+        ) {
+
+            setMensagemDocumentos(
+                'Selecione pelo menos um documento.'
+            );
+
+            return;
+        }
+
+
+        if (!idProcessoCriado) {
+
+            setMensagemDocumentos(
+                'Processo não encontrado.'
+            );
+
+            return;
+        }
+
+
+        const token =
+            localStorage.getItem(
+                'token'
+            );
+
+
+        if (!token) {
+
+            deslogar();
+
+            return;
+        }
+
+
+        setGerandoDocumentos(
+            true
+        );
+
+        setMensagemDocumentos(
+            ''
+        );
+
+
+        let quantidadeGerada = 0;
+
+
+        try {
+
+            for (
+                const idModelo
+                of modelosSelecionados
+                ) {
+
+                const modelo =
+                    modelosIniciais.find(
+                        item =>
+                            String(
+                                item.id
+                            )
+                            ===
+                            String(
+                                idModelo
+                            )
+                    );
+
+
+                const response =
+                    await fetch(
+
+                        `${API_URL}/processo/${idProcessoCriado}/documentos/gerar`,
+
+                        {
+                            method: 'POST',
+
+                            credentials:
+                                'include',
+
+                            headers: {
+
+                                'Content-Type':
+                                    'application/json',
+
+                                'X-Access-Token':
+                                token
+                            },
+
+                            body:
+                                JSON.stringify({
+
+                                    id_modelo:
+                                    idModelo
+
+                                })
+                        }
+
+                    );
+
+
+                if (
+                    response.status === 401
+                ) {
+
+                    deslogar();
+
+                    return;
+                }
+
+
+                if (!response.ok) {
+
+                    let dadosErro = {};
+
+
+                    try {
+
+                        dadosErro =
+                            await response.json();
+
+                    } catch {
+
+                        dadosErro = {};
+
+                    }
+
+
+                    throw new Error(
+
+                        dadosErro.error
+                        ||
+                        `Erro ao gerar ${modelo?.nome || 'documento'}.`
+
+                    );
+                }
+
+
+                const arquivo =
+                    await response.blob();
+
+
+                const url =
+                    window.URL.createObjectURL(
+                        arquivo
+                    );
+
+
+                const nomeModelo =
+                    modelo?.nome
+                    ||
+                    'documento';
+
+
+                const nomeSeguro =
+                    String(
+                        nomeModelo
+                    )
+                        .normalize('NFD')
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ''
+                        )
+                        .replace(
+                            /[^a-zA-Z0-9_-]/g,
+                            '_'
+                        );
+
+
+                const numeroSeguro =
+                    String(
+                        numeroProcessoCriado
+                        ||
+                        idProcessoCriado
+                    )
+                        .replace(
+                            /[^a-zA-Z0-9_-]/g,
+                            '_'
+                        );
+
+
+                const link =
+                    document.createElement(
+                        'a'
+                    );
+
+
+                link.href =
+                    url;
+
+
+                link.download =
+                    `${nomeSeguro}_${numeroSeguro}.docx`;
+
+
+                document.body.appendChild(
+                    link
+                );
+
+
+                link.click();
+
+
+                link.remove();
+
+
+                setTimeout(
+                    () => {
+
+                        window.URL.revokeObjectURL(
+                            url
+                        );
+
+                    },
+                    1000
+                );
+
+
+                quantidadeGerada++;
+            }
+
+
+            setMensagemDocumentos(
+                quantidadeGerada === 1
+                    ? 'Documento gerado com sucesso!'
+                    : 'Documentos gerados com sucesso!'
+            );
+
+
+            setTimeout(
+                () => {
+
+                    navigate(
+                        '/processos'
+                    );
+
+                },
+                1000
+            );
+
+
+        } catch (erro) {
+
+            console.error(
+                'Erro ao gerar documentos iniciais:',
+                erro
+            );
+
+
+            setMensagemDocumentos(
+
+                quantidadeGerada > 0
+
+                    ? (
+                        'Alguns documentos foram gerados, '
+                        + 'mas ocorreu um erro: '
+                        + erro.message
+                    )
+
+                    : (
+                        erro.message
+                        ||
+                        'Erro ao gerar documentos.'
+                    )
+
+            );
+
+
+        } finally {
+
+            setGerandoDocumentos(
+                false
+            );
+        }
     }
 
     function alterarProLabore(valorSelecionado) {
@@ -347,13 +881,43 @@ export default function CadastroProcessoPagamento1({ api }) {
 
             mostrarMensagem(dados.mensagem || 'Processo cadastrado com sucesso!', 'sucesso');
 
-            sessionStorage.removeItem('processo_temp');
-            sessionStorage.removeItem('parte_contraria_temp');
-            sessionStorage.removeItem('honorarios_temp');
+            sessionStorage.removeItem(
+                'processo_temp'
+            );
 
-            setTimeout(() => {
-                navigate('/processos');
-            }, 2000);
+            sessionStorage.removeItem(
+                'parte_contraria_temp'
+            );
+
+            sessionStorage.removeItem(
+                'honorarios_temp'
+            );
+
+
+            setIdProcessoCriado(
+                dados.id_processo
+            );
+
+
+            setNumeroProcessoCriado(
+                dados.numero_processo
+                ||
+                processo.numero_processo
+                ||
+                String(
+                    dados.id_processo
+                )
+            );
+
+
+            setModalDocumentosAberta(
+                true
+            );
+
+
+            await buscarModelosIniciais(
+                dados.id_processo
+            );
 
         } catch (erro) {
             console.error('Erro ao cadastrar processo:', erro);
@@ -362,6 +926,67 @@ export default function CadastroProcessoPagamento1({ api }) {
             setCarregando(false);
         }
     }
+
+    const modelosIniciaisFiltrados =
+        modelosIniciais.filter(
+            modelo => {
+
+                const termo =
+                    String(
+                        buscaModeloInicial
+                        ||
+                        ''
+                    )
+                        .normalize('NFD')
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ''
+                        )
+                        .toLowerCase()
+                        .trim();
+
+
+                const nome =
+                    String(
+                        modelo.nome
+                        ||
+                        ''
+                    )
+                        .normalize('NFD')
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ''
+                        )
+                        .toLowerCase();
+
+
+                const tipo =
+                    String(
+                        formatarTipoModelo(
+                            modelo.tipo
+                        )
+                        ||
+                        ''
+                    )
+                        .normalize('NFD')
+                        .replace(
+                            /[\u0300-\u036f]/g,
+                            ''
+                        )
+                        .toLowerCase();
+
+
+                return (
+                    nome.includes(
+                        termo
+                    )
+                    ||
+                    tipo.includes(
+                        termo
+                    )
+                );
+            }
+        );
 
     return (
         <div className={css.paginaCompleta}>
@@ -749,7 +1374,295 @@ export default function CadastroProcessoPagamento1({ api }) {
                     </div>
                 </form>
             </section>
+
+
+            {
+                modalDocumentosAberta
+                &&
+                (
+                    <div
+                        className={
+                            css.modalDocumentosOverlay
+                        }
+                    >
+
+                        <div
+                            className={
+                                css.modalDocumentos
+                            }
+                        >
+
+                            <button
+                                type="button"
+                                className={
+                                    css.modalDocumentosFechar
+                                }
+                                onClick={
+                                    irParaProcessos
+                                }
+                                disabled={
+                                    gerandoDocumentos
+                                }
+                                aria-label="Fechar"
+                            >
+                                ✕
+                            </button>
+
+
+                            <h2
+                                className={
+                                    css.modalDocumentosTitulo
+                                }
+                            >
+                                Gostaria de gerar
+                                arquivos iniciais?
+                            </h2>
+
+                            <div
+                                className={
+                                    css.buscaModeloInicialContainer
+                                }
+                            >
+
+                                <input
+                                    type="text"
+                                    className={
+                                        css.buscaModeloInicial
+                                    }
+                                    placeholder="Pesquisar documento..."
+                                    value={
+                                        buscaModeloInicial
+                                    }
+                                    onChange={
+                                        (e) =>
+                                            setBuscaModeloInicial(
+                                                e.target.value
+                                            )
+                                    }
+                                    disabled={
+                                        gerandoDocumentos
+                                    }
+                                />
+
+
+                                <svg
+                                    className={
+                                        css.iconeBuscaModeloInicial
+                                    }
+                                    width="20"
+                                    height="20"
+                                    viewBox="0 0 24 24"
+                                    fill="none"
+                                    stroke="#8a8a8a"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                >
+                                    <circle
+                                        cx="11"
+                                        cy="11"
+                                        r="8"
+                                    />
+
+                                    <line
+                                        x1="21"
+                                        y1="21"
+                                        x2="16.65"
+                                        y2="16.65"
+                                    />
+                                </svg>
+
+                            </div>
+
+
+                            {
+                                carregandoModelos
+                                    ? (
+                                        <div
+                                            className={
+                                                css.estadoModelosIniciais
+                                            }
+                                        >
+                                            Carregando modelos...
+                                        </div>
+                                    )
+
+                                    : modelosIniciaisFiltrados.length === 0
+                                        ? (
+                                            <div
+                                                className={
+                                                    css.estadoModelosIniciais
+                                                }
+                                            >
+
+                                                <p>
+                                                    Nenhum modelo de documento
+                                                    inicial está disponível
+                                                    para este processo.
+                                                </p>
+
+                                            </div>
+                                        )
+
+                                        : (
+                                            <div
+                                                className={
+                                                    css.listaModelosIniciais
+                                                }
+                                            >
+
+                                                {
+                                                    modelosIniciaisFiltrados.map(
+                                                        modelo => (
+
+                                                            <label
+                                                                key={
+                                                                    modelo.id
+                                                                }
+                                                                className={
+                                                                    css.itemModeloInicial
+                                                                }
+                                                            >
+
+                                                                <input
+                                                                    type="checkbox"
+                                                                    className={
+                                                                        css.checkboxModeloInicial
+                                                                    }
+                                                                    checked={
+                                                                        modelosSelecionados.includes(
+                                                                            String(
+                                                                                modelo.id
+                                                                            )
+                                                                        )
+                                                                    }
+                                                                    onChange={
+                                                                        () =>
+                                                                            alternarModeloInicial(
+                                                                                modelo.id
+                                                                            )
+                                                                    }
+                                                                    disabled={
+                                                                        gerandoDocumentos
+                                                                    }
+                                                                />
+
+
+                                                                <div
+                                                                    className={
+                                                                        css.textoModeloInicial
+                                                                    }
+                                                                >
+
+                                                                    <span
+                                                                        className={
+                                                                            css.nomeModeloInicial
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            modelo.nome
+                                                                        }
+                                                                    </span>
+
+
+                                                                    <span
+                                                                        className={
+                                                                            css.tipoModeloInicial
+                                                                        }
+                                                                    >
+                                                                        {
+                                                                            formatarTipoModelo(
+                                                                                modelo.tipo
+                                                                            )
+                                                                        }
+                                                                    </span>
+
+                                                                </div>
+
+                                                            </label>
+
+                                                        )
+                                                    )
+                                                }
+
+                                            </div>
+                                        )
+                            }
+
+
+                            {
+                                mensagemDocumentos
+                                &&
+                                (
+                                    <p
+                                        className={
+                                            css.mensagemDocumentos
+                                        }
+                                    >
+                                        {
+                                            mensagemDocumentos
+                                        }
+                                    </p>
+                                )
+                            }
+
+
+                            <div
+                                className={
+                                    css.modalDocumentosAcoes
+                                }
+                            >
+
+                                <button
+                                    type="button"
+                                    className={
+                                        css.botaoGerarArquivos
+                                    }
+                                    onClick={
+                                        gerarDocumentosIniciais
+                                    }
+                                    disabled={
+                                        gerandoDocumentos
+                                        ||
+                                        carregandoModelos
+                                        ||
+                                        modelosIniciais.length === 0
+                                    }
+                                >
+                                    {
+                                        gerandoDocumentos
+                                            ? 'Gerando...'
+                                            : 'Gerar arquivos'
+                                    }
+                                </button>
+
+
+                                <button
+                                    type="button"
+                                    className={
+                                        css.botaoAgoraNao
+                                    }
+                                    onClick={
+                                        irParaProcessos
+                                    }
+                                    disabled={
+                                        gerandoDocumentos
+                                    }
+                                >
+                                    Agora não
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                )
+            }
+
+
             <Footer />
+
         </div>
     );
 }

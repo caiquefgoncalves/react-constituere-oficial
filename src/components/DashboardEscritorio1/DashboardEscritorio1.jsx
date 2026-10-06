@@ -46,7 +46,7 @@ export default function DashboardEscritorio1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.22:5000';
+    const API_URL = api || 'http://10.92.11.25:5000';
 
     useEffect(() => {
         function atualizarQuantidadeItens() {
@@ -407,6 +407,10 @@ export default function DashboardEscritorio1({ api }) {
 
     function irParaModelosDocumentos() {
         navigate(`/escritorio/${id}/modelos_documentos`);
+    }
+
+    function irParaSaudeFinanceira() {
+        navigate(`/escritorio/${id}/financeiro`);
     }
 
     function fecharModal() {
@@ -1035,6 +1039,15 @@ export default function DashboardEscritorio1({ api }) {
                                     </div>
                                 </>
                             )}
+
+                            <button
+                                className={css.botaoSaudeFinanceira}
+                                type="button"
+                                onClick={irParaSaudeFinanceira}
+                                name="btn-saude-financeira"
+                            >
+                                Ver saúde financeira
+                            </button>
                         </section>
 
                     </div>

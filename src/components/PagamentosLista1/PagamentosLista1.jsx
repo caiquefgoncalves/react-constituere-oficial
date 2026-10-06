@@ -4,6 +4,8 @@ import css from './PagamentosLista1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx";
+import AlertaVencimentos, { TagVencimento } from "../AlertaVencimentos/AlertaVencimentos.jsx";
+
 
 export default function PagamentosLista1({ api }) {
     const navigate = useNavigate();
@@ -25,8 +27,9 @@ export default function PagamentosLista1({ api }) {
     const [baixando, setBaixando] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
+    const [versaoAlertas, setVersaoAlertas] = useState(0);
 
-    const API_URL = api || 'http://10.92.11.22:5000';
+    const API_URL = api || 'http://10.92.11.25:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 
@@ -59,7 +62,6 @@ export default function PagamentosLista1({ api }) {
             console.error('Erro ao buscar totais:', error);
         }
     }, [API_URL]);
-
 
     useEffect(() => {
         function aplicarEstadoMenu(e) {
@@ -163,12 +165,26 @@ export default function PagamentosLista1({ api }) {
 
     function getStatusClass(status) {
         if (!status) return '';
-        const statusMap = {
-            'A pagar': 'apagar',
-            'Paga': 'paga',
-            'Atrasada': 'atrasada'
-        };
-        return statusMap[status] || status.toLowerCase().replace(' ', '');
+
+        const normalizado = status
+            .toLowerCase()
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .trim();
+
+        if (normalizado === 'a pagar' || normalizado === 'a_pagar') {
+            return 'apagar';
+        }
+
+        if (normalizado === 'paga' || normalizado === 'pago') {
+            return 'paga';
+        }
+
+        if (normalizado === 'atrasada' || normalizado === 'atrasado') {
+            return 'atrasada';
+        }
+
+        return normalizado.replace(/\s+/g, '');
     }
 
     function abrirModalBaixa(parcela) {
@@ -206,6 +222,7 @@ export default function PagamentosLista1({ api }) {
                 buscarPagamentos(pagina);
                 totaisCarregados.current = false;
                 buscarTotais();
+                setVersaoAlertas(v => v + 1);
             } else {
                 setMensagem(data.error || 'Erro ao confirmar pagamento.');
                 setTipoMensagem('erro');
@@ -246,11 +263,8 @@ export default function PagamentosLista1({ api }) {
         }
     }
 
-    const podeRolarEstatisticasEsquerda =
-        paginaEstatisticas > 0;
-
-    const podeRolarEstatisticasDireita =
-        paginaEstatisticas < totalEstatisticas - 1;
+    const podeRolarEstatisticasEsquerda = paginaEstatisticas > 0;
+    const podeRolarEstatisticasDireita = paginaEstatisticas < totalEstatisticas - 1;
 
     return (
         <div className={css.paginaCompleta}>
@@ -272,8 +286,13 @@ export default function PagamentosLista1({ api }) {
                         </div>
                     )}
 
-                    <div className={css.carrosselEstatisticas}>
+                    <AlertaVencimentos
+                        api={API_URL}
+                        atualizar={versaoAlertas}
+                        onVerPendentes={() => setFiltroStatus('A pagar')}
+                    />
 
+                    <div className={css.carrosselEstatisticas}>
                         {podeRolarEstatisticasEsquerda && (
                             <button
                                 className={css.botaoSetaEstatisticas}
@@ -285,38 +304,32 @@ export default function PagamentosLista1({ api }) {
                             </button>
                         )}
 
-                        <div
-                            className={css.gradeEstatisticas}
-                            ref={estatisticasRef}
-                        >
+                        <div className={css.gradeEstatisticas} ref={estatisticasRef}>
                             <div className={css.cardEstatistica}>
-            <span className={css.labelEstatistica}>
-                Valor Total Recebido
-            </span>
-
+                                <span className={css.labelEstatistica}>
+                                    Valor Total Recebido
+                                </span>
                                 <span className={css.numeroEstatistica}>
-                {formatarMoeda(totais.recebido)}
-            </span>
+                                    {formatarMoeda(totais.recebido)}
+                                </span>
                             </div>
 
                             <div className={css.cardEstatistica}>
-            <span className={css.labelEstatistica}>
-                Valor Total a Pagar
-            </span>
-
+                                <span className={css.labelEstatistica}>
+                                    Valor Total a Pagar
+                                </span>
                                 <span className={css.numeroEstatistica}>
-                {formatarMoeda(totais.a_pagar)}
-            </span>
+                                    {formatarMoeda(totais.a_pagar)}
+                                </span>
                             </div>
 
                             <div className={css.cardEstatistica}>
-            <span className={css.labelEstatistica}>
-                Valor Total em Atraso
-            </span>
-
+                                <span className={css.labelEstatistica}>
+                                    Valor Total em Atraso
+                                </span>
                                 <span className={css.numeroEstatistica}>
-                {formatarMoeda(totais.atrasado)}
-            </span>
+                                    {formatarMoeda(totais.atrasado)}
+                                </span>
                             </div>
                         </div>
 
@@ -330,7 +343,6 @@ export default function PagamentosLista1({ api }) {
                                 &#10095;
                             </button>
                         )}
-
                     </div>
 
                     <div className={css.areaFiltros}>
@@ -343,14 +355,29 @@ export default function PagamentosLista1({ api }) {
                                 onChange={(e) => setFiltroNome(e.target.value)}
                                 name="filtro_nome"
                             />
-                            <svg className={css.iconeBusca} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#ffbf00" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <svg
+                                className={css.iconeBusca}
+                                width="20"
+                                height="20"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="#ffbf00"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            >
                                 <circle cx="11" cy="11" r="8"></circle>
                                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                             </svg>
                         </div>
 
                         <div className={css.filtrosOpcoes}>
-                            <select className={css.selectFiltro} value={filtroStatus} onChange={(e) => setFiltroStatus(e.target.value)} name="filtro_status">
+                            <select
+                                className={css.selectFiltro}
+                                value={filtroStatus}
+                                onChange={(e) => setFiltroStatus(e.target.value)}
+                                name="filtro_status"
+                            >
                                 <option value="todos">Filtrar por: Status</option>
                                 <option value="A pagar">A pagar</option>
                                 <option value="Paga">Paga</option>
@@ -381,7 +408,6 @@ export default function PagamentosLista1({ api }) {
                                     <tbody>
                                     {pagamentos.map(pag => (
                                         <tr key={pag.id}>
-
                                             <td
                                                 data-label="Nome"
                                                 className={css.nomeProcesso}
@@ -390,9 +416,9 @@ export default function PagamentosLista1({ api }) {
                                             </td>
 
                                             <td data-label="Valor">
-                <span className={css.valorPagamento}>
-                    {formatarMoeda(pag.valor)}
-                </span>
+                                                <span className={css.valorPagamento}>
+                                                    {formatarMoeda(pag.valor)}
+                                                </span>
                                             </td>
 
                                             <td data-label="Cliente">
@@ -400,13 +426,13 @@ export default function PagamentosLista1({ api }) {
                                             </td>
 
                                             <td data-label="Status">
-                <span
-                    className={`${css.statusBadge} ${
-                        css[getStatusClass(pag.status)]
-                    }`}
-                >
-                    {pag.status || '--'}
-                </span>
+                                                <span
+                                                    className={`${css.statusBadge} ${
+                                                        css[getStatusClass(pag.status)]
+                                                    }`}
+                                                >
+                                                    {pag.status || '--'}
+                                                </span>
                                             </td>
 
                                             <td data-label="Pagamento">
@@ -415,6 +441,9 @@ export default function PagamentosLista1({ api }) {
 
                                             <td data-label="Vencimento">
                                                 {pag.vencimento || '--'}
+                                                {pag.status === 'A pagar' && (
+                                                    <TagVencimento vencimento={pag.vencimento} />
+                                                )}
                                             </td>
 
                                             <td
@@ -426,9 +455,7 @@ export default function PagamentosLista1({ api }) {
                                                         pag.status !== undefined && (
                                                             <button
                                                                 className={css.botaoDarBaixa}
-                                                                onClick={() =>
-                                                                    abrirModalBaixa(pag)
-                                                                }
+                                                                onClick={() => abrirModalBaixa(pag)}
                                                                 type="button"
                                                             >
                                                                 Dar Baixa
@@ -437,12 +464,11 @@ export default function PagamentosLista1({ api }) {
 
                                                     {pag.status === 'Paga' && (
                                                         <span className={css.pagamentoConcluido}>
-                            Pagamento recebido
-                        </span>
+                                                            Pagamento recebido
+                                                        </span>
                                                     )}
                                                 </div>
                                             </td>
-
                                         </tr>
                                     ))}
                                     </tbody>
@@ -485,7 +511,10 @@ export default function PagamentosLista1({ api }) {
 
                         <h2 className={css.tituloBaixa}>Confirmar pagamento</h2>
                         <p className={css.subtituloBaixa}>
-                            Deseja confirmar o recebimento de <strong>{formatarMoeda(parcelaBaixar.valor)}</strong> referente a <strong>{parcelaBaixar.nome}</strong> do cliente <strong>{parcelaBaixar.cliente}</strong>?
+                            Deseja confirmar o recebimento de{' '}
+                            <strong>{formatarMoeda(parcelaBaixar.valor)}</strong> referente a{' '}
+                            <strong>{parcelaBaixar.nome}</strong> do cliente{' '}
+                            <strong>{parcelaBaixar.cliente}</strong>?
                         </p>
 
                         <div className={css.botoesBaixa}>

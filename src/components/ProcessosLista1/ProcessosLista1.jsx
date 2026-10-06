@@ -3259,7 +3259,10 @@ export default function ProcessosLista1({ api }) {
                                                                             : tipo === 'HIPOSSUFICIENCIA'
                                                                                 ? 'Declaração de hipossuficiência'
 
-                                                                                : tipo
+                                                                                : tipo === 'PROCURACAO'
+                                                                                    ? 'Procuração'
+
+                                                                                    : tipo
                                                                 }
 
                                                             </option>
@@ -3400,7 +3403,10 @@ export default function ProcessosLista1({ api }) {
                                                             : modelo.tipo === 'HIPOSSUFICIENCIA'
                                                                 ? 'Declaração de hipossuficiência'
 
-                                                                : modelo.tipo
+                                                                : modelo.tipo === 'PROCURACAO'
+                                                                    ? 'Procuração'
+
+                                                                    : modelo.tipo
                                                 }
                                             </span>
 

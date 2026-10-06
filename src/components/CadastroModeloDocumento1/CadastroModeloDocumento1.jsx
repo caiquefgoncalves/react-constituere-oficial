@@ -25,7 +25,7 @@ export default function CadastroModeloDocumento1({ api }) {
     const { id } = useParams();
 
     const API_URL =
-        api || 'http://10.92.11.22:5000';
+        api || 'http://10.92.11.25:5000';
 
 
     // =====================================================

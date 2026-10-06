@@ -1,0 +1,180 @@
+.alerta {
+    background: #f2f6fc;
+    border: 1px solid #b3c9e8;
+    border-left: 5px solid #0047ab;
+    border-radius: 12px;
+    padding: 1.2rem 1.4rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    font-family: 'Clear Sans', sans-serif;
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.topo {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+}
+
+.titulo {
+    margin: 0;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.1rem;
+    color: #0047ab;
+}
+
+.resumo {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+    color: #666666;
+}
+
+.botaoFechar {
+    background: transparent;
+    border: none;
+    color: #888888;
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
+.botaoFechar:hover {
+    background: #dce7f7;
+    color: #0047ab;
+}
+
+.lista {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    background: #ffffff;
+    border: 1px solid #c9d9ef;
+    border-radius: 8px;
+    padding: 0.55rem 0.8rem;
+    min-width: 0;
+}
+
+.itemInfo {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.itemNome {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #333333;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.itemCliente {
+    font-size: 0.75rem;
+    color: #888888;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.itemValor {
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: #333333;
+    white-space: nowrap;
+}
+
+/* Etiquetas de prazo (usadas no alerta e na tabela) */
+.tag {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.7rem;
+    font-weight: 600;
+    white-space: nowrap;
+    margin-left: 0.5rem;
+}
+
+.tagAtencao {
+    background: #d6e4f7;
+    color: #0047ab;
+}
+
+.tagUrgente {
+    background: #ffd9a8;
+    color: #a14a00;
+}
+
+.tagAtrasada {
+    background: #ffb3b3;
+    color: #8a0000;
+}
+
+.restantes {
+    margin: 0;
+    font-size: 0.8rem;
+    color: #888888;
+}
+
+.acoes {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.botaoPrimario {
+    background: #0047ab;
+    color: #ffffff;
+    border: none;
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.botaoPrimario:hover {
+    background: #003580;
+}
+
+.botaoSecundario {
+    background: transparent;
+    color: #0047ab;
+    border: 1px solid #0047ab;
+    border-radius: 999px;
+    padding: 0.55rem 1.3rem;
+    font-family: inherit;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.botaoSecundario:hover {
+    background: #e3ecf8;
+}
+
+@media (max-width: 426px) {
+    .item {
+        flex-wrap: wrap;
+    }
+
+    .tag {
+        margin-left: 0;
+    }
+}

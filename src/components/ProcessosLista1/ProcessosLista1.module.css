@@ -789,7 +789,6 @@
     cursor: not-allowed;
 }
 
-/* Estilos para a aba "Pagamento do êxito" */
 .tituloExito {
     font-family: 'Glacial Indifference', sans-serif;
     font-size: 1.3rem;
@@ -944,9 +943,7 @@
     }
 }
 
-/* ========================================================= */
-/* DOCUMENTOS DO PROCESSO */
-/* ========================================================= */
+
 
 .documentosContainer {
     width: 100%;
@@ -1061,9 +1058,7 @@
 }
 
 
-/* ========================================================= */
-/* MODELO SELECIONADO */
-/* ========================================================= */
+
 
 .modeloSelecionadoInfo {
     width: 100%;
@@ -1114,9 +1109,6 @@
 }
 
 
-/* ========================================================= */
-/* GERAR */
-/* ========================================================= */
 
 .botaoGerarDocumentoContainer {
     width: 100%;
@@ -1187,4 +1179,3 @@ select.input {
     cursor: pointer;
     color: #333333;
 }
-
