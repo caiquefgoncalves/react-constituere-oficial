@@ -4,7 +4,7 @@ import css from './MenuLateralAdvogado.module.css';
 
 export default function MenuLateralAdvogado({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://localhost:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
     const [podeVerLog, setPodeVerLog] = useState(false);
     const [colapsado, setColapsado] = useState(() => {
         try {
@@ -197,6 +197,25 @@ export default function MenuLateralAdvogado({ api }) {
                     <h2 className={css.desktop}>Log</h2>
                 </div>
             )}
+
+            <div
+                className={css.funcoes}
+                onClick={() => navigate('/chats')}
+                name="menu-chat"
+            >
+                <svg
+                    className={css.iconeChat}
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="#0047ab"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                >
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+                <h2 className={css.desktop}>Chat</h2>
+            </div>
 
             <div
                 className={css.funcoes}

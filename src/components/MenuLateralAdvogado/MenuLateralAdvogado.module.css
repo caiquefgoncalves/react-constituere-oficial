@@ -147,3 +147,9 @@
 
     flex-shrink: 0;
 }
+
+.iconeChat {
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+}

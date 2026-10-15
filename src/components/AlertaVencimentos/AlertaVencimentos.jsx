@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import css from './AlertaVencimentos.module.css';
-import { diasParaVencer } from "../../../utils/Vencimentos.js";
+import { diasParaVencer } from "../../../utils/Vencimento.js";
 
 export const DIAS_ALERTA = 3;
 const MAX_ITENS_VISIVEIS = 5;

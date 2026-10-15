@@ -374,7 +374,7 @@ function extrairLista(resposta) {
 
 export default function LogsAuditoria1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.25:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
 
     const [logs, setLogs] = useState([]);
     const [carregando, setCarregando] = useState(true);

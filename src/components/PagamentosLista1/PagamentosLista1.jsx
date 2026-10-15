@@ -29,7 +29,7 @@ export default function PagamentosLista1({ api }) {
 
     const [versaoAlertas, setVersaoAlertas] = useState(0);
 
-    const API_URL = api || 'http://10.92.11.25:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 

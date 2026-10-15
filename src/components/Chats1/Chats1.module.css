@@ -1,0 +1,460 @@
+@import url('https://fonts.googleapis.com/css2?family=Glacial+Indifference:wght@400;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/clear-sans');
+
+.paginaCompleta {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #ffffff;
+}
+
+.layoutDashboard {
+    display: flex;
+    flex: 1;
+    width: 100%;
+    max-width: 1440px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.menuLateralContainer {
+    width: 220px;
+    flex-shrink: 0;
+    background-color: #ffffff;
+    border-right: 1px solid #e5e7eb;
+    transition: width 0.25s ease;
+}
+
+.menuLateralColapsado {
+    width: 60px;
+}
+
+.conteudoPrincipal {
+    flex: 1;
+    min-width: 0;
+    padding: 2rem 2.5rem;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.mensagemAlerta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.9rem 1.2rem;
+    border-radius: 10px;
+    margin-bottom: 1rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.mensagemAlerta.erro {
+    background: #fdecea;
+    color: #a12a1e;
+    border: 1px solid #f5c6cb;
+}
+
+.mensagemAlerta.sucesso {
+    background: #eafaf1;
+    color: #1b7a3d;
+    border: 1px solid #b7e4c7;
+}
+
+.mensagemAlerta button {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    color: inherit;
+}
+
+.chatWrapper {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+    gap: 1rem;
+    align-items: stretch;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 320px;
+    flex-shrink: 0;
+    background: #fafbfd;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+    height: calc(100vh - 220px);
+}
+
+.secaoConversas {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+}
+
+.tituloLista {
+    margin: 0;
+    padding: 1.2rem 1.4rem;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #0047ab;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.conversasScroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0.5rem;
+}
+
+.conversaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.8rem 0.9rem;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.conversaItem:hover {
+    background: #eef4fb;
+}
+
+.conversaAtiva {
+    background: #e3edf8;
+}
+
+.imagem {
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: #e3edf8;
+}
+
+.imagemFallback {
+    height: 44px;
+    width: 44px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #0047ab, #3b7dd8);
+    color: #ffffff;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 0.95rem;
+}
+
+.conversaInfo {
+    flex: 1;
+    min-width: 0;
+}
+
+.nome {
+    margin: 0 0 0.15rem;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.95rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.mensagem {
+    margin: 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.8rem;
+    color: #64748b;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.chatArea {
+    flex: 1;
+    min-width: 0;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 220px);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    padding: 0.9rem 1.2rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.headerInfo {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.headerInfo p {
+    margin: 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 700;
+    color: #0f172a;
+    font-size: 0.95rem;
+}
+
+.btnVoltar {
+    display: none;
+    background: none;
+    border: none;
+    font-size: 1.3rem;
+    color: #0047ab;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+}
+
+.mensagens {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    background: #f8fafc;
+    min-height: 0;
+    overscroll-behavior: contain;
+}
+
+.mensagens p {
+    margin: 0;
+}
+
+.mensagemEu {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.mensagemVoce {
+    display: flex;
+    justify-content: flex-start;
+}
+
+.balao {
+    max-width: 68%;
+    padding: 0.7rem 1rem;
+    border-radius: 14px;
+    font-family: 'Clear Sans', sans-serif;
+}
+
+.mensagemEu .balao {
+    background: #0047ab;
+    color: #ffffff;
+    border-bottom-right-radius: 4px;
+}
+
+.mensagemVoce .balao {
+    background: #ffffff;
+    color: #0f172a;
+    border: 1px solid #e5e7eb;
+    border-bottom-left-radius: 4px;
+}
+
+.balao p {
+    margin: 0 0 0.25rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.dataMensagem {
+    display: block;
+    font-size: 0.65rem;
+}
+
+.mensagemEu .dataMensagem {
+    color: #dbe9f7;
+}
+
+.mensagemVoce .dataMensagem {
+    color: #64748b;
+}
+
+.enviando {
+    font-style: italic;
+    opacity: 0.7;
+}
+
+.chat {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1rem;
+    border-top: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.inputMensagem {
+    flex: 1;
+    padding: 0.75rem 1rem;
+    border: 1px solid #d6dce3;
+    border-radius: 24px;
+    outline: none;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.92rem;
+    box-sizing: border-box;
+    color: #0f172a;
+    background: #f8fafc;
+}
+
+.inputMensagem:focus {
+    border-color: #0047ab;
+    background: #ffffff;
+}
+
+.mandar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    border: none;
+    background: #0047ab;
+    color: #ffffff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    flex-shrink: 0;
+}
+
+.mandar:hover:not(:disabled) {
+    background: #003580;
+}
+
+.mandar:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chatAreaVazio {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    height: calc(100vh - 220px);
+}
+
+.mensagemVazio {
+    text-align: center;
+    padding: 2rem;
+}
+
+.iconeVazio {
+    font-size: 3.5rem;
+    margin-bottom: 0.8rem;
+}
+
+.mensagemVazio h3 {
+    margin: 0 0 0.4rem;
+    font-family: 'Glacial Indifference', sans-serif;
+    font-size: 1.3rem;
+    color: #0047ab;
+}
+
+.mensagemVazio p {
+    margin: 0;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    color: #64748b;
+}
+
+.estadoVazio {
+    text-align: center;
+    padding: 1.5rem;
+    color: #64748b;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.88rem;
+}
+
+.carregando,
+.semConversas {
+    text-align: center;
+    color: #64748b;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.85rem;
+    padding: 1.5rem 1rem;
+}
+
+@media (max-width: 900px) {
+    .container {
+        width: 260px;
+    }
+
+    .conteudoPrincipal {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 700px) {
+    .layoutDashboard {
+        display: block;
+    }
+
+    .menuLateralContainer {
+        width: 60px;
+    }
+
+    .conteudoPrincipal {
+        padding: 1rem;
+    }
+
+    .chatWrapper {
+        flex-direction: column;
+    }
+
+    .container {
+        width: 100%;
+        height: auto;
+        max-height: 50vh;
+    }
+
+    .chatArea {
+        height: calc(100vh - 300px);
+    }
+
+    .btnVoltar {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        background: #eef4fb;
+    }
+
+    .chatAreaVazio {
+        height: 300px;
+    }
+
+    .balao {
+        max-width: 82%;
+    }
+}
