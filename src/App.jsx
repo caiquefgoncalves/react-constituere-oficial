@@ -28,8 +28,10 @@ import CadastroModeloDocumento from "./pages/CadastroModeloDocumento.jsx";
 import DocumentosGerados from "./pages/DocumentosGerados.jsx";
 import LogsAuditoria from "./pages/LogsAuditoria.jsx";
 import DashboardFinanceiroEscritorio from "./pages/DashboardFinanceiroEscritorio.jsx";
+import Chats from "./pages/Chats.jsx";
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://10.92.11.25:5000';
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.0.134:5000';
 
 function App() {
     const [chatVeritasAberto, setChatVeritasAberto] = useState(false);
@@ -80,6 +82,9 @@ function App() {
                     path="/documentos"
                     element={<DocumentosGerados api={API_URL} />}
                 />
+
+                <Route path="/chats" element={<Chats api={API_URL} />} />
+
             </Routes>
 
             <ChatVeritas
@@ -87,6 +92,7 @@ function App() {
                 onFechar={() => setChatVeritasAberto(false)}
                 api={API_URL}
             />
+
         </Router>
     )
 }
