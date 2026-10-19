@@ -212,7 +212,7 @@
 
 @media (max-width: 700px) {
     .layoutDashboard { display: block; padding: 0; }
-    .menuLateralContainer { width: 100%; border-right: 0; }
+    .menuLateralContainer { display: none; }
     .conteudoPrincipal { padding: 1.5rem 1rem; }
     .areaFiltros label, .areaFiltros input, .areaFiltros select { width: 100%; }
     .areaFiltros { align-items: stretch; }

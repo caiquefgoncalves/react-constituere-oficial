@@ -16,7 +16,7 @@ export default function Header({ api, fotoPerfil }) {
     const [notificacoes, setNotificacoes] = useState([]);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.28:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -455,6 +455,32 @@ export default function Header({ api, fotoPerfil }) {
                                     className={css.funcoes}
                                     onClick={() => {
                                         fecharMenuMobile();
+                                        navigate('/documentos');
+                                    }}
+                                    name="menu-documentos"
+                                >
+                                    <svg
+                                        className={css.iconeMenuMobile}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="#0047ab"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                                        <polyline points="14 2 14 8 20 8" />
+                                        <line x1="8" y1="13" x2="16" y2="13" />
+                                        <line x1="8" y1="17" x2="16" y2="17" />
+                                    </svg>
+                                    <p>Documentos</p>
+                                </li>
+
+                                <li
+                                    className={css.funcoes}
+                                    onClick={() => {
+                                        fecharMenuMobile();
                                         navigate('/agendamentos');
                                     }}
                                     name="menu-agendamentos"
@@ -479,6 +505,61 @@ export default function Header({ api, fotoPerfil }) {
                                         alt="Pagamentos"
                                     />
                                     <p>Pagamentos</p>
+                                </li>
+
+                                <li
+                                    className={css.funcoes}
+                                    onClick={() => {
+                                        fecharMenuMobile();
+                                        navigate('/log');
+                                    }}
+                                    name="menu-auditoria"
+                                >
+                                    <img
+                                        src="/Log.png"
+                                        alt="Log de auditoria"
+                                        className={css.iconeMenuMobile}
+                                    />
+                                    <p>Log</p>
+                                </li>
+
+                                <li
+                                    className={css.funcoes}
+                                    onClick={() => {
+                                        fecharMenuMobile();
+                                        navigate('/chats');
+                                    }}
+                                    name="menu-chat"
+                                >
+                                    <svg
+                                        className={css.iconeMenuMobile}
+                                        viewBox="0 0 24 24"
+                                        fill="none"
+                                        stroke="#0047ab"
+                                        strokeWidth="2"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        aria-hidden="true"
+                                    >
+                                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                                    </svg>
+                                    <p>Chat</p>
+                                </li>
+
+                                <li
+                                    className={css.funcoes}
+                                    onClick={() => {
+                                        fecharMenuMobile();
+                                        window.dispatchEvent(new CustomEvent('veritas:abrir'));
+                                    }}
+                                    name="menu-veritas"
+                                >
+                                    <img
+                                        src="/veritas.png"
+                                        alt="Veritas"
+                                        className={css.iconeMenuMobile}
+                                    />
+                                    <p>Veritas</p>
                                 </li>
 
                                 <li
@@ -717,6 +798,7 @@ export default function Header({ api, fotoPerfil }) {
                     data-bs-target="#menuLateral"
                     aria-controls="menuLateral"
                     aria-label="Abrir menu"
+                    onClick={() => setMenuNotificacoes(false)}
                 >
                     <svg
                         width="25"
