@@ -20,7 +20,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://10.92.11.25:5000";
+    const API_URL = api || "http://10.68.209.197:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");
@@ -35,14 +35,14 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const [tipoLancamento, setTipoLancamento] = useState("todos");
     const [modalAberto, setModalAberto] = useState(false);
     const [paginaLancamentos, setPaginaLancamentos] = useState(1);
-
-    const [baixandoId, setBaixandoId] = useState(null);
-    const [modalBaixaAberto, setModalBaixaAberto] = useState(false);
-    const [lancamentoParaBaixar, setLancamentoParaBaixar] = useState(null);
-
     const [mensagem, setMensagem] = useState("");
     const [tipoMensagem, setTipoMensagem] = useState("");
     const [gerandoPdf, setGerandoPdf] = useState(false);
+
+    // ESTADOS DO MODAL DE BAIXA QUE ESTAVAM FALTANDO
+    const [modalBaixaAberto, setModalBaixaAberto] = useState(false);
+    const [lancamentoParaBaixar, setLancamentoParaBaixar] = useState(null);
+    const [baixandoId, setBaixandoId] = useState(null);
 
     const [resumo, setResumo] = useState({
         receita_recebida: 0,
@@ -310,8 +310,8 @@ function DashboardFinanceiroEscritorio1({ api }) {
     }
 
     function classeStatusBadge(status) {
-        if (status === "recebida" || status === "pago") return css.badgePago;
-        if (status === "atrasado") return css.badgeAtrasado;
+        if (status === "Recebido") return css.badgePago;
+        if (status === "Atrasado") return css.badgeAtrasado;
         return css.badgePendente;
     }
 
@@ -727,10 +727,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                 <td>
                                                     {lanc.status && (
                                                         <span className={`${css.badgeStatusInfo} ${classeStatusBadge(lanc.status)}`}>
-                                                            {lanc.status === "recebida" && "Recebido"}
-                                                            {lanc.status === "atrasado" && "Atrasado"}
-                                                            {lanc.status === "pago" && "Pago"}
-                                                            {!["recebida", "atrasado", "pago"].includes(lanc.status) && (lanc.status || "")}
+                                                            {lanc.status}
                                                         </span>
                                                     )}
                                                 </td>
@@ -746,7 +743,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                 <td>
                                                     {lanc.tipo === "despesa" &&
                                                         lanc.origem === 'manual' &&
-                                                        lanc.status !== 'pago' && (
+                                                        lanc.status !== 'Recebido' && (
                                                             <button
                                                                 className={css.botaoDarBaixa}
                                                                 onClick={() => abrirModalBaixa(lanc)}
