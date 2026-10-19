@@ -331,6 +331,29 @@ function temAlteracaoAntesDepois(log) {
 }
 
 function BlocoAlteracao({ log }) {
+    if (Array.isArray(log?.alteracoes)) {
+        const alteracoes = log.alteracoes.filter(alteracao => temAlteracaoAntesDepois({ ...log, ...alteracao }));
+        return (
+            <section className={css.secaoAlteracao}>
+                {alteracoes.map(alteracao => (
+                    <div key={alteracao.campo}>
+                        <h3 className={css.tituloSecao}>Alteração em {tituloAmigavel(alteracao.campo)}:</h3>
+                        <div className={css.alteracaoGrid}>
+                            <div className={`${css.alteracaoCard} ${css.alteracaoAntes}`}>
+                                <span className={css.alteracaoLabel}>Antes</span>
+                                <p className={css.alteracaoValor}>{valorLegivel(alteracao.valor_antigo, alteracao.campo)}</p>
+                            </div>
+                            <div className={`${css.alteracaoCard} ${css.alteracaoDepois}`}>
+                                <span className={css.alteracaoLabel}>Depois</span>
+                                <p className={css.alteracaoValor}>{valorLegivel(alteracao.valor_novo, alteracao.campo)}</p>
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </section>
+        );
+    }
+
     if (!temAlteracaoAntesDepois(log)) return null;
 
     const campoLegivel = tituloAmigavel(log.campo);
@@ -374,7 +397,7 @@ function extrairLista(resposta) {
 
 export default function LogsAuditoria1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.28:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
 
     const [logs, setLogs] = useState([]);
     const [carregando, setCarregando] = useState(true);
