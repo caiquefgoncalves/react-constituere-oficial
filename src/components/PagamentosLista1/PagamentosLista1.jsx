@@ -4,8 +4,6 @@ import css from './PagamentosLista1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx";
-import AlertaVencimentos, { TagVencimento } from "../AlertaVencimentos/AlertaVencimentos.jsx";
-
 
 export default function PagamentosLista1({ api }) {
     const navigate = useNavigate();
@@ -27,9 +25,7 @@ export default function PagamentosLista1({ api }) {
     const [baixando, setBaixando] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
-    const [versaoAlertas, setVersaoAlertas] = useState(0);
-
-    const API_URL = api || 'http://192.168.0.134:5000';
+    const API_URL = api || 'http://10.92.11.28:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 
@@ -222,7 +218,6 @@ export default function PagamentosLista1({ api }) {
                 buscarPagamentos(pagina);
                 totaisCarregados.current = false;
                 buscarTotais();
-                setVersaoAlertas(v => v + 1);
             } else {
                 setMensagem(data.error || 'Erro ao confirmar pagamento.');
                 setTipoMensagem('erro');
@@ -285,12 +280,6 @@ export default function PagamentosLista1({ api }) {
                             {mensagem}
                         </div>
                     )}
-
-                    <AlertaVencimentos
-                        api={API_URL}
-                        atualizar={versaoAlertas}
-                        onVerPendentes={() => setFiltroStatus('A pagar')}
-                    />
 
                     <div className={css.carrosselEstatisticas}>
                         {podeRolarEstatisticasEsquerda && (
@@ -441,9 +430,6 @@ export default function PagamentosLista1({ api }) {
 
                                             <td data-label="Vencimento">
                                                 {pag.vencimento || '--'}
-                                                {pag.status === 'A pagar' && (
-                                                    <TagVencimento vencimento={pag.vencimento} />
-                                                )}
                                             </td>
 
                                             <td

@@ -29,7 +29,7 @@ export default function CadastroProcesso1({ api }) {
     const [carregandoEscritorios, setCarregandoEscritorios] = useState(false);
     const [verificandoNumero, setVerificandoNumero] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.134:5000';
+    const API_URL = api || 'http://10.92.11.28:5000';
 
     function agendarLimpezaMensagem() {
         if (window.timeoutMensagem) {

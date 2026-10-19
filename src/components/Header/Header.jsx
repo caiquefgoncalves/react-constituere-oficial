@@ -16,7 +16,7 @@ export default function Header({ api, fotoPerfil }) {
     const [notificacoes, setNotificacoes] = useState([]);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.134:5000';
+    const API_URL = api || 'http://10.92.11.28:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');

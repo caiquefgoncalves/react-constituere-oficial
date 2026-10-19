@@ -40,29 +40,8 @@ function valorParaNumero(valorMascarado) {
     return parseInt(n, 10) / 100;
 }
 
-function mascaraData(valor) {
-    let v = String(valor || '').replace(/\D/g, '');
-
-    if (v.length > 8) {
-        v = v.slice(0, 8);
-    }
-
-    if (v.length <= 2) return v;
-    if (v.length <= 4) return `${v.slice(0, 2)}/${v.slice(2)}`;
-
-    return `${v.slice(0, 2)}/${v.slice(2, 4)}/${v.slice(4)}`;
-}
-
-function dataParaBanco(dataMascarada) {
-    const n = String(dataMascarada || '').replace(/\D/g, '');
-
-    if (n.length !== 8) return '';
-
-    return `${n.slice(4, 8)}-${n.slice(2, 4)}-${n.slice(0, 2)}`;
-}
-
 export default function AdicionarLancamento1({ api, idEscritorio, isOpen, onClose, onSucesso }) {
-    const API_URL = api || 'http://192.168.0.134:5000';
+    const API_URL = api || 'http://10.92.11.25:5000';
 
     const [dados, setDados] = useState(estadoInicial);
     const [salvando, setSalvando] = useState(false);
@@ -76,10 +55,6 @@ export default function AdicionarLancamento1({ api, idEscritorio, isOpen, onClos
 
         if (name === 'valor') {
             v = mascaraValor(value);
-        }
-
-        if (name === 'data') {
-            v = mascaraData(value);
         }
 
         if (name === 'descricao') {
@@ -122,10 +97,8 @@ export default function AdicionarLancamento1({ api, idEscritorio, isOpen, onClos
             return;
         }
 
-        const dataBanco = dataParaBanco(dados.data);
-
-        if (!dataBanco) {
-            setMensagem('Data inválida. Use o formato DD/MM/AAAA.');
+        if (!dados.data) {
+            setMensagem('Data inválida.');
             setTipoMensagem('erro');
             return;
         }
@@ -139,7 +112,7 @@ export default function AdicionarLancamento1({ api, idEscritorio, isOpen, onClos
             formData.append('tipo', dados.tipo);
             formData.append('descricao', dados.descricao.trim());
             formData.append('valor', String(valorNum).replace('.', ','));
-            formData.append('data', dataBanco);
+            formData.append('data', dados.data);
 
             const response = await fetch(
                 `${API_URL}/escritorio/${idEscritorio}/financeiro/lancamentos`,
@@ -255,13 +228,10 @@ export default function AdicionarLancamento1({ api, idEscritorio, isOpen, onClos
                                 <input
                                     id="data"
                                     name="data"
-                                    type="text"
-                                    inputMode="numeric"
+                                    type="date"
                                     className={css.input}
-                                    placeholder="DD/MM/AAAA"
                                     value={dados.data}
                                     onChange={handleChange}
-                                    maxLength={10}
                                     disabled={salvando}
                                     required
                                 />

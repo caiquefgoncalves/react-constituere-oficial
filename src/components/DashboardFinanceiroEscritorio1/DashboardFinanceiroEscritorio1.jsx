@@ -20,7 +20,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://192.168.0.134:5000";
+    const API_URL = api || "http://10.92.11.25:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");
@@ -35,6 +35,14 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const [tipoLancamento, setTipoLancamento] = useState("todos");
     const [modalAberto, setModalAberto] = useState(false);
     const [paginaLancamentos, setPaginaLancamentos] = useState(1);
+
+    const [baixandoId, setBaixandoId] = useState(null);
+    const [modalBaixaAberto, setModalBaixaAberto] = useState(false);
+    const [lancamentoParaBaixar, setLancamentoParaBaixar] = useState(null);
+
+    const [mensagem, setMensagem] = useState("");
+    const [tipoMensagem, setTipoMensagem] = useState("");
+    const [gerandoPdf, setGerandoPdf] = useState(false);
 
     const [resumo, setResumo] = useState({
         receita_recebida: 0,
@@ -159,6 +167,97 @@ function DashboardFinanceiroEscritorio1({ api }) {
         buscarDados();
     }
 
+    function abrirModalBaixa(lancamento) {
+        setLancamentoParaBaixar(lancamento);
+        setModalBaixaAberto(true);
+    }
+
+    function fecharModalBaixa() {
+        if (baixandoId) return;
+        setModalBaixaAberto(false);
+        setLancamentoParaBaixar(null);
+    }
+
+    async function confirmarBaixa() {
+        if (!lancamentoParaBaixar) return;
+
+        setBaixandoId(lancamentoParaBaixar.id_real);
+        setMensagem("");
+
+        try {
+            const token = localStorage.getItem("token");
+            const response = await fetch(`${API_URL}/escritorio/${id}/financeiro/lancamentos/${lancamentoParaBaixar.id_real}/baixar`, {
+                method: "PUT",
+                credentials: "include",
+                headers: { "X-Access-Token": token }
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                setMensagem("Baixa realizada com sucesso!");
+                setTipoMensagem("sucesso");
+                fecharModalBaixa();
+                buscarDados();
+                setTimeout(() => setMensagem(""), 3000);
+            } else {
+                setMensagem(data.error || "Erro ao dar baixa.");
+                setTipoMensagem("erro");
+                fecharModalBaixa();
+            }
+        } catch (error) {
+            setMensagem("Erro de conexão.");
+            setTipoMensagem("erro");
+            fecharModalBaixa();
+        } finally {
+            setBaixandoId(null);
+        }
+    }
+
+    async function baixarPDF() {
+        const token = localStorage.getItem("token");
+        if (!token || !id) return;
+
+        setGerandoPdf(true);
+        try {
+            let periodoTexto = "Este mês";
+            if (periodo === "mesAnterior") periodoTexto = "Mês anterior";
+            if (periodo === "30dias") periodoTexto = "Últimos 30 dias";
+            if (periodo === "90dias") periodoTexto = "Últimos 90 dias";
+            if (periodo === "personalizado") {
+                periodoTexto = `${formatarData(dataInicial)} a ${formatarData(dataFinal)}`;
+            }
+
+            const response = await fetch(`${API_URL}/escritorio/${id}/financeiro/relatorio`, {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/json",
+                    "X-Access-Token": token
+                },
+                body: JSON.stringify({
+                    lancamentos: lancamentos,
+                    resumo: resumo,
+                    periodo_texto: periodoTexto
+                })
+            });
+
+            if (!response.ok) throw new Error("Não foi possível gerar o PDF.");
+
+            const arquivo = URL.createObjectURL(await response.blob());
+            const link = document.createElement("a");
+            link.href = arquivo;
+            link.download = "relatorio-financeiro.pdf";
+            link.click();
+            URL.revokeObjectURL(arquivo);
+        } catch (error) {
+            setMensagem("Erro ao gerar o PDF.");
+            setTipoMensagem("erro");
+        } finally {
+            setGerandoPdf(false);
+        }
+    }
+
     const receitaRecebida = resumo.receita_recebida || 0;
     const receitaAReceber = resumo.receita_a_receber || 0;
     const receitaPendente = resumo.receita_pendente || 0;
@@ -261,16 +360,32 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                 <p className={css.descricao}>{nomeFantasia}</p>
                             </div>
 
-                            <button
-                                type="button"
-                                className={css.botaoNovoLancamento}
-                                onClick={abrirModal}
-                                name="btn-novo-lancamento"
-                            >
-                                + Novo lançamento
-                            </button>
+                            <div className={css.acoesTopo}>
+                                <button
+                                    type="button"
+                                    className={css.botaoRelatorio}
+                                    onClick={baixarPDF}
+                                    disabled={gerandoPdf}
+                                >
+                                    {gerandoPdf ? "Gerando..." : "Baixar PDF"}
+                                </button>
+                                <button
+                                    type="button"
+                                    className={css.botaoNovoLancamento}
+                                    onClick={abrirModal}
+                                    name="btn-novo-lancamento"
+                                >
+                                    + Novo lançamento
+                                </button>
+                            </div>
                         </div>
                     </div>
+
+                    {mensagem && (
+                        <div className={`${css.mensagemContainer} ${tipoMensagem === 'sucesso' ? css.sucesso : css.erro}`}>
+                            {mensagem}
+                        </div>
+                    )}
 
                     <section className={css.blocoSaude}>
                         <div className={css.saudeTexto}>
@@ -590,33 +705,34 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                             <th>Data</th>
                                             <th>Status</th>
                                             <th>Valor</th>
+                                            <th>Ações</th>
                                         </tr>
                                         </thead>
                                         <tbody>
                                         {lancamentosPaginados.map((lanc) => (
                                             <tr key={lanc.id}>
                                                 <td>
-                                                        <span
-                                                            className={`${css.badgeStatus} ${
-                                                                lanc.tipo === "receita"
-                                                                    ? css.badgeReceita
-                                                                    : css.badgeDespesa
-                                                            }`}
-                                                        >
-                                                            {lanc.tipo === "receita" ? "Receita" : "Despesa"}
-                                                        </span>
+                                                    <span
+                                                        className={`${css.badgeStatus} ${
+                                                            lanc.tipo === "receita"
+                                                                ? css.badgeReceita
+                                                                : css.badgeDespesa
+                                                        }`}
+                                                    >
+                                                        {lanc.tipo === "receita" ? "Receita" : "Despesa"}
+                                                    </span>
                                                 </td>
                                                 <td>{capitalizarFrase(lanc.descricao)}</td>
                                                 <td>{formatarData(lanc.data)}</td>
                                                 <td>
+                                                    {lanc.status && (
                                                         <span className={`${css.badgeStatusInfo} ${classeStatusBadge(lanc.status)}`}>
                                                             {lanc.status === "recebida" && "Recebido"}
-                                                            {lanc.status === "a_receber" && "A receber"}
                                                             {lanc.status === "atrasado" && "Atrasado"}
                                                             {lanc.status === "pago" && "Pago"}
-                                                            {lanc.status === "pendente" && "Pendente"}
-                                                            {!["recebida", "a_receber", "atrasado", "pago", "pendente"].includes(lanc.status) && (lanc.status || "--")}
+                                                            {!["recebida", "atrasado", "pago"].includes(lanc.status) && (lanc.status || "")}
                                                         </span>
+                                                    )}
                                                 </td>
                                                 <td
                                                     className={
@@ -626,6 +742,18 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                     }
                                                 >
                                                     {dinheiro(lanc.valor)}
+                                                </td>
+                                                <td>
+                                                    {lanc.tipo === "despesa" &&
+                                                        lanc.origem === 'manual' &&
+                                                        lanc.status !== 'pago' && (
+                                                            <button
+                                                                className={css.botaoDarBaixa}
+                                                                onClick={() => abrirModalBaixa(lanc)}
+                                                            >
+                                                                Dar Baixa
+                                                            </button>
+                                                        )}
                                                 </td>
                                             </tr>
                                         ))}
@@ -669,6 +797,44 @@ function DashboardFinanceiroEscritorio1({ api }) {
                 onClose={fecharModal}
                 onSucesso={handleLancamentoSucesso}
             />
+
+            {modalBaixaAberto && lancamentoParaBaixar && (
+                <div className={css.modalOverlay} onClick={fecharModalBaixa}>
+                    <div className={css.modalBaixaContainer} onClick={(e) => e.stopPropagation()}>
+                        <button
+                            className={css.modalFecharIconeLeft}
+                            onClick={fecharModalBaixa}
+                            disabled={baixandoId !== null}
+                        >
+                            ✕
+                        </button>
+
+                        <h2 className={css.tituloBaixa}>Confirmar pagamento</h2>
+                        <p className={css.subtituloBaixa}>
+                            Deseja confirmar o pagamento de{' '}
+                            <strong>{dinheiro(lancamentoParaBaixar.valor)}</strong> referente a{' '}
+                            <strong>{capitalizarFrase(lancamentoParaBaixar.descricao)}</strong>?
+                        </p>
+
+                        <div className={css.botoesBaixa}>
+                            <button
+                                className={css.btnCancelarBaixa}
+                                onClick={fecharModalBaixa}
+                                disabled={baixandoId !== null}
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                className={css.btnConfirmarBaixa}
+                                onClick={confirmarBaixa}
+                                disabled={baixandoId !== null}
+                            >
+                                {baixandoId !== null ? 'Confirmando...' : 'Confirmar'}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <Footer />
         </div>

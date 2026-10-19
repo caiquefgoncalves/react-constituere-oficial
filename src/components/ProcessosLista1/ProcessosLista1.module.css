@@ -527,7 +527,6 @@
 .formulario {
     display: flex;
     flex-direction: column;
-    align-items: center;
     justify-content: center;
     width: 100%;
     box-sizing: border-box;
@@ -907,7 +906,7 @@
     color: #0047ab;
     font-size: 1.15rem;
     font-weight: 700;
-    text-align: center;
+    text-align: left;
 }
 
 .menuLateralContainer {
@@ -1178,4 +1177,588 @@ select.input {
 
     cursor: pointer;
     color: #333333;
+}
+
+
+@media (max-width: 769px) {
+
+    .menuLateralContainer {
+        display: none;
+    }
+
+    .layoutDashboard {
+        padding: 0;
+    }
+
+    .conteudoPrincipal {
+        width: 100%;
+
+        padding:
+                2rem
+                1.5rem;
+
+        box-sizing: border-box;
+    }
+
+
+
+
+    .topoSaudacao {
+        width: 100%;
+
+        gap: 1rem;
+    }
+
+
+    .filtrosOpcoes {
+        width: 100%;
+    }
+
+    .selectFiltro {
+        flex: 1;
+
+        min-width: 200px;
+    }
+
+
+
+
+    .tabelaContainer {
+        overflow: visible;
+
+        background: transparent;
+    }
+
+    .tabela {
+        display: block;
+
+        width: 100%;
+    }
+
+    .tabela thead {
+        display: none;
+    }
+
+    .tabela tbody {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 1.25rem;
+    }
+
+
+    .tabela tr {
+        display: block;
+
+        width: 100%;
+
+        background: #ffffff;
+
+        border: 1px solid #dbe9f7;
+
+        border-radius: 16px;
+
+        padding: 0;
+
+        overflow: hidden;
+
+        box-sizing: border-box;
+
+        box-shadow:
+                0 3px 12px
+                rgba(0, 71, 171, 0.06);
+    }
+
+    .tabela tr:hover td {
+        background: transparent;
+    }
+
+
+    .tabela td {
+        display: flex;
+
+        justify-content: space-between;
+        align-items: center;
+
+        gap: 1.5rem;
+
+        width: auto;
+
+        margin:
+                0
+                1.25rem;
+
+        padding:
+                1rem
+                0;
+
+        border-bottom:
+                1px
+                solid
+                #edf0f3;
+
+        box-sizing: border-box;
+
+        min-width: 0;
+
+        text-align: right;
+
+        overflow-wrap: anywhere;
+    }
+
+    .tabela td:last-child {
+        border-bottom: none;
+    }
+
+
+    .tabela td::before {
+        content: attr(data-label);
+
+        font-family:
+                'Clear Sans',
+                sans-serif;
+
+        font-size: 0.85rem;
+
+        font-weight: 700;
+
+        color: #666666;
+
+        text-align: left;
+
+        flex-shrink: 0;
+    }
+
+
+
+    .tabela td:first-child {
+        margin: 0;
+
+        padding:
+                1rem
+                1.25rem;
+
+        background: #f8fbff;
+
+        border-bottom:
+                1px
+                solid
+                #dbe9f7;
+    }
+
+    .tabela td:first-child::before {
+        color: #0047ab;
+    }
+
+    .colunaProcesso {
+        justify-content: flex-end;
+
+        min-width: 0;
+
+        font-family:
+                'Clear Sans',
+                sans-serif;
+
+        font-weight: 600;
+
+        color: #0047ab;
+    }
+
+
+    .statusBadge {
+        flex-shrink: 0;
+    }
+
+
+    .colunaAcoes {
+        min-width: 0 !important;
+
+        white-space: normal !important;
+    }
+
+    .tabela td.colunaAcoes {
+        display: flex !important;
+
+        flex-direction: row;
+
+        justify-content: flex-start;
+
+        text-align: right !important;
+    }
+
+    .acoesProcesso {
+        justify-content: flex-end;
+
+        margin: 0;
+    }
+
+    .botaoVer,
+    .botaoInativar,
+    .botaoAtivar {
+        margin: 0;
+    }
+
+
+
+    .modalContainer,
+    .modalContainerSegunda {
+        width:
+                calc(100% - 2rem);
+
+        max-width: 900px;
+
+        box-sizing: border-box;
+    }
+
+    .modalHeader {
+        padding:
+                1.25rem
+                1.5rem;
+    }
+
+    .modalBody {
+        padding:
+                1.25rem
+                1.5rem
+                1.5rem;
+    }
+
+    .linha {
+        column-gap: 2rem;
+    }
+
+    .campoMetade {
+        width:
+                calc(50% - 1rem) !important;
+    }
+}
+
+
+@media (max-width: 426px) {
+
+    .conteudoPrincipal {
+        width: 100%;
+
+        padding:
+                1rem
+                4vw;
+
+        gap: 1.5rem;
+
+        box-sizing: border-box;
+    }
+
+    .tituloPagina {
+        font-size: 1.8rem;
+    }
+
+    .botaoAdicionar {
+        width: 32px;
+        height: 32px;
+
+        font-size: 1.3rem;
+
+        flex-shrink: 0;
+    }
+
+
+
+
+    .filtrosOpcoes {
+        flex-direction: column;
+    }
+
+    .selectFiltro {
+        width: 100%;
+
+        min-width: 0;
+    }
+
+
+    .tabela tbody {
+        gap: 1rem;
+    }
+
+    .tabela tr {
+        border-radius: 14px;
+    }
+
+
+
+
+    .tabela td {
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 0.45rem;
+
+        margin:
+                0
+                1.25rem;
+
+        padding:
+                1rem
+                0;
+
+        text-align: left;
+    }
+
+    .tabela td::before {
+        font-size: 0.8rem;
+
+        color: #6d6d6d;
+    }
+
+
+
+
+    .tabela td:first-child {
+        margin: 0;
+
+        padding:
+                1.15rem
+                1.25rem;
+
+        background: #f8fbff;
+    }
+
+    .tabela td:first-child::before {
+        color: #0047ab;
+    }
+
+    .colunaProcesso {
+        justify-content: flex-start;
+
+        text-align: left;
+
+        font-size: 0.95rem;
+
+        font-weight: 600;
+    }
+
+
+    .statusBadge {
+        min-width: 0;
+
+        width: fit-content;
+
+        padding:
+                0.3rem
+                0.9rem;
+    }
+
+
+
+
+    .tabela td.colunaAcoes {
+        align-items: flex-start;
+
+        text-align: left !important;
+    }
+
+    .acoesProcesso {
+        width: 100%;
+
+        justify-content: flex-start;
+
+        gap: 0.5rem;
+    }
+
+    .botaoVer,
+    .botaoInativar,
+    .botaoAtivar {
+        margin: 0;
+
+        padding:
+                0.45rem
+                1rem;
+
+        font-size: 0.78rem;
+    }
+
+
+
+    .modalContainer,
+    .modalContainerSegunda {
+        width:
+                calc(100% - 1.5rem);
+
+        max-height: 92vh;
+
+        border-radius: 14px;
+    }
+
+    .modalHeader {
+        padding:
+                1rem
+                1.25rem;
+    }
+
+    .modalTitulo {
+        font-size: 1.3rem;
+
+        line-height: 1.2;
+
+        overflow-wrap: anywhere;
+    }
+
+    .modalBody {
+        padding:
+                1rem
+                1.25rem
+                1.5rem;
+    }
+
+
+
+    .secaoTitulo {
+        gap: 1.25rem;
+
+        overflow-x: auto;
+    }
+
+    .secaoSubtitulo {
+        font-size: 1.05rem;
+
+        white-space: nowrap;
+
+        text-align: left;
+    }
+
+
+
+    .linha {
+        display: flex;
+
+        flex-direction: column;
+
+        gap: 0;
+
+        width: 100%;
+    }
+
+    .campoMetade {
+        width: 100% !important;
+
+        margin-bottom:
+                1.25rem !important;
+    }
+
+    .campoInteiro {
+        width: 100%;
+    }
+
+    .input,
+    .textarea {
+        width: 100%;
+
+        box-sizing: border-box;
+    }
+
+
+
+
+    .botaoContainer {
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 0.75rem;
+    }
+
+    .botaoCadastro,
+    .botaoCancelar,
+    .botaoEditar {
+        width: 100%;
+
+        padding:
+                0.8rem
+                1rem;
+
+        box-sizing: border-box;
+    }
+
+
+
+
+    .topoAtualizacao {
+        gap: 0.75rem;
+    }
+
+    .listaAtualizacao {
+        min-width: 0;
+
+        padding:
+                0.5rem
+                0;
+    }
+
+    .atualizacao {
+        align-items: flex-start;
+
+        gap: 0.75rem;
+
+        padding:
+                1rem
+                0;
+    }
+
+    .dataAtualizacao {
+        min-width: 60px;
+
+        padding: 0.6rem;
+    }
+
+    .textoDataAtualizacao {
+        font-size: 0.8rem;
+    }
+
+    .textoAtualizacao {
+        min-width: 0;
+    }
+
+    .tituloAtualizacao,
+    .descricaoAtualizacao {
+        overflow-wrap: anywhere;
+    }
+
+    .atualizacaoAcoes {
+        flex-wrap: wrap;
+    }
+
+
+
+
+    .modalInativacao {
+        width:
+                calc(100% - 2rem);
+
+        padding:
+                2rem
+                1.25rem
+                1.5rem;
+
+        box-sizing: border-box;
+    }
+
+    .tituloInativacao {
+        font-size: 1.5rem;
+    }
+
+    .botoesInativacao {
+        flex-direction: column;
+    }
+
+    .btnCancelarInativacao,
+    .btnConfirmarInativacao {
+        width: 100%;
+
+        padding:
+                0.8rem
+                1rem;
+
+        box-sizing: border-box;
+    }
 }

@@ -403,6 +403,37 @@
     padding: 1.5rem 1rem;
 }
 
+.abas {
+    display: flex;
+    padding: 0.8rem 0.8rem 0 0.8rem;
+    gap: 0.5rem;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.aba {
+    flex: 1;
+    padding: 0.6rem;
+    background: transparent;
+    border: none;
+    border-bottom: 2px solid transparent;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: #64748b;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.aba:hover {
+    color: #0047ab;
+}
+
+.abaAtiva {
+    color: #0047ab;
+    border-bottom-color: #0047ab;
+}
+
 @media (max-width: 900px) {
     .container {
         width: 260px;

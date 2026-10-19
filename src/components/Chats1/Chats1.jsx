@@ -16,7 +16,7 @@ function decodificarToken(token) {
 }
 
 export default function Chats1({ api }) {
-    const api_url = api || "http://10.92.11.25:5000";
+    const api_url = api || "http://10.92.11.28:5000";
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -25,6 +25,10 @@ export default function Chats1({ api }) {
     const [usuarioId, setUsuarioId] = useState(null);
     const [fotoPerfil, setFotoPerfil] = useState("");
     const [menuColapsado, setMenuColapsado] = useState(false);
+
+    const [aba, setAba] = useState("conversas");
+    const [contatos, setContatos] = useState([]);
+    const [carregandoContatos, setCarregandoContatos] = useState(false);
 
     const [conversas, setConversas] = useState([]);
     const [carregandoConversas, setCarregandoConversas] = useState(true);
@@ -104,7 +108,7 @@ export default function Chats1({ api }) {
                 const conversaExistente = conversas.find(c => c.usuario_id === parseInt(contatoId));
                 if (conversaExistente) {
                     setConversaSelecionada(prev => (prev && prev.conversa_id === conversaExistente.conversa_id) ? prev : conversaExistente);
-                } else if (usuarioTipo === 0) {
+                } else {
                     iniciarConversaAutomatica(parseInt(contatoId));
                 }
             }
@@ -260,6 +264,12 @@ export default function Chats1({ api }) {
         }
     }, [mensagens]);
 
+    useEffect(() => {
+        if (aba === 'novo' && contatos.length === 0 && !carregandoContatos) {
+            carregarContatos();
+        }
+    }, [aba]);
+
     async function carregarConversas(tokenParam) {
         const token = tokenParam || getToken();
         if (!token) return;
@@ -285,6 +295,31 @@ export default function Chats1({ api }) {
             console.error('Erro ao carregar conversas:', error);
         } finally {
             setCarregandoConversas(false);
+        }
+    }
+
+    async function carregarContatos() {
+        const token = getToken();
+        if (!token) return;
+
+        setCarregandoContatos(true);
+        try {
+            const rota = usuarioTipo === 0 ? '/clientes' : '/dm/advogados_disponiveis';
+            const response = await fetch(`${api_url}${rota}`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                const lista = data.clientes || data.advogados || [];
+                setContatos(lista);
+            }
+        } catch (error) {
+            console.error('Erro ao carregar contatos:', error);
+        } finally {
+            setCarregandoContatos(false);
         }
     }
 
@@ -339,6 +374,7 @@ export default function Chats1({ api }) {
                     const novaConversa = conversas.find(c => c.usuario_id === contatoId);
                     if (novaConversa) {
                         setConversaSelecionada(novaConversa);
+                        setAba('conversas');
                         atualizarUrl(contatoId);
                     }
                 }, 500);
@@ -442,6 +478,9 @@ export default function Chats1({ api }) {
 
     if (!autorizado) return null;
 
+    const idsComConversa = new Set(conversas.map(c => c.usuario_id));
+    const contatosSemConversa = contatos.filter(c => !idsComConversa.has(c.id));
+
     return (
         <div className={css.paginaCompleta}>
             <Header api={api_url} fotoPerfil={fotoPerfil} />
@@ -461,42 +500,99 @@ export default function Chats1({ api }) {
 
                     <div className={css.chatWrapper}>
                         <div className={css.container}>
+                            <div className={css.abas}>
+                                <button
+                                    className={`${css.aba} ${aba === 'conversas' ? css.abaAtiva : ''}`}
+                                    onClick={() => setAba('conversas')}
+                                >
+                                    Conversas
+                                </button>
+                                <button
+                                    className={`${css.aba} ${aba === 'novo' ? css.abaAtiva : ''}`}
+                                    onClick={() => setAba('novo')}
+                                >
+                                    Nova Conversa
+                                </button>
+                            </div>
+
                             <div className={css.secaoConversas}>
-                                <h2 className={css.tituloLista}>Minhas Conversas</h2>
-                                {carregandoConversas ? (
-                                    <p className={css.carregando}>Carregando conversas...</p>
-                                ) : conversas.length === 0 ? (
-                                    <p className={css.semConversas}>Nenhuma conversa ainda.</p>
-                                ) : (
-                                    <div className={css.conversasScroll}>
-                                        {conversas.map(conv => (
-                                            <div
-                                                key={conv.conversa_id}
-                                                className={`${css.conversaItem} ${conversaSelecionada?.conversa_id === conv.conversa_id ? css.conversaAtiva : ''}`}
-                                                onClick={() => {
-                                                    setConversaSelecionada(conv);
-                                                    atualizarUrl(conv.usuario_id);
-                                                }}
-                                            >
-                                                <img
-                                                    className={css.imagem}
-                                                    src={getImagemUrl(conv.usuario_id)}
-                                                    onError={(e) => {
-                                                        e.target.style.display = 'none';
-                                                        if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
-                                                    }}
-                                                    alt={conv.usuario_nome}
-                                                />
-                                                <div className={css.imagemFallback} style={{ display: 'none' }}>
-                                                    {iniciais(conv.usuario_nome)}
-                                                </div>
-                                                <div className={css.conversaInfo}>
-                                                    <p className={css.nome}>{conv.usuario_nome}</p>
-                                                    <p className={css.mensagem}>{conv.ultimo_texto?.substring(0, 35) || 'Nenhuma mensagem'}</p>
-                                                </div>
+                                {aba === 'conversas' && (
+                                    <>
+                                        {carregandoConversas ? (
+                                            <p className={css.carregando}>Carregando conversas...</p>
+                                        ) : conversas.length === 0 ? (
+                                            <p className={css.semConversas}>Nenhuma conversa ainda.</p>
+                                        ) : (
+                                            <div className={css.conversasScroll}>
+                                                {conversas.map(conv => (
+                                                    <div
+                                                        key={conv.conversa_id}
+                                                        className={`${css.conversaItem} ${conversaSelecionada?.conversa_id === conv.conversa_id ? css.conversaAtiva : ''}`}
+                                                        onClick={() => {
+                                                            setConversaSelecionada(conv);
+                                                            atualizarUrl(conv.usuario_id);
+                                                        }}
+                                                    >
+                                                        <img
+                                                            className={css.imagem}
+                                                            src={getImagemUrl(conv.usuario_id)}
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                            alt={conv.usuario_nome}
+                                                        />
+                                                        <div className={css.imagemFallback} style={{ display: 'none' }}>
+                                                            {iniciais(conv.usuario_nome)}
+                                                        </div>
+                                                        <div className={css.conversaInfo}>
+                                                            <p className={css.nome}>{conv.usuario_nome}</p>
+                                                            <p className={css.mensagem}>{conv.ultimo_texto?.substring(0, 35) || 'Nenhuma mensagem'}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
                                             </div>
-                                        ))}
-                                    </div>
+                                        )}
+                                    </>
+                                )}
+
+                                {aba === 'novo' && (
+                                    <>
+                                        {carregandoContatos ? (
+                                            <p className={css.carregando}>Carregando...</p>
+                                        ) : contatosSemConversa.length === 0 ? (
+                                            <p className={css.semConversas}>
+                                                {contatos.length > 0 ? 'Você já tem conversa com todos.' : 'Nenhum contato encontrado.'}
+                                            </p>
+                                        ) : (
+                                            <div className={css.conversasScroll}>
+                                                {contatosSemConversa.map(contato => (
+                                                    <div
+                                                        key={contato.id}
+                                                        className={css.conversaItem}
+                                                        onClick={() => iniciarConversaAutomatica(contato.id)}
+                                                    >
+                                                        <img
+                                                            className={css.imagem}
+                                                            src={getImagemUrl(contato.id)}
+                                                            onError={(e) => {
+                                                                e.target.style.display = 'none';
+                                                                if (e.target.nextSibling) e.target.nextSibling.style.display = 'flex';
+                                                            }}
+                                                            alt={contato.nome}
+                                                        />
+                                                        <div className={css.imagemFallback} style={{ display: 'none' }}>
+                                                            {iniciais(contato.nome)}
+                                                        </div>
+                                                        <div className={css.conversaInfo}>
+                                                            <p className={css.nome}>{contato.nome}</p>
+                                                            <p className={css.mensagem}>Clique para iniciar</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </>
                                 )}
                             </div>
                         </div>
