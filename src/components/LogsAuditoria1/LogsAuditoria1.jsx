@@ -740,7 +740,7 @@ export default function LogsAuditoria1({ api }) {
                             <div><span>Cargo</span><strong>{detalheAberto.cargo || '-'}</strong></div>
                             <div><span>Data</span><strong>{separarDataHora(detalheAberto.data_hora).data}</strong></div>
                             <div><span>Hora</span><strong>{separarDataHora(detalheAberto.data_hora).hora}</strong></div>
-                            <div><span>Origem</span><strong>{detalheAberto.maquina || '-'}</strong></div>
+                            <div><span>Origem/IP</span><strong>{detalheAberto.ip_origem || '-'}</strong></div>
                         </div>
 
                         <BlocoAlteracao log={detalheAberto} />
