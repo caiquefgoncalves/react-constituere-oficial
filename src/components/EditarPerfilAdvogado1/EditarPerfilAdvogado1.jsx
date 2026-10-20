@@ -32,7 +32,11 @@ export default function EditarPerfilAdvogado({ api }) {
     const [avisoInternetLenta, setAvisoInternetLenta] = useState(false);
     const [carregandoDados, setCarregandoDados] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const [googleConectado, setGoogleConectado] = useState(false);
+    const [googleEmail, setGoogleEmail] = useState('');
+    const [carregandoGoogle, setCarregandoGoogle] = useState(false);
+
+    const API_URL = api || 'http://10.92.11.22:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -139,6 +143,10 @@ export default function EditarPerfilAdvogado({ api }) {
     }
 
     useEffect(() => {
+        buscarStatusGoogle();
+    }, [API_URL]);
+
+    useEffect(() => {
         let timerAviso = null;
         if (exibirCarregamento) {
             timerAviso = setTimeout(() => {
@@ -222,6 +230,144 @@ export default function EditarPerfilAdvogado({ api }) {
         }
         carregarDados();
     }, [API_URL, navigate]);
+
+    async function buscarStatusGoogle() {
+        try {
+            const token = localStorage.getItem('token');
+
+            if (!token) return;
+
+            const resposta = await fetch(
+                `${API_URL}/google/calendar/status`,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                }
+            );
+
+            if (!resposta.ok) return;
+
+            const dados = await resposta.json();
+
+            setGoogleConectado(dados.conectado || false);
+            setGoogleEmail(dados.google_email || '');
+
+        } catch (erro) {
+            console.error(
+                'Erro ao consultar Google Agenda:',
+                erro
+            );
+        }
+    }
+
+
+    async function conectarGoogle() {
+        setCarregandoGoogle(true);
+
+        try {
+            const token = localStorage.getItem('token');
+
+            const resposta = await fetch(
+                `${API_URL}/google/calendar/conectar`,
+                {
+                    method: 'GET',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                }
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                setMensagem(
+                    dados.error ||
+                    'Não foi possível conectar ao Google Agenda.'
+                );
+                setTipoMensagem('erro');
+                agendarLimpezaMensagem();
+                return;
+            }
+
+            window.location.href = dados.authorization_url;
+
+        } catch (erro) {
+            console.error(
+                'Erro ao conectar Google Agenda:',
+                erro
+            );
+
+            setMensagem(
+                'Erro de conexão com o Google Agenda.'
+            );
+            setTipoMensagem('erro');
+            agendarLimpezaMensagem();
+
+        } finally {
+            setCarregandoGoogle(false);
+        }
+    }
+
+
+    async function desconectarGoogle() {
+        setCarregandoGoogle(true);
+
+        try {
+            const token = localStorage.getItem('token');
+
+            const resposta = await fetch(
+                `${API_URL}/google/calendar/desconectar`,
+                {
+                    method: 'DELETE',
+                    credentials: 'include',
+                    headers: {
+                        'X-Access-Token': token
+                    }
+                }
+            );
+
+            const dados = await resposta.json();
+
+            if (!resposta.ok) {
+                setMensagem(
+                    dados.error ||
+                    'Não foi possível desconectar o Google Agenda.'
+                );
+                setTipoMensagem('erro');
+                agendarLimpezaMensagem();
+                return;
+            }
+
+            setGoogleConectado(false);
+            setGoogleEmail('');
+
+            setMensagem(
+                'Google Agenda desconectado com sucesso!'
+            );
+            setTipoMensagem('sucesso');
+            agendarLimpezaMensagem();
+
+        } catch (erro) {
+            console.error(
+                'Erro ao desconectar Google Agenda:',
+                erro
+            );
+
+            setMensagem(
+                'Erro de conexão ao desconectar o Google Agenda.'
+            );
+            setTipoMensagem('erro');
+            agendarLimpezaMensagem();
+
+        } finally {
+            setCarregandoGoogle(false);
+        }
+    }
+
 
     async function handleSalvar(e) {
         e.preventDefault();
@@ -682,6 +828,64 @@ export default function EditarPerfilAdvogado({ api }) {
                         </button>
                     </div>
                 </form>
+
+                <div className={css.googleContainer}>
+                    <div className={css.googleTopo}>
+                        <div>
+                            <h2 className={css.googleTitulo}>
+                                Google Agenda
+                            </h2>
+
+                            <p className={css.googleDescricao}>
+                                Sincronize seus agendamentos
+                                com sua agenda do Google
+                            </p>
+                        </div>
+
+                        <div
+                            className={
+                                googleConectado
+                                    ? css.googleStatusConectado
+                                    : css.googleStatusDesconectado
+                            }
+                        >
+                            {googleConectado
+                                ? 'Conectado'
+                                : 'Não conectado'}
+                        </div>
+                    </div>
+
+                    {googleConectado ? (
+                        <>
+                            <p className={css.googleEmail}>
+                                Conta conectada: {googleEmail}
+                            </p>
+
+                            <button
+                                type="button"
+                                className={css.botaoGoogleDesconectar}
+                                onClick={desconectarGoogle}
+                                disabled={carregandoGoogle}
+                            >
+                                {carregandoGoogle
+                                    ? 'Desconectando...'
+                                    : 'Desconectar Google Agenda'}
+                            </button>
+                        </>
+                    ) : (
+                        <button
+                            type="button"
+                            className={css.botaoGoogle}
+                            onClick={conectarGoogle}
+                            disabled={carregandoGoogle}
+                        >
+                            {carregandoGoogle
+                                ? 'Conectando...'
+                                : 'Conectar Google Agenda'}
+                        </button>
+                    )}
+                </div>
+
             </section>
 
             <Footer />
