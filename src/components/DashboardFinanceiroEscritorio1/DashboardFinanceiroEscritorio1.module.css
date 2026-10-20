@@ -1046,6 +1046,12 @@
     cursor: not-allowed;
 }
 
+.badgeAReceber {
+    background: #cce5ff;
+    color: #004085;
+    border: 1px solid #b8daff;
+}
+
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }

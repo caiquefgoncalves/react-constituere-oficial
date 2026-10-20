@@ -12,15 +12,14 @@ function capitalizarFrase(texto) {
     if (texto === null || texto === undefined) return "--";
     const valor = String(texto).trim();
     if (!valor) return "--";
-    const minusculo = valor.toLowerCase();
-    return minusculo.charAt(0).toUpperCase() + minusculo.slice(1);
+    return valor.replace(/\b\w/g, letra => letra.toUpperCase());
 }
 
 function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://10.68.209.197:5000";
+    const API_URL = api || "http://10.92.11.28:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");
@@ -39,7 +38,6 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const [tipoMensagem, setTipoMensagem] = useState("");
     const [gerandoPdf, setGerandoPdf] = useState(false);
 
-    // ESTADOS DO MODAL DE BAIXA QUE ESTAVAM FALTANDO
     const [modalBaixaAberto, setModalBaixaAberto] = useState(false);
     const [lancamentoParaBaixar, setLancamentoParaBaixar] = useState(null);
     const [baixandoId, setBaixandoId] = useState(null);
@@ -312,7 +310,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     function classeStatusBadge(status) {
         if (status === "Recebido") return css.badgePago;
         if (status === "Atrasado") return css.badgeAtrasado;
-        return css.badgePendente;
+        return css.badgeAReceber; // Azul para a pagar
     }
 
     function voltarParaDashboardEscritorio() {
@@ -741,16 +739,14 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                     {dinheiro(lanc.valor)}
                                                 </td>
                                                 <td>
-                                                    {lanc.tipo === "despesa" &&
-                                                        lanc.origem === 'manual' &&
-                                                        lanc.status !== 'Recebido' && (
-                                                            <button
-                                                                className={css.botaoDarBaixa}
-                                                                onClick={() => abrirModalBaixa(lanc)}
-                                                            >
-                                                                Dar Baixa
-                                                            </button>
-                                                        )}
+                                                    {lanc.status !== 'Recebido' ? (
+                                                        <button
+                                                            className={css.botaoDarBaixa}
+                                                            onClick={() => abrirModalBaixa(lanc)}
+                                                        >
+                                                            Dar Baixa
+                                                        </button>
+                                                    ) : null}
                                                 </td>
                                             </tr>
                                         ))}
