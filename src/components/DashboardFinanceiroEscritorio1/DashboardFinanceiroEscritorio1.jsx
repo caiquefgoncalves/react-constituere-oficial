@@ -32,6 +32,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const [lancamentos, setLancamentos] = useState([]);
     const [carregandoResumo, setCarregandoResumo] = useState(true);
     const [tipoLancamento, setTipoLancamento] = useState("todos");
+    const [filtroStatusLista, setFiltroStatusLista] = useState("todos");
     const [modalAberto, setModalAberto] = useState(false);
     const [paginaLancamentos, setPaginaLancamentos] = useState(1);
     const [mensagem, setMensagem] = useState("");
@@ -276,9 +277,23 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const alturaAReceber = (receitaAReceber / maiorValor) * 100;
     const alturaDespesas = (despesas / maiorValor) * 100;
 
-    const totalPaginas = Math.max(1, Math.ceil(lancamentos.length / ITENS_POR_PAGINA));
+    const lancamentosFiltrados = lancamentos.filter(lanc => {
+        if (filtroStatusLista === 'todos') return true;
+        if (filtroStatusLista === 'a_receber') {
+            return lanc.status === 'A pagar' || lanc.status === 'Atrasado';
+        }
+        if (filtroStatusLista === 'recebido') {
+            return lanc.status === 'Recebido';
+        }
+        if (filtroStatusLista === 'atrasado') {
+            return lanc.status === 'Atrasado';
+        }
+        return true;
+    });
+
+    const totalPaginas = Math.max(1, Math.ceil(lancamentosFiltrados.length / ITENS_POR_PAGINA));
     const inicio = (paginaLancamentos - 1) * ITENS_POR_PAGINA;
-    const lancamentosPaginados = lancamentos.slice(inicio, inicio + ITENS_POR_PAGINA);
+    const lancamentosPaginados = lancamentosFiltrados.slice(inicio, inicio + ITENS_POR_PAGINA);
 
     function irParaPagina(novaPagina) {
         if (novaPagina < 1 || novaPagina > totalPaginas) return;
@@ -310,7 +325,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     function classeStatusBadge(status) {
         if (status === "Recebido") return css.badgePago;
         if (status === "Atrasado") return css.badgeAtrasado;
-        return css.badgeAReceber; // Azul para a pagar
+        return css.badgeAReceber;
     }
 
     function voltarParaDashboardEscritorio() {
@@ -685,13 +700,20 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                 >
                                     Despesas
                                 </button>
+                                <button
+                                    type="button"
+                                    className={`${css.botaoFiltroTipo} ${filtroStatusLista === "a_receber" ? css.botaoFiltroAtivo : ""}`}
+                                    onClick={() => setFiltroStatusLista(filtroStatusLista === "a_receber" ? "todos" : "a_receber")}
+                                >
+                                    A receber / A pagar
+                                </button>
                             </div>
                         </div>
 
                         <div className={css.tabelaContainer}>
                             {carregandoResumo ? (
                                 <p className={css.textoVazio}>Carregando lançamentos...</p>
-                            ) : lancamentos.length === 0 ? (
+                            ) : lancamentosFiltrados.length === 0 ? (
                                 <p className={css.textoVazio}>Nenhum lançamento encontrado.</p>
                             ) : (
                                 <>
@@ -709,7 +731,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                         <tbody>
                                         {lancamentosPaginados.map((lanc) => (
                                             <tr key={lanc.id}>
-                                                <td>
+                                                <td data-label="Tipo">
                                                     <span
                                                         className={`${css.badgeStatus} ${
                                                             lanc.tipo === "receita"
@@ -720,9 +742,9 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                         {lanc.tipo === "receita" ? "Receita" : "Despesa"}
                                                     </span>
                                                 </td>
-                                                <td>{capitalizarFrase(lanc.descricao)}</td>
-                                                <td>{formatarData(lanc.data)}</td>
-                                                <td>
+                                                <td data-label="Descrição">{capitalizarFrase(lanc.descricao)}</td>
+                                                <td data-label="Data">{formatarData(lanc.data)}</td>
+                                                <td data-label="Status">
                                                     {lanc.status && (
                                                         <span className={`${css.badgeStatusInfo} ${classeStatusBadge(lanc.status)}`}>
                                                             {lanc.status}
@@ -730,6 +752,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                     )}
                                                 </td>
                                                 <td
+                                                    data-label="Valor"
                                                     className={
                                                         lanc.tipo === "receita"
                                                             ? css.valorReceitaCelula
@@ -738,7 +761,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                                 >
                                                     {dinheiro(lanc.valor)}
                                                 </td>
-                                                <td>
+                                                <td data-label="Ações" className={css.colunaAcoes}>
                                                     {lanc.status !== 'Recebido' ? (
                                                         <button
                                                             className={css.botaoDarBaixa}

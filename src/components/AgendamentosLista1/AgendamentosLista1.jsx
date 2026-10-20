@@ -165,9 +165,15 @@ export default function AgendamentosLista1({ api }) {
                 return;
             }
 
-            setAgendamentos(
-                dados.agendamentos || []
-            );
+            const lista = dados.agendamentos || [];
+
+            lista.sort((a, b) => {
+                const dataA = new Date(`${a.data_iso}T${a.horario}:00`);
+                const dataB = new Date(`${b.data_iso}T${b.horario}:00`);
+                return dataB - dataA;
+            });
+
+            setAgendamentos(lista);
 
         } catch (erro) {
             console.error(
