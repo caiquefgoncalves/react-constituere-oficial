@@ -41,7 +41,7 @@ function valorParaNumero(valorMascarado) {
 }
 
 export default function AdicionarLancamento1({ api, idEscritorio, isOpen, onClose, onSucesso }) {
-    const API_URL = api || 'http://10.92.11.25:5000';
+    const API_URL = api || 'http://10.92.11.21:5000';
 
     const [dados, setDados] = useState(estadoInicial);
     const [salvando, setSalvando] = useState(false);

@@ -46,7 +46,9 @@ export default function DashboardEscritorio1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.20:5000';
+    const [cargoUsuario, setCargoUsuario] = useState(null);
+
+    const API_URL = api || 'http://10.92.11.21:5000';
 
     useEffect(() => {
         function atualizarQuantidadeItens() {
@@ -132,6 +134,10 @@ export default function DashboardEscritorio1({ api }) {
                         setFotoPerfil(
                             `${API_URL}/uploads/Escritorios/escritorio_${escritorio.id}.jpeg`
                         );
+                    }
+
+                    if (escritorio.status) {
+                        setCargoUsuario(escritorio.status);
                     }
 
                     return true;
@@ -1040,14 +1046,16 @@ export default function DashboardEscritorio1({ api }) {
                                 </>
                             )}
 
-                            <button
-                                className={css.botaoSaudeFinanceira}
-                                type="button"
-                                onClick={irParaSaudeFinanceira}
-                                name="btn-saude-financeira"
-                            >
-                                Ver saúde financeira
-                            </button>
+                            {cargoUsuario === 'PROPRIETARIO' && (
+                                <button
+                                    className={css.botaoSaudeFinanceira}
+                                    type="button"
+                                    onClick={irParaSaudeFinanceira}
+                                    name="btn-saude-financeira"
+                                >
+                                    Ver saúde financeira
+                                </button>
+                            )}
                         </section>
 
                     </div>

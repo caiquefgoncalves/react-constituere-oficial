@@ -25,7 +25,7 @@ export default function PagamentosLista1({ api }) {
     const [baixando, setBaixando] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.20:5000';
+    const API_URL = api || 'http://10.92.11.21:5000';
     const debounceTimer = useRef(null);
     const totaisCarregados = useRef(false);
 
@@ -233,6 +233,44 @@ export default function PagamentosLista1({ api }) {
         }
     }
 
+    async function baixarRelatorioPDF() {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        try {
+            const response = await fetch(`${API_URL}/pagamentos/relatorio`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Access-Token': token
+                },
+                body: JSON.stringify({
+                    pagamentos: pagamentos,
+                    totais: totais,
+                    filtros: {
+                        nome: filtroNome,
+                        status: filtroStatus
+                    }
+                })
+            });
+
+            if (!response.ok) throw new Error('Erro ao gerar PDF');
+
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'relatorio-pagamentos.pdf';
+            link.click();
+            URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error(error);
+            setMensagem('Erro ao gerar o relatório PDF.');
+            setTipoMensagem('erro');
+        }
+    }
+
     const totalEstatisticas = 3;
 
     function irParaEstatistica(pagina) {
@@ -372,6 +410,14 @@ export default function PagamentosLista1({ api }) {
                                 <option value="Paga">Paga</option>
                                 <option value="Atrasada">Atrasada</option>
                             </select>
+
+                            <button
+                                type="button"
+                                className={css.botaoPdf}
+                                onClick={baixarRelatorioPDF}
+                            >
+                                Baixar PDF
+                            </button>
                         </div>
                     </div>
 

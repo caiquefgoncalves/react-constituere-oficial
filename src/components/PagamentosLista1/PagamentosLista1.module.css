@@ -216,6 +216,27 @@
     border-color: #0047ab;
 }
 
+.botaoPdf {
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    background-color: #0053b8;
+    color: #ffffff;
+    font-family: 'Clear Sans', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.botaoPdf:hover {
+    background-color: #003f8d;
+}
+
 .tabelaContainer {
     background: #ffffff;
     overflow-x: auto;
@@ -812,6 +833,10 @@
     .selectFiltro {
         width: 100%;
         min-width: 0;
+    }
+
+    .botaoPdf {
+        width: 100%;
     }
 
     .tabela tbody {
