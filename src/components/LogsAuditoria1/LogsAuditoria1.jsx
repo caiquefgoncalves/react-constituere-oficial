@@ -224,6 +224,11 @@ function valorLegivel(valor, campo = '') {
     const chave = String(campo).toLowerCase();
     const texto = String(valor);
 
+    if (chave === 'ativo') {
+        if (texto === '1' || texto.toLowerCase() === 'true') return 'Ativado';
+        if (texto === '0' || texto.toLowerCase() === 'false') return 'Desativado';
+    }
+
     if (chave.includes('cpf')) return formatarCpf(texto);
     if (chave.includes('cnpj')) return formatarCnpj(texto);
     if (chave.includes('cep')) return formatarCep(texto);
@@ -397,7 +402,7 @@ function extrairLista(resposta) {
 
 export default function LogsAuditoria1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
 
     const [logs, setLogs] = useState([]);
     const [carregando, setCarregando] = useState(true);

@@ -4,6 +4,16 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { HashLink } from 'react-router-hash-link';
 import { io } from 'socket.io-client';
 
+function corrigirTextoCorrompido(texto) {
+    if (typeof texto !== 'string' || !/[ÃÂ]/.test(texto)) return texto;
+    try {
+        const bytes = Uint8Array.from(texto, caractere => caractere.charCodeAt(0));
+        return new TextDecoder('utf-8').decode(bytes);
+    } catch {
+        return texto;
+    }
+}
+
 export default function Header({ api, fotoPerfil }) {
     const navigate = useNavigate();
     const location = useLocation();
@@ -16,7 +26,7 @@ export default function Header({ api, fotoPerfil }) {
     const [notificacoes, setNotificacoes] = useState([]);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const API_URL = api || 'http://192.168.0.134:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -325,7 +335,7 @@ export default function Header({ api, fotoPerfil }) {
                         >
                             <div className={css.notificacaoTopo}>
                                 <p className={css.notificacaoTitulo}>
-                                    {notificacao.titulo}
+                                    {corrigirTextoCorrompido(notificacao.titulo)}
                                 </p>
 
                                 <p className={css.notificacaoData}>
@@ -334,7 +344,7 @@ export default function Header({ api, fotoPerfil }) {
                             </div>
 
                             <p className={css.notificacaoDescricao}>
-                                {notificacao.mensagem}
+                                {corrigirTextoCorrompido(notificacao.mensagem)}
                             </p>
                         </div>
                     )
