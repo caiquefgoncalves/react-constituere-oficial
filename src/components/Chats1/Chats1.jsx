@@ -16,7 +16,7 @@ function decodificarToken(token) {
 }
 
 export default function Chats1({ api }) {
-    const api_url = api || "http://10.92.11.28:5000";
+    const api_url = api || "http://10.92.11.20:5000";
     const navigate = useNavigate();
     const location = useLocation();
 
