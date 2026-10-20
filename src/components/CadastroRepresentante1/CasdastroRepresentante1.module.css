@@ -212,3 +212,304 @@ select.input {
         transform: translateY(0);
     }
 }
+
+
+@media (max-width: 1024px) {
+
+    .containerSection {
+        padding-top: 1rem;
+        padding-bottom: 4rem;
+    }
+
+    .topArea {
+        margin-top: 2.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .titulo {
+        font-size: 3rem;
+    }
+
+    .botaoVoltar {
+        left: 2rem;
+    }
+
+    .formulario {
+        padding:
+                0
+                2rem;
+    }
+
+    .linha {
+        column-gap: 2rem;
+    }
+
+    .campoMetade {
+        width:
+                calc(50% - 1rem) !important;
+    }
+}
+
+
+@media (max-width: 768px) {
+
+    .containerSection {
+        width: 100%;
+
+        padding-top: 0.5rem;
+        padding-bottom: 3rem;
+
+        box-sizing: border-box;
+    }
+
+
+    .topArea {
+        width: 100%;
+
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+
+        padding:
+                0
+                1.5rem;
+
+        box-sizing: border-box;
+    }
+
+    .titulo {
+        font-size: 2.6rem;
+
+        padding:
+                0
+                4rem;
+
+        line-height: 1.1;
+    }
+
+    .botaoVoltar {
+        left: 1.5rem;
+
+        width: 42px;
+        height: 42px;
+
+        flex-shrink: 0;
+    }
+
+    .formulario {
+        width: 100%;
+
+        padding:
+                0
+                1.5rem;
+
+        box-sizing: border-box;
+    }
+
+    .linha {
+        display: flex;
+
+        flex-direction: column;
+
+        width: 100%;
+
+        gap: 0;
+    }
+
+    .campoMetade {
+        width: 100% !important;
+
+        margin-bottom:
+                1.25rem !important;
+    }
+
+    .campoInteiro {
+        width: 100%;
+
+        margin-bottom:
+                1.25rem;
+    }
+
+    .input {
+        width: 100%;
+
+        min-width: 0;
+
+        box-sizing: border-box;
+    }
+
+
+    .mensagemContainer {
+        width:
+                calc(100% - 3rem);
+
+        max-width: none;
+
+        margin:
+                0
+                auto
+                2rem;
+
+        box-sizing: border-box;
+    }
+
+    .botaoContainer {
+        width: 100%;
+
+        margin-top: 2rem;
+
+        gap: 1rem;
+
+        flex-wrap: wrap;
+    }
+}
+
+
+
+
+@media (max-width: 480px) {
+
+    .containerSection {
+        padding-bottom: 2.5rem;
+    }
+
+    .topArea {
+        margin-top: 1.5rem;
+        margin-bottom: 1.75rem;
+
+        padding:
+                0
+                1rem;
+    }
+
+    .titulo {
+        font-size: 2rem;
+
+        padding:
+                0
+                3rem;
+
+        line-height: 1.15;
+    }
+
+    .botaoVoltar {
+        left: 1rem;
+
+        width: 38px;
+        height: 38px;
+    }
+
+    .formulario {
+        padding:
+                0
+                1rem;
+    }
+
+    .campoMetade {
+        margin-bottom:
+                1.1rem !important;
+    }
+
+    .campoInteiro {
+        margin-bottom: 1.1rem;
+    }
+
+    .label {
+        font-size: 0.95rem;
+    }
+
+    .input {
+        padding:
+                0.75rem
+                0.9rem;
+
+        font-size: 0.95rem;
+    }
+
+    .obsCampos {
+        font-size: 0.8rem;
+    }
+
+
+    .botaoContainer {
+        margin-top: 1.5rem;
+
+        flex-direction: column;
+
+        align-items: stretch;
+
+        gap: 0.75rem;
+    }
+
+    .botaoCadastro,
+    .botaoCadastrarCliente {
+        width: 100%;
+
+        padding:
+                0.85rem
+                1rem;
+
+        font-size: 1rem;
+
+        box-sizing: border-box;
+    }
+
+    .mensagemContainer {
+        width:
+                calc(100% - 2rem);
+
+        padding:
+                12px
+                16px;
+
+        font-size: 0.95rem;
+
+        margin-bottom: 1.5rem;
+    }
+}
+
+
+@media (max-width: 360px) {
+
+    .topArea {
+        margin-top: 1.25rem;
+
+        padding:
+                0
+                0.75rem;
+    }
+
+    .titulo {
+        font-size: 1.75rem;
+
+        padding:
+                0
+                2.7rem;
+    }
+
+    .botaoVoltar {
+        left: 0.75rem;
+
+        width: 36px;
+        height: 36px;
+    }
+
+    .formulario {
+        padding:
+                0
+                0.75rem;
+    }
+
+    .input {
+        font-size: 0.9rem;
+    }
+
+    .botaoCadastro,
+    .botaoCadastrarCliente {
+        font-size: 0.95rem;
+    }
+
+    .mensagemContainer {
+        width:
+                calc(100% - 1.5rem);
+    }
+}

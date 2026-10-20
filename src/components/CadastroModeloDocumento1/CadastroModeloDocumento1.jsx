@@ -43,9 +43,7 @@ export default function CadastroModeloDocumento1({ api }) {
         useState(null);
 
 
-    // =====================================================
-    // MENSAGENS
-    // =====================================================
+
 
     const [mensagem, setMensagem] =
         useState('');
@@ -56,9 +54,7 @@ export default function CadastroModeloDocumento1({ api }) {
     ] = useState('');
 
 
-    // =====================================================
-    // MODAL DE AJUDA
-    // =====================================================
+
 
     const [
         modalFormatoAberto,
@@ -71,9 +67,7 @@ export default function CadastroModeloDocumento1({ api }) {
     ] = useState('');
 
 
-    // =====================================================
-    // PREVIEW
-    // =====================================================
+
 
     const [
         carregandoPreview,
@@ -96,9 +90,7 @@ export default function CadastroModeloDocumento1({ api }) {
     ] = useState([]);
 
 
-    // =====================================================
-    // CADASTRO
-    // =====================================================
+
 
     const [
         cadastrando,
@@ -106,9 +98,7 @@ export default function CadastroModeloDocumento1({ api }) {
     ] = useState(false);
 
 
-    // =====================================================
-    // VARIÁVEIS DISPONÍVEIS
-    // =====================================================
+
 
     const gruposVariaveis = [
 
@@ -355,9 +345,6 @@ export default function CadastroModeloDocumento1({ api }) {
     ];
 
 
-    // =====================================================
-    // MOSTRAR MENSAGEM
-    // =====================================================
 
     function mostrarMensagem(
         texto,
@@ -403,9 +390,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // VOLTAR
-    // =====================================================
+
 
     function voltar() {
 
@@ -415,9 +400,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // ARQUIVO
-    // =====================================================
+
 
     function handleArquivo(e) {
 
@@ -474,9 +457,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // GERAR PREVIEW QUANDO SELECIONAR O ARQUIVO
-    // =====================================================
+
 
     useEffect(() => {
 
@@ -493,9 +474,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }, [arquivo]);
 
 
-    // =====================================================
-    // PREVIEW DO WORD
-    // =====================================================
+
 
     async function visualizarDocumento(
         arquivoSelecionado
@@ -514,10 +493,6 @@ export default function CadastroModeloDocumento1({ api }) {
 
         try {
 
-            /*
-             * Dá um pequeno tempo para o React
-             * criar o container do preview.
-             */
 
             await new Promise(
                 resolve =>
@@ -609,9 +584,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // VERIFICAR VARIÁVEIS DO DOCUMENTO
-    // =====================================================
+
 
     function verificarVariaveis(
         textoDocumento
@@ -627,10 +600,6 @@ export default function CadastroModeloDocumento1({ api }) {
             );
 
 
-        /*
-         * Procura tudo que estiver
-         * no formato {{alguma.coisa}}
-         */
 
         const encontradas =
             textoDocumento.match(
@@ -676,9 +645,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // COPIAR VARIÁVEL
-    // =====================================================
+
 
     async function copiarVariavel(
         valor
@@ -719,9 +686,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // CADASTRAR MODELO
-    // =====================================================
+
 
     async function handleCadastro(e) {
 
@@ -767,10 +732,7 @@ export default function CadastroModeloDocumento1({ api }) {
         }
 
 
-        /*
-         * Não deixa cadastrar se houver
-         * uma variável escrita errada.
-         */
+
 
         if (
             variaveisNaoReconhecidas.length > 0
@@ -929,9 +891,7 @@ export default function CadastroModeloDocumento1({ api }) {
     }
 
 
-    // =====================================================
-    // RETURN
-    // =====================================================
+
 
     return (
 
@@ -952,9 +912,6 @@ export default function CadastroModeloDocumento1({ api }) {
                 }
             >
 
-                {/* =================================================
-                    TOPO
-                ================================================= */}
 
                 <div
                     className={
@@ -1004,9 +961,7 @@ export default function CadastroModeloDocumento1({ api }) {
                 </div>
 
 
-                {/* =================================================
-                    MENSAGEM
-                ================================================= */}
+
 
                 {mensagem && (
 
@@ -1029,9 +984,7 @@ export default function CadastroModeloDocumento1({ api }) {
                 )}
 
 
-                {/* =================================================
-                    FORMULÁRIO
-                ================================================= */}
+
 
                 <form
                     className={
@@ -1048,7 +1001,6 @@ export default function CadastroModeloDocumento1({ api }) {
                         }
                     >
 
-                        {/* NOME */}
 
                         <div
                             className={
@@ -1086,7 +1038,6 @@ export default function CadastroModeloDocumento1({ api }) {
                         </div>
 
 
-                        {/* TIPO */}
 
                         <div
                             className={
@@ -1151,7 +1102,6 @@ export default function CadastroModeloDocumento1({ api }) {
                         </div>
 
 
-                        {/* DESCRIÇÃO */}
 
                         <div
                             className={
@@ -1197,7 +1147,6 @@ export default function CadastroModeloDocumento1({ api }) {
                         </div>
 
 
-                        {/* ARQUIVO */}
 
                         <div
                             className={
@@ -1253,9 +1202,6 @@ export default function CadastroModeloDocumento1({ api }) {
 
                     </div>
 
-                    {/* =================================================
-                        PREVIEW
-                    ================================================= */}
 
                     {arquivo && (
 
@@ -1379,7 +1325,6 @@ export default function CadastroModeloDocumento1({ api }) {
                             }
 
 
-                            {/* VARIÁVEIS COM ERRO */}
 
                             {
                                 variaveisNaoReconhecidas.length > 0
@@ -1430,7 +1375,6 @@ export default function CadastroModeloDocumento1({ api }) {
                             }
 
 
-                            {/* CARREGANDO */}
 
                             {carregandoPreview && (
 
@@ -1445,7 +1389,6 @@ export default function CadastroModeloDocumento1({ api }) {
                             )}
 
 
-                            {/* ERRO */}
 
                             {erroPreview && (
 
@@ -1460,7 +1403,6 @@ export default function CadastroModeloDocumento1({ api }) {
                             )}
 
 
-                            {/* DOCUMENTO */}
 
                             <div
                                 className={
@@ -1482,9 +1424,7 @@ export default function CadastroModeloDocumento1({ api }) {
                     )}
 
 
-                    {/* =================================================
-                        BOTÃO CADASTRAR
-                    ================================================= */}
+
 
                     <div
                         className={
@@ -1525,9 +1465,7 @@ export default function CadastroModeloDocumento1({ api }) {
             <Footer />
 
 
-            {/* =====================================================
-                MODAL - COMO PREPARAR O DOCUMENTO
-            ===================================================== */}
+
 
             {modalFormatoAberto && (
 
@@ -1593,7 +1531,6 @@ export default function CadastroModeloDocumento1({ api }) {
                         </div>
 
 
-                        {/* FORMATO */}
 
                         <div
                             className={
@@ -1629,7 +1566,6 @@ export default function CadastroModeloDocumento1({ api }) {
 
                         </div>
 
-                        {/* VARIÁVEIS */}
 
                         <div
                             className={

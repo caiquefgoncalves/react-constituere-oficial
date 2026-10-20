@@ -18,7 +18,6 @@
 }
 
 
-/* TOPO */
 
 .topArea {
     display: flex;
@@ -63,7 +62,6 @@
 }
 
 
-/* MENSAGEM */
 
 .mensagemContainer {
     padding: 16px 24px;
@@ -93,7 +91,6 @@
 }
 
 
-/* FORMULÁRIO */
 
 .formulario {
     display: flex;
@@ -174,7 +171,6 @@ select.input {
 }
 
 
-/* DESCRIÇÃO */
 
 .textareaDescricao {
     width: 100%;
@@ -210,7 +206,6 @@ select.input {
 }
 
 
-/* ARQUIVO */
 
 .areaArquivo {
     width: 100%;
@@ -329,7 +324,6 @@ select.input {
 }
 
 
-/* BOTÃO */
 
 .botaoContainer {
     display: flex;
@@ -370,10 +364,6 @@ select.input {
     background-color: #d69f00;
 }
 
-
-/* ========================= */
-/* MODAL */
-/* ========================= */
 
 .overlayModal {
     position: fixed;
@@ -455,7 +445,6 @@ select.input {
 }
 
 
-/* CABEÇALHO MODAL */
 
 .cabecalhoModal {
     padding-right: 2rem;
@@ -494,7 +483,6 @@ select.input {
 }
 
 
-/* FORMATO DOCX */
 
 .avisoFormato {
     display: flex;
@@ -561,7 +549,6 @@ select.input {
 }
 
 
-/* EXEMPLO */
 
 .exemploDocumento {
     border:
@@ -623,7 +610,6 @@ select.input {
 }
 
 
-/* VARIÁVEIS */
 
 .areaVariaveisModal {
     margin-top: 1rem;
@@ -776,7 +762,6 @@ select.input {
 }
 
 
-/* RODAPÉ MODAL */
 
 .rodapeModal {
     display: flex;
@@ -818,7 +803,6 @@ select.input {
 }
 
 
-/* SCROLL DA MODAL */
 
 .modalFormato::-webkit-scrollbar {
     width: 6px;
@@ -905,16 +889,6 @@ select.input {
     margin-bottom: 1rem;
 }
 
-/* ========================= */
-/* RESPONSIVIDADE */
-/* ========================= */
-
-/* ========================= */
-/* RESPONSIVIDADE */
-/* ========================= */
-
-
-/* TELAS GRANDES */
 
 @media (min-width: 1400px) {
 
@@ -928,7 +902,6 @@ select.input {
 }
 
 
-/* NOTEBOOK / TABLET HORIZONTAL */
 
 @media (max-width: 1024px) {
 
@@ -953,7 +926,6 @@ select.input {
     }
 
 
-    /* PREVIEW */
 
     .fundoPreview {
         padding: 1.5rem;
@@ -966,13 +938,8 @@ select.input {
 }
 
 
-/* TABLET / CELULAR */
 
 @media (max-width: 768px) {
-
-    /* ========================= */
-    /* TOPO */
-    /* ========================= */
 
     .topArea {
         display: flex;
@@ -1012,11 +979,6 @@ select.input {
         line-height: 1.1;
     }
 
-
-    /* ========================= */
-    /* FORMULÁRIO */
-    /* ========================= */
-
     .formulario {
         padding: 0 1.5rem;
     }
@@ -1049,9 +1011,6 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* ARQUIVO */
-    /* ========================= */
 
     .areaArquivo {
         height: auto;
@@ -1092,9 +1051,7 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* PREVIEW */
-    /* ========================= */
+
 
     .areaPreview {
         margin-top: 2rem;
@@ -1187,11 +1144,6 @@ select.input {
     }
 
 
-    /*
-     * O Word tem largura própria.
-     * O fundo continua rolável caso
-     * algum documento seja muito largo.
-     */
 
     .fundoPreview {
         width: 100%;
@@ -1215,24 +1167,14 @@ select.input {
     }
 
 
-    /*
-     * O docx-preview cria:
-     *
-     * .docx-wrapper
-     * section.docx
-     *
-     * Reduzimos o documento inteiro
-     * para caber no tablet.
-     */
+
 
     .documentoPreview :global(.docx-wrapper) {
         zoom: 0.78;
     }
 
 
-    /* ========================= */
-    /* MODAL */
-    /* ========================= */
+
 
     .overlayModal {
         padding: 1rem;
@@ -1280,9 +1222,7 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* BOTÃO */
-    /* ========================= */
+
 
     .botaoContainer {
         margin-top: 2rem;
@@ -1297,13 +1237,10 @@ select.input {
 }
 
 
-/* CELULAR */
 
 @media (max-width: 480px) {
 
-    /* ========================= */
-    /* PÁGINA */
-    /* ========================= */
+
 
     .containerSection {
         padding-top: 0.5rem;
@@ -1332,9 +1269,7 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* FORMULÁRIO */
-    /* ========================= */
+
 
     .formulario {
         padding: 0 1rem;
@@ -1367,9 +1302,6 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* UPLOAD */
-    /* ========================= */
 
     .areaArquivo {
         min-height: 90px;
@@ -1418,9 +1350,7 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* PREVIEW */
-    /* ========================= */
+
 
     .areaPreview {
         margin-top: 1.5rem;
@@ -1455,19 +1385,12 @@ select.input {
     }
 
 
-    /*
-     * Aproxima uma página A4 inteira
-     * da largura de um celular.
-     */
-
     .documentoPreview :global(.docx-wrapper) {
         zoom: 0.48;
     }
 
 
-    /* ========================= */
-    /* MODAL */
-    /* ========================= */
+
 
     .overlayModal {
         padding: 0.6rem;
@@ -1595,9 +1518,6 @@ select.input {
     }
 
 
-    /* ========================= */
-    /* CADASTRAR */
-    /* ========================= */
 
     .botaoCadastro {
         width: 100%;
@@ -1611,7 +1531,6 @@ select.input {
 }
 
 
-/* CELULARES PEQUENOS */
 
 @media (max-width: 360px) {
 

@@ -25,9 +25,7 @@ export default function ModelosDocumentos1({ api }) {
         api || 'http://10.92.11.20:5000';
 
 
-    // =====================================================
-    // LISTAGEM
-    // =====================================================
+
 
     const [modelos, setModelos] =
         useState([]);
@@ -42,9 +40,7 @@ export default function ModelosDocumentos1({ api }) {
         useState(true);
 
 
-    // =====================================================
-    // PREVIEW
-    // =====================================================
+
 
     const [
         carregandoPreview,
@@ -57,9 +53,7 @@ export default function ModelosDocumentos1({ api }) {
     ] = useState('');
 
 
-    // =====================================================
-    // MODAL
-    // =====================================================
+
 
     const [
         modeloSelecionado,
@@ -77,9 +71,7 @@ export default function ModelosDocumentos1({ api }) {
     ] = useState(false);
 
 
-    // =====================================================
-    // EDIÇÃO
-    // =====================================================
+
 
     const [
         nomeEditado,
@@ -97,9 +89,7 @@ export default function ModelosDocumentos1({ api }) {
     ] = useState('');
 
 
-    // =====================================================
-    // MENSAGENS
-    // =====================================================
+
 
     const [mensagem, setMensagem] =
         useState('');
@@ -110,9 +100,7 @@ export default function ModelosDocumentos1({ api }) {
     ] = useState('');
 
 
-    // =====================================================
-    // MENU LATERAL
-    // =====================================================
+
 
     const [
         menuColapsado,
@@ -165,9 +153,7 @@ export default function ModelosDocumentos1({ api }) {
     }, []);
 
 
-    // =====================================================
-    // CARREGAR MODELOS
-    // =====================================================
+
 
     useEffect(() => {
 
@@ -260,9 +246,7 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // CARREGAR PREVIEW
-    // =====================================================
+
 
     useEffect(() => {
 
@@ -359,10 +343,7 @@ export default function ModelosDocumentos1({ api }) {
                 await response.blob();
 
 
-            /*
-             * Espera o React montar
-             * o espaço do preview.
-             */
+           
 
             await new Promise(
                 resolve =>
@@ -435,9 +416,7 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // MENSAGEM
-    // =====================================================
+
 
     function mostrarMensagem(
         texto,
@@ -474,9 +453,7 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // FORMATAR TIPO
-    // =====================================================
+
 
     function formatarTipo(tipo) {
 
@@ -500,9 +477,6 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // FILTROS
-    // =====================================================
 
     function normalizarTexto(texto) {
 
@@ -566,9 +540,7 @@ export default function ModelosDocumentos1({ api }) {
         });
 
 
-    // =====================================================
-    // NAVEGAÇÃO
-    // =====================================================
+
 
     function irParaCadastro() {
 
@@ -580,9 +552,6 @@ export default function ModelosDocumentos1({ api }) {
 
 
 
-    // =====================================================
-    // MODAL
-    // =====================================================
 
     function abrirModal(modelo) {
 
@@ -696,9 +665,7 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // EDITAR MODELO
-    // =====================================================
+
 
     async function salvarEdicao() {
 
@@ -864,9 +831,7 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // ATIVAR / INATIVAR
-    // =====================================================
+
 
     async function alternarStatus(
         modelo
@@ -1006,9 +971,7 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // BAIXAR
-    // =====================================================
+
 
     async function baixarModelo(
         modelo
@@ -1128,9 +1091,6 @@ export default function ModelosDocumentos1({ api }) {
     }
 
 
-    // =====================================================
-    // RETURN
-    // =====================================================
 
     return (
 
@@ -1151,7 +1111,6 @@ export default function ModelosDocumentos1({ api }) {
                 }
             >
 
-                {/* MENU LATERAL */}
 
                 <div
                     className={`
@@ -1171,7 +1130,6 @@ export default function ModelosDocumentos1({ api }) {
                 </div>
 
 
-                {/* CONTEÚDO */}
 
                 <main
                     className={
@@ -1179,7 +1137,6 @@ export default function ModelosDocumentos1({ api }) {
                     }
                 >
 
-                    {/* TOPO */}
 
                     <div
                         className={
@@ -1222,7 +1179,6 @@ export default function ModelosDocumentos1({ api }) {
                     </div>
 
 
-                    {/* MENSAGEM */}
 
                     {mensagem && (
 
@@ -1244,7 +1200,6 @@ export default function ModelosDocumentos1({ api }) {
                     )}
 
 
-                    {/* FILTROS */}
 
                     <div
                         className={
@@ -1367,7 +1322,6 @@ export default function ModelosDocumentos1({ api }) {
                     </div>
 
 
-                    {/* TABELA */}
 
                     <div
                         className={
@@ -1612,9 +1566,7 @@ export default function ModelosDocumentos1({ api }) {
             </div>
 
 
-            {/* =====================================================
-                MODAL
-            ===================================================== */}
+
 
             {modalAberto && modeloSelecionado && (
 
@@ -1636,7 +1588,6 @@ export default function ModelosDocumentos1({ api }) {
                         }
                     >
 
-                        {/* CABEÇALHO */}
 
                         <div
                             className={
@@ -1675,9 +1626,7 @@ export default function ModelosDocumentos1({ api }) {
                         </div>
 
 
-                        {/* =================================================
-                            EDIÇÃO
-                        ================================================= */}
+
 
                         {editando ? (
 
@@ -1687,7 +1636,6 @@ export default function ModelosDocumentos1({ api }) {
                                 }
                             >
 
-                                {/* NOME */}
 
                                 <div
                                     className={
@@ -1723,7 +1671,6 @@ export default function ModelosDocumentos1({ api }) {
                                 </div>
 
 
-                                {/* TIPO */}
 
                                 <div
                                     className={
@@ -1795,7 +1742,6 @@ export default function ModelosDocumentos1({ api }) {
                                 </div>
 
 
-                                {/* DESCRIÇÃO */}
 
                                 <div
                                     className={
@@ -1831,7 +1777,6 @@ export default function ModelosDocumentos1({ api }) {
                                 </div>
 
 
-                                {/* BOTÕES */}
 
                                 <div
                                     className={
@@ -1872,9 +1817,7 @@ export default function ModelosDocumentos1({ api }) {
 
                             <>
 
-                                {/* =================================================
-                                    INFORMAÇÕES
-                                ================================================= */}
+
 
                                 <div
                                     className={
@@ -2010,9 +1953,7 @@ export default function ModelosDocumentos1({ api }) {
                                 </div>
 
 
-                                {/* =================================================
-                                    PREVIEW DO DOCUMENTO
-                                ================================================= */}
+
 
                                 <div
                                     className={
@@ -2065,7 +2006,6 @@ export default function ModelosDocumentos1({ api }) {
                                     </div>
 
 
-                                    {/* CARREGANDO */}
 
                                     {carregandoPreview && (
 
@@ -2080,7 +2020,6 @@ export default function ModelosDocumentos1({ api }) {
                                     )}
 
 
-                                    {/* ERRO */}
 
                                     {erroPreview && (
 
@@ -2095,7 +2034,6 @@ export default function ModelosDocumentos1({ api }) {
                                     )}
 
 
-                                    {/* DOCUMENTO */}
 
                                     {!erroPreview && (
 
@@ -2119,9 +2057,7 @@ export default function ModelosDocumentos1({ api }) {
                                 </div>
 
 
-                                {/* =================================================
-                                    AÇÕES
-                                ================================================= */}
+
 
                                 <div
                                     className={
