@@ -44,8 +44,6 @@ const rotulos = {
     valor: 'Valor',
     forma_pagamento: 'Forma de Pagamento',
     vencimento: 'Vencimento',
-    metodo: 'Método HTTP',
-    rota: 'Rota',
     dados: 'Dados Enviados',
     cpf: 'CPF',
     cnpj: 'CNPJ',
@@ -143,10 +141,31 @@ function corrigirValorTexto(texto) {
     return texto;
 }
 
+function removerDadosInternos(valor) {
+    if (Array.isArray(valor)) return valor.map(removerDadosInternos);
+    if (!valor || typeof valor !== 'object') return valor;
+
+    return Object.fromEntries(
+        Object.entries(valor)
+            .filter(([chave]) => {
+                const normalizada = String(chave).toLowerCase();
+                return !(
+                    normalizada === 'id'
+                    || normalizada.startsWith('id_')
+                    || ['id_evento', 'metodo', 'rota', 'parametros_rota'].includes(normalizada)
+                );
+            })
+            .map(([chave, item]) => [chave, removerDadosInternos(item)])
+    );
+}
+
 function dadosLegiveis(detalhes) {
     try {
         const conteudo = JSON.parse(detalhes || '{}');
-        return conteudo.dados && typeof conteudo.dados === 'object' ? conteudo.dados : conteudo;
+        const dados = conteudo.dados && typeof conteudo.dados === 'object'
+            ? conteudo.dados
+            : conteudo;
+        return removerDadosInternos(dados);
     } catch {
         return { observacao: detalhes || 'Nenhuma informação adicional.' };
     }
@@ -327,6 +346,8 @@ function temAlteracaoAntesDepois(log) {
     if (!log) return false;
     if (log.acao !== 'EDITAR' && log.acao !== 'ATIVAR' && log.acao !== 'INATIVAR') return false;
     if (!log.campo || log.campo.toUpperCase() === 'REGISTRO') return false;
+    const campoNormalizado = String(log.campo).toLowerCase();
+    if (campoNormalizado === 'id' || campoNormalizado.startsWith('id_')) return false;
     if (ehCampoSigiloso(log.campo)) return false;
     if ((log.valor_antigo === null || log.valor_antigo === undefined || log.valor_antigo === '') &&
         (log.valor_novo === null || log.valor_novo === undefined || log.valor_novo === '')) {
