@@ -410,8 +410,8 @@ function classeAcao(acao) {
     if (acao === 'CRIAR') return `${base} ${css.tagCriar}`;
     if (acao === 'EDITAR') return `${base} ${css.tagEditar}`;
     if (acao === 'EXCLUIR') return `${base} ${css.tagExcluir}`;
-    if (acao === 'CONFIRMAR' || acao === 'CONCLUIR' || acao === 'ATIVAR') return `${base} ${css.tagSucesso}`;
-    if (acao === 'RECUSAR' || acao === 'CANCELAR' || acao === 'INATIVAR') return `${base} ${css.tagAlerta}`;
+    if (acao === 'CONFIRMAR' || acao === 'CONCLUIR' || acao === 'ATIVAR' || acao === 'PROMOVER') return `${base} ${css.tagSucesso}`;
+    if (acao === 'RECUSAR' || acao === 'CANCELAR' || acao === 'INATIVAR' || acao === 'REBAIXAR') return `${base} ${css.tagAlerta}`;
     return base;
 }
 
@@ -436,6 +436,7 @@ export default function LogsAuditoria1({ api }) {
     const [advogado, setAdvogado] = useState('');
 
     const [idEscritorio, setIdEscritorio] = useState(null);
+    const [escritorios, setEscritorios] = useState([]);
     const [advogados, setAdvogados] = useState([]);
 
     const [paginaLogs, setPaginaLogs] = useState(1);
@@ -480,6 +481,30 @@ export default function LogsAuditoria1({ api }) {
         return lista;
     }, [API_URL, porPaginaLogs]);
 
+    const carregarAdvogados = useCallback(async (idEsc) => {
+        const token = localStorage.getItem('token');
+        if (!token || !idEsc) return;
+
+        const params = new URLSearchParams();
+        params.set('limite', 500);
+        params.set('page', 1);
+        params.set('por_pagina', 500);
+
+        const resposta = await fetch(
+            `${API_URL}/escritorio/${idEsc}/logs?${params.toString()}`,
+            {
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            }
+        );
+        const dados = await resposta.json();
+        if (!resposta.ok) throw new Error(dados.error || 'Nao foi possivel carregar o Log.');
+
+        const nomes = [...new Set(extrairLista(dados).map(log => log.nome_usuario).filter(Boolean))]
+            .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+        setAdvogados(nomes);
+    }, [API_URL]);
+
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) { navigate('/login'); return; }
@@ -488,36 +513,26 @@ export default function LogsAuditoria1({ api }) {
             try {
                 const headers = { 'X-Access-Token': token };
 
-                const respostaEscritorio = await fetch(`${API_URL}/meu_escritorio`, {
+                const respostaEscritorios = await fetch(`${API_URL}/meus_escritorios`, {
                     credentials: 'include',
                     headers
                 });
-                const dadosEscritorio = await respostaEscritorio.json();
+                const dadosEscritorios = await respostaEscritorios.json();
+                const escritoriosDisponiveis = (dadosEscritorios.escritorios || []).filter(item => (
+                    item.ativo && String(item.status || '').toUpperCase() === 'PROPRIETARIO'
+                ));
 
-                if (!respostaEscritorio.ok || !dadosEscritorio.escritorio?.id) {
+                if (!respostaEscritorios.ok || escritoriosDisponiveis.length === 0) {
                     navigate('/dashboard_advogado');
                     return;
                 }
 
-                setIdEscritorio(dadosEscritorio.escritorio.id);
+                const escritorioSelecionado = escritoriosDisponiveis[0];
+                setEscritorios(escritoriosDisponiveis);
+                setIdEscritorio(escritorioSelecionado.id);
 
-                const paramsTodos = new URLSearchParams();
-                paramsTodos.set('limite', 500);
-                paramsTodos.set('page', 1);
-                paramsTodos.set('por_pagina', 500);
-
-                const respostaTodos = await fetch(
-                    `${API_URL}/escritorio/${dadosEscritorio.escritorio.id}/logs?${paramsTodos.toString()}`,
-                    { credentials: 'include', headers }
-                );
-                const dadosTodos = await respostaTodos.json();
-                const listaTodos = extrairLista(dadosTodos);
-
-                const nomes = [...new Set(listaTodos.map(l => l.nome_usuario).filter(Boolean))]
-                    .sort((a, b) => a.localeCompare(b, 'pt-BR'));
-                setAdvogados(nomes);
-
-                await carregarLogs(dadosEscritorio.escritorio.id, 1, {
+                await carregarAdvogados(escritorioSelecionado.id);
+                await carregarLogs(escritorioSelecionado.id, 1, {
                     dataInicio: '',
                     dataFim: '',
                     advogado: ''
@@ -530,7 +545,34 @@ export default function LogsAuditoria1({ api }) {
         }
 
         carregar();
-    }, [API_URL, navigate, carregarLogs]);
+    }, [API_URL, navigate, carregarLogs, carregarAdvogados]);
+
+    async function trocarEscritorio(evento) {
+        const novoIdEscritorio = Number(evento.target.value);
+        if (!novoIdEscritorio || novoIdEscritorio === idEscritorio) return;
+
+        setCarregando(true);
+        setErro('');
+        setDetalheAberto(null);
+        setIdEscritorio(novoIdEscritorio);
+        setDataInicio('');
+        setDataFim('');
+        setAdvogado('');
+        setPaginaLogs(1);
+
+        try {
+            await carregarAdvogados(novoIdEscritorio);
+            await carregarLogs(novoIdEscritorio, 1, {
+                dataInicio: '',
+                dataFim: '',
+                advogado: ''
+            });
+        } catch (e) {
+            setErro(e.message || 'Nao foi possivel carregar o Log.');
+        } finally {
+            setCarregando(false);
+        }
+    }
 
     function aplicarFiltros() {
         if (!idEscritorio) return;
@@ -606,6 +648,18 @@ export default function LogsAuditoria1({ api }) {
                     {!carregando && !erro && (
                         <>
                             <div className={css.areaFiltros}>
+                                {escritorios.length > 1 && (
+                                    <label>
+                                        Escritorio
+                                        <select value={idEscritorio || ''} onChange={trocarEscritorio}>
+                                            {escritorios.map(item => (
+                                                <option key={item.id} value={item.id}>
+                                                    {item.nome_fantasia || item.razao_social || `Escritorio ${item.id}`}
+                                                </option>
+                                            ))}
+                                        </select>
+                                    </label>
+                                )}
                                 <label>
                                     Data inicial
                                     <input
