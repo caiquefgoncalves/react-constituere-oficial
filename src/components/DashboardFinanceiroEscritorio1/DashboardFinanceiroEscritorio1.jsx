@@ -19,7 +19,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://10.92.11.21:5000";
+    const API_URL = api || "http://192.168.0.132:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");

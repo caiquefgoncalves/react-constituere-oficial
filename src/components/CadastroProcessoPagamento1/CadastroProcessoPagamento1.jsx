@@ -118,7 +118,7 @@ export default function CadastroProcessoPagamento1({ api }) {
         setBuscaModeloInicial
     ] = useState('');
 
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const API_URL = api || 'http://192.168.0.132:5000';
 
     const dias = Array.from({ length: 31 }, (_, index) => index + 1);
     const meses = [

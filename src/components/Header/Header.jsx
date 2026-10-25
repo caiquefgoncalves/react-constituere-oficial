@@ -26,7 +26,7 @@ export default function Header({ api, fotoPerfil }) {
     const [notificacoes, setNotificacoes] = useState([]);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.134:5000';
+    const API_URL = api || 'http://192.168.0.132:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
@@ -87,6 +87,8 @@ export default function Header({ api, fotoPerfil }) {
                         return anteriores;
                     }
 
+                    console.log("Nova notificação recebida no socket:", novaNotificacao);
+
                     return [
                         novaNotificacao,
                         ...anteriores
@@ -111,7 +113,7 @@ export default function Header({ api, fotoPerfil }) {
             socket.off('connect_error');
             socket.disconnect();
         };
-    }, [token, idUsuario, API_URL]);
+    }, [token, idUsuario, API_URL, location.pathname]);
 
     async function buscarNotificacoes() {
         if (!token) {
@@ -328,23 +330,23 @@ export default function Header({ api, fotoPerfil }) {
         return (
             <div className={css.listaNotificacoes}>
                 {notificacoes.map(
-                    (notificacao) => (
+                    (notificacao, index) => (
                         <div
                             className={`${css.notificacao} ${!notificacao.lida ? css.notificacaoNaoLida : ''}`}
-                            key={notificacao.id}
+                            key={notificacao.id || notificacao.id_notificacao || index}
                         >
                             <div className={css.notificacaoTopo}>
                                 <p className={css.notificacaoTitulo}>
-                                    {corrigirTextoCorrompido(notificacao.titulo)}
+                                    {corrigirTextoCorrompido(notificacao.titulo) || 'Notificação'}
                                 </p>
 
                                 <p className={css.notificacaoData}>
-                                    {notificacao.data_criacao} às {notificacao.hora_criacao}
+                                    {notificacao.data_criacao || ''} {notificacao.hora_criacao ? `às ${notificacao.hora_criacao}` : ''}
                                 </p>
                             </div>
 
                             <p className={css.notificacaoDescricao}>
-                                {corrigirTextoCorrompido(notificacao.mensagem)}
+                                {corrigirTextoCorrompido(notificacao.mensagem) || 'Sem mensagem'}
                             </p>
                         </div>
                     )

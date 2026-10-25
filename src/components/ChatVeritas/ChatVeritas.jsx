@@ -39,7 +39,7 @@ function formatarTexto(texto) {
 }
 
 export default function ChatVeritas({ aberto, onFechar, api }) {
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const API_URL = api || 'http://192.168.0.132:5000';
     const [ehProprietario, setEhProprietario] = useState(
         () => localStorage.getItem('veritas_eh_proprietario') === 'true'
     );

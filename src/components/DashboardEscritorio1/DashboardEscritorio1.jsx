@@ -48,7 +48,7 @@ export default function DashboardEscritorio1({ api }) {
 
     const [cargoUsuario, setCargoUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.20:5000';
+    const API_URL = api || 'http://192.168.0.132:5000';
 
     useEffect(() => {
         function atualizarQuantidadeItens() {

@@ -36,7 +36,7 @@ export default function EditarPerfilAdvogado({ api }) {
     const [googleEmail, setGoogleEmail] = useState('');
     const [carregandoGoogle, setCarregandoGoogle] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.22:5000';
+    const API_URL = api || 'http://192.168.0.132:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
