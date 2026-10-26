@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from 'react';
+// useNavigate permite mudar de página sem recarregar o site.
 import { useNavigate } from 'react-router-dom';
+// CSS Modules associa os estilos a esta tela e evita conflito de nomes com outros componentes.
 import css from './ProcessosLista1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx";
 
+// Componente principal da página. A propriedade 'api' informa o endereço do servidor Flask.
 export default function ProcessosLista1({ api }) {
+    // Inicializa a navegação para outras rotas do React.
     const navigate = useNavigate();
-    const API_URL = api || 'http://192.168.0.132:5000';
+    // Se não houver endereço recebido por parâmetro, utiliza o endereço de desenvolvimento.
+    const API_URL = api || 'http://10.92.11.21:5000';
 
+    // ESTADOS DA LISTAGEM
+    // useState mantém informações que mudam durante o uso; a função 'set...' atualiza a tela.
+    // Os processos e seus tipos começam vazios, enquanto 'carregando' indica a busca inicial.
     const [processos, setProcessos] = useState([]);
     const [tiposProcessos, setTiposProcessos] = useState([]);
     const [carregando, setCarregando] = useState(true);
 
+    // MENSAGENS DE RETORNO
+    // Estados separados para avisos gerais, do modal, das atualizações e dos honorários.
+    // Cada 'tipoMensagem' indica se o aviso deve aparecer como sucesso ou erro.
     const [mensagem, setMensagem] = useState('');
     const [tipoMensagem, setTipoMensagem] = useState('');
 
@@ -25,10 +36,15 @@ export default function ProcessosLista1({ api }) {
     const [mensagemExito, setMensagemExito] = useState('');
     const [tipoMensagemExito, setTipoMensagemExito] = useState('');
 
+    // FILTROS
+    // Armazenam a pesquisa digitada e as opções escolhidas nos selects da página.
     const [filtroNumero, setFiltroNumero] = useState('');
     const [filtroStatus, setFiltroStatus] = useState('todos');
     const [filtroTipo, setFiltroTipo] = useState('todos');
 
+    // MODAL DE DETALHES E EDIÇÃO
+    // Guarda qual processo está aberto, se está em edição e os campos alterados.
+    // A cópia original da parte contrária permite descartar mudanças ao cancelar.
     const [modalAberto, setModalAberto] = useState(false);
     const [processoSelecionado, setProcessoSelecionado] = useState(null);
     const [editando, setEditando] = useState(false);
@@ -37,11 +53,15 @@ export default function ProcessosLista1({ api }) {
     const [parteContrariaOriginal, setParteContrariaOriginal] = useState({});
     const [buscandoCepParte, setBuscandoCepParte] = useState(false);
 
+    // Confirmação de inativação: mostra o modal e guarda o processo que será afetado.
     const [modalInativarAberto, setModalInativarAberto] = useState(false);
     const [processoInativar, setProcessoInativar] = useState(null);
 
+    // Controla a aba visível dentro do modal: informações, atualizações ou documentos.
     const [opcao, setOpcao] = useState("info");
 
+    // GERAÇÃO DE DOCUMENTOS
+    // Estados para a lista de modelos, seleções do usuário e indicadores de carregamento.
     const [
         modelosDocumento,
         setModelosDocumento
@@ -70,6 +90,8 @@ export default function ProcessosLista1({ api }) {
         setTipoDocumentoSelecionado
     ] = useState('');
 
+    // ATUALIZAÇÕES DO PROCESSO
+    // Controlam o formulário, os registros já existentes e a possível conclusão do processo.
     const [novaAtualizacao, setNovaAtualizacao] = useState(false);
     const [data, setData] = useState('');
     const [titulo, setTitulo] = useState('');
@@ -83,11 +105,19 @@ export default function ProcessosLista1({ api }) {
     const [verificandoExito, setVerificandoExito] = useState(false);
     const [temExitoProcesso, setTemExitoProcesso] = useState(false);
 
+    // HONORÁRIOS DE ÊXITO
+    // Controlam a etapa financeira que pode aparecer ao concluir um processo.
     const [modalExitoAberto, setModalExitoAberto] = useState(false);
     const [processoExito, setProcessoExito] = useState(null);
     const [carregandoExito, setCarregandoExito] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
+    // Cria uma lista única com todas as categorias/tipos de documentos disponíveis, extraindo a propriedade 'tipo' de cada modelo e eliminando as duplicatas.
+    // Exemplo: Se os modelos forem ['Contrato', 'Procuração', 'Contrato']
+    // Resultado em 'tiposDocumentoDisponiveis': ['Contrato', 'Procuração']
+
+    // O new Set(...) lê essa lista de textos e remove na hora os tipos repetidos (deixando apenas ['Contrato', 'Petição', 'Recibo']).
+    // O ... transforma essa coleção limpa de volta em um array comum para que você possa utilizá-lo no seu código JavaScript ou JSX.
     const tiposDocumentoDisponiveis = [
         ...new Set(
             modelosDocumento.map(
@@ -97,6 +127,7 @@ export default function ProcessosLista1({ api }) {
     ];
 
 
+    // Mostra no segundo select apenas modelos do tipo selecionado no primeiro.
     const modelosDocumentoFiltrados =
         modelosDocumento.filter(
             modelo =>
@@ -104,6 +135,7 @@ export default function ProcessosLista1({ api }) {
                 tipoDocumentoSelecionado
         );
 
+    // Agrupa todos os campos do formulário financeiro em um único objeto de estado.
     const [dadosExito, setDadosExito] = useState({
         tipo_pagamento: '',
         valor_exito: '',
@@ -120,8 +152,10 @@ export default function ProcessosLista1({ api }) {
 
     const [salvandoExito, setSalvandoExito] = useState(false);
 
+    // Siglas utilizadas para preencher os campos de seleção de estado (UF).
     const ufs = ['AC','AL','AP','AM','BA','CE','DF','ES','GO','MA','MT','MS','MG','PA','PB','PR','PE','PI','RJ','RN','RS','RO','RR','SC','SP','SE','TO'];
 
+    // Remove dados da sessão guardados no navegador e redireciona para o login.
     function deslogar() {
         localStorage.removeItem('nome');
         localStorage.removeItem('tipo');
@@ -130,8 +164,11 @@ export default function ProcessosLista1({ api }) {
         navigate('/login');
     }
 
+    // Efeito executado quando o componente aparece: sincroniza o estado do menu lateral.
+    // Também escuta mudanças no menu e remove o evento ao sair da tela.
     useEffect(() => {
         function aplicarEstadoMenu(e) {
+            // '?.' acessa a informação sem erro se ela não existir; '??' usa false se o valor for nulo/indefinido.
             const colapsado = e?.detail?.colapsado ?? false;
             setMenuColapsado(colapsado);
         }
@@ -142,14 +179,17 @@ export default function ProcessosLista1({ api }) {
             }
         });
 
+        // Escuta o evento personalizado disparado quando o menu é expandido ou recolhido.
         window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
 
         return () => {
+            // Limpeza do efeito: evita manter eventos duplicados após desmontar o componente.
             window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
         };
     }, []);
 
 
+    // Limpa avisos anteriores para que não apareçam em outra operação ou modal.
     function limparTodasMensagens() {
         setMensagem('');
         setTipoMensagem('');
@@ -161,6 +201,8 @@ export default function ProcessosLista1({ api }) {
         setTipoMensagemExito('');
     }
 
+    // Agenda a retirada automática de um aviso após cinco segundos.
+    // clearTimeout cancela uma limpeza anterior para impedir que o aviso novo suma cedo.
     function agendarLimpeza(setMsg, setTipo, refKey) {
         if (window[refKey]) clearTimeout(window[refKey]);
         window[refKey] = setTimeout(() => {
@@ -169,31 +211,37 @@ export default function ProcessosLista1({ api }) {
         }, 5000);
     }
 
+    // Exibe avisos na área principal da página e programa sua limpeza.
     function mostrarMensagem(texto, tipo = 'erro') {
         setMensagem(texto);
         setTipoMensagem(tipo);
         agendarLimpeza(setMensagem, setTipoMensagem, 'timeoutMensagem');
     }
 
+    // Exibe avisos dentro do modal de detalhes do processo.
     function mostrarMensagemModal(texto, tipo = 'erro') {
         setMensagemModal(texto);
         setTipoMensagemModal(tipo);
         agendarLimpeza(setMensagemModal, setTipoMensagemModal, 'timeoutMensagemModal');
     }
 
+    // Exibe avisos específicos do formulário de atualização.
     function mostrarMensagemAtualizacao(texto, tipo = 'erro') {
         setMensagemAtualizacao(texto);
         setTipoMensagemAtualizacao(tipo);
         agendarLimpeza(setMensagemAtualizacao, setTipoMensagemAtualizacao, 'timeoutMensagemAtualizacao');
     }
 
+    // Exibe avisos específicos da etapa de honorários de êxito.
     function mostrarMensagemExito(texto, tipo = 'erro') {
         setMensagemExito(texto);
         setTipoMensagemExito(tipo);
         agendarLimpeza(setMensagemExito, setTipoMensagemExito, 'timeoutMensagemExito');
     }
 
+    // Converte os valores internos do status em textos amigáveis para a interface.
     function formatarStatus(status) {
+        // Tabela simples que relaciona cada código de status ao nome exibido.
         const map = {
             em_andamento: 'Andamento',
             concluido: 'Concluído',
@@ -204,7 +252,9 @@ export default function ProcessosLista1({ api }) {
         return map[status] || status || '--';
     }
 
+    // Monta o nome dos clientes, aceitando tanto uma lista quanto um texto já pronto.
     function nomesClientes(processo) {
+        // Se a API devolveu vários clientes em array, map obtém os nomes e join os une com vírgulas.
         if (Array.isArray(processo.clientes)) {
             return processo.clientes
                 .map(c => c.nome || c)
@@ -214,9 +264,11 @@ export default function ProcessosLista1({ api }) {
         return processo.clientes || '--';
     }
 
+    // Solicita à API um PDF com as informações do processo e inicia seu download.
     async function gerarDocumentoProcesso() {
         if (!processoSelecionado) return;
 
+        // Recupera o token de autenticação; sem ele, a requisição protegida não pode continuar.
         const token = localStorage.getItem('token');
         if (!token) {
             deslogar();
@@ -224,6 +276,7 @@ export default function ProcessosLista1({ api }) {
         }
 
         try {
+            // fetch faz a requisição HTTP; await aguarda a resposta antes de seguir.
             const response = await fetch(
                 `${API_URL}/processo/${processoSelecionado.id}/documento`,
                 {
@@ -233,21 +286,32 @@ export default function ProcessosLista1({ api }) {
                 }
             );
 
+            // HTTP 401 indica autenticação inválida/expirada; por isso a sessão é encerrada.
             if (response.status === 401) {
                 deslogar();
                 return;
             }
 
             if (!response.ok) {
+                // Tenta ler o JSON de erro da API. Se falhar (ex: a API retornou HTML ou texto puro),
+                // o .catch() captura o erro e devolve um objeto vazio ({}) para não quebrar o código.
                 const resultado = await response.json().catch(() => ({}));
                 mostrarMensagemModal(resultado.error || 'Erro ao gerar o PDF do processo.', 'erro');
                 return;
             }
 
+            // Converte a resposta em arquivo e força o download do PDF do processo.
+            // blob transforma os bytes da resposta em um arquivo utilizável pelo navegador.
             const arquivo = await response.blob();
             const url = URL.createObjectURL(arquivo);
+            // Cria um link temporário que dispara o download programaticamente.
             const link = document.createElement('a');
+
+            // Define um identificador buscando a propriedade disponível mais relevante
             const numero = processoSelecionado.numero_processo || processoSelecionado.numero || processoSelecionado.id;
+
+            // Substitui qualquer caractere que NÃO seja letra, número, hífen ou underline por '_'
+            // Isso evita erros de download causados por barras, pontos ou espaços no nome do arquivo
             const nomeSeguro = String(numero).replace(/[^a-zA-Z0-9_-]/g, '_');
 
             link.href = url;
@@ -255,6 +319,9 @@ export default function ProcessosLista1({ api }) {
             document.body.appendChild(link);
             link.click();
             link.remove();
+
+            // Aguarda 1 segundo antes de liberar a memória da URL. Isso garante que o navegador
+            // finalize a inicialização do download sem corromper o arquivo na transferência.
             setTimeout(() => URL.revokeObjectURL(url), 1000);
             mostrarMensagemModal('PDF do processo gerado com sucesso.', 'sucesso');
         } catch (error) {
@@ -263,18 +330,22 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Padroniza textos para a pesquisa, ignorando acentos, maiúsculas e espaços nas pontas.
     function normalizarTexto(texto) {
         return (texto || '')
+            // Separa letras de marcas de acentuação para possibilitar a busca sem acentos.
             .normalize('NFD')
             .replace(/[\u0300-\u036f]/g, '')
             .toLowerCase()
             .trim();
     }
 
+    // Retira tudo que não é dígito; útil antes de aplicar máscaras e fazer validações.
     function apenasNumeros(valor) {
         return String(valor || '').replace(/\D/g, '');
     }
 
+    // Insere automaticamente as barras de uma data digitada no formato DD/MM/AAAA.
     function handleData(e) {
         let valor = apenasNumeros(e.target.value);
 
@@ -291,17 +362,20 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Ajusta a escrita para que cada palavra comece com letra maiúscula.
     function capitalizarNome(texto) {
         if (!texto) {
             return '';
         }
 
         return texto
-            .split(' ')
+            .split(' ') // 1. Divide o texto em um array de palavras, separando pelos espaços
+            // 2. Transforma cada palavra isolada
             .map(palavra => palavra.charAt(0).toUpperCase() + palavra.slice(1).toLowerCase())
-            .join(' ');
+            .join(' '); // 3. Junta as palavras formatadas de volta em uma única string com espaços
     }
 
+    // Transforma números digitados em texto no padrão monetário brasileiro (R$ 0,00).
     function formatarDinheiro(valorTexto) {
         let numeros = apenasNumeros(valorTexto);
         numeros = numeros.replace(/^0+/, '');
@@ -318,6 +392,7 @@ export default function ProcessosLista1({ api }) {
             numeros = '0' + numeros;
         }
 
+        // Os dois últimos dígitos representam centavos; os anteriores representam reais.
         const reais = numeros.slice(0, -2);
         const centavos = numeros.slice(-2);
         const reaisFormatado = reais.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
@@ -325,6 +400,7 @@ export default function ProcessosLista1({ api }) {
         return `R$ ${reaisFormatado},${centavos}`;
     }
 
+    // Converte um número recebido da API para a máscara monetária exibida no campo.
     function formatarValorBanco(valor) {
         if (valor === null || valor === undefined || valor === '') {
             return '';
@@ -339,6 +415,7 @@ export default function ProcessosLista1({ api }) {
         return formatarDinheiro(String(Math.round(numero * 100)));
     }
 
+    // Faz o caminho inverso da máscara: transforma "R$ 1.234,56" em 1234.56 para a API.
     function converterDinheiro(valorTexto) {
         if (valorTexto === null || valorTexto === undefined || valorTexto === '') {
             return null;
@@ -365,6 +442,7 @@ export default function ProcessosLista1({ api }) {
         return Number.isNaN(numero) ? null : numero;
     }
 
+    // Aplica os pontos e o hífen ao CPF enquanto a pessoa digita.
     function formatarCpf(valor) {
         let n = apenasNumeros(valor);
         if (n.length > 11) n = n.slice(0, 11);
@@ -374,6 +452,7 @@ export default function ProcessosLista1({ api }) {
         return `${n.slice(0,3)}.${n.slice(3,6)}.${n.slice(6,9)}-${n.slice(9,11)}`;
     }
 
+    // Aplica automaticamente a máscara do CNPJ.
     function formatarCnpj(valor) {
         let n = apenasNumeros(valor);
         if (n.length > 14) n = n.slice(0, 14);
@@ -384,6 +463,7 @@ export default function ProcessosLista1({ api }) {
         return `${n.slice(0,2)}.${n.slice(2,5)}.${n.slice(5,8)}/${n.slice(8,12)}-${n.slice(12,14)}`;
     }
 
+    // Aplica parênteses, espaço e hífen à entrada de telefone.
     function formatarTelefone(valor) {
         let n = apenasNumeros(valor);
         if (n.length > 11) n = n.slice(0, 11);
@@ -393,6 +473,7 @@ export default function ProcessosLista1({ api }) {
         return `(${n.slice(0,2)}) ${n.slice(2,7)}-${n.slice(7,11)}`;
     }
 
+    // Insere o hífen do CEP após os cinco primeiros dígitos.
     function formatarCep(valor) {
         let n = apenasNumeros(valor);
         if (n.length > 8) n = n.slice(0, 8);
@@ -400,6 +481,7 @@ export default function ProcessosLista1({ api }) {
         return `${n.slice(0,5)}-${n.slice(5,8)}`;
     }
 
+    // Formata datas informadas nos campos editáveis.
     function formatarDataEdit(valor) {
         let n = apenasNumeros(valor);
 
@@ -413,6 +495,7 @@ export default function ProcessosLista1({ api }) {
         return `${n.slice(0, 2)}/${n.slice(2, 4)}/${n.slice(4, 8)}`;
     }
 
+    // Coloca a pontuação no número do processo conforme o padrão de 20 dígitos.
     function formatarNumeroProcessoEdit(valor) {
         let n = apenasNumeros(valor);
 
@@ -429,16 +512,20 @@ export default function ProcessosLista1({ api }) {
         return `${n.slice(0, 7)}-${n.slice(7, 9)}.${n.slice(9, 13)}.${n.slice(13, 14)}.${n.slice(14, 16)}.${n.slice(16)}`;
     }
 
+    // Reaproveita a formatação do número do processo para os detalhes da tela.
     function formatarNumeroParaExibicao(valor) {
         if (!valor) return '';
         return formatarNumeroProcessoEdit(String(valor));
     }
 
+    // Confere se o CPF tem 11 dígitos e se seus dois dígitos verificadores são válidos.
     function validarCpf(cpf) {
         const n = apenasNumeros(cpf);
         if (n.length !== 11) return false;
+        // A expressão regular rejeita sequências repetidas, como 11111111111.
         if (/^(\d)\1{10}$/.test(n)) return false;
 
+        // O algoritmo usa somas ponderadas para calcular os dígitos verificadores.
         let soma = 0;
         for (let i = 0; i < 9; i++) soma += parseInt(n[i]) * (10 - i);
         let resto = (soma * 10) % 11;
@@ -454,6 +541,7 @@ export default function ProcessosLista1({ api }) {
         return true;
     }
 
+    // Confere os 14 dígitos do CNPJ e recalcula os dois dígitos verificadores.
     function validarCnpj(cnpj) {
         const n = apenasNumeros(cnpj);
         if (n.length !== 14) return false;
@@ -485,6 +573,7 @@ export default function ProcessosLista1({ api }) {
         return true;
     }
 
+    // Calcula a idade pela data de nascimento, descontando um ano se o aniversário ainda não ocorreu.
     function calcularIdade(dataStr) {
         if (!dataStr) return null;
         const p = String(dataStr).replace(/[\/\-]/g, '/').split('/');
@@ -498,6 +587,7 @@ export default function ProcessosLista1({ api }) {
         return idade;
     }
 
+    // Busca na API os processos disponíveis para o usuário e seus tipos de classificação.
     async function buscarProcessos() {
         const token = localStorage.getItem('token');
 
@@ -509,6 +599,7 @@ export default function ProcessosLista1({ api }) {
         setCarregando(true);
 
         try {
+            // Envia GET para obter a lista; os headers carregam a credencial de acesso.
             const resposta = await fetch(`${API_URL}/processos`, {
                 method: 'GET',
                 credentials: 'include',
@@ -533,6 +624,7 @@ export default function ProcessosLista1({ api }) {
                 return;
             }
 
+            // Se a API não enviar uma lista, usa [] para manter a tela em um estado previsível.
             setProcessos(dados.processos || []);
             setTiposProcessos(dados.tipos_processos || []);
 
@@ -544,10 +636,13 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Executa a busca inicial dos processos uma única vez após a montagem da tela.
+    // O array vazio de dependências ([]) evita repetir o efeito a cada renderização.
     useEffect(() => {
         buscarProcessos();
     }, []);
 
+    // Busca os dados da outra parte do processo e prepara uma cópia para edição.
     async function buscarParteContraria(idProcesso) {
         const token = localStorage.getItem('token');
 
@@ -569,6 +664,7 @@ export default function ProcessosLista1({ api }) {
             const resultado = await response.json();
             const dados = resultado.dados || {};
 
+            // O operador spread (...dados) copia os campos recebidos; os seguintes são sobrescritos com valores formatados.
             const normalizado = {
                 ...dados,
                 cpf: dados.cpf ? formatarCpf(dados.cpf) : '',
@@ -586,6 +682,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Recupera o histórico de atualizações de um processo.
     async function buscarAtualizacoes(idProcesso) {
         const token = localStorage.getItem('token');
 
@@ -630,6 +727,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Consulta os modelos de Word disponíveis para gerar documentos no processo aberto.
     async function buscarModelosDocumento(
         idProcesso
     ) {
@@ -755,6 +853,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Verifica se o processo possui configuração de honorários de êxito.
     async function verificarTemExito(idProcesso) {
         const token = localStorage.getItem('token');
 
@@ -784,6 +883,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Recupera a configuração financeira já registrada e preenche o formulário.
     async function buscarDadosExito(idProcesso) {
         const token = localStorage.getItem('token');
 
@@ -843,6 +943,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Cria ou altera uma atualização sem passar pelo formulário de honorários.
     async function salvarAtualizacaoDireta(processoConcluido) {
         const token = localStorage.getItem('token');
 
@@ -852,7 +953,9 @@ export default function ProcessosLista1({ api }) {
         }
 
         const urlBase = `${API_URL}/processo/${processoSelecionado.id}/atualizacoes`;
+        // O operador ternário escolhe a rota de edição (com ID) ou a rota de cadastro.
         const url = editandoAtualizacao ? `${urlBase}/${editandoAtualizacao.id}` : urlBase;
+        // PUT atualiza um registro existente; POST cria um novo registro.
         const method = editandoAtualizacao ? 'PUT' : 'POST';
 
         try {
@@ -863,6 +966,7 @@ export default function ProcessosLista1({ api }) {
                     'Content-Type': 'application/json',
                     'X-Access-Token': token
                 },
+                // JSON.stringify converte o objeto JavaScript para o formato JSON esperado pela API.
                 body: JSON.stringify({
                     titulo: titulo.trim(),
                     descricao: descricao.trim() ? descricao.trim() : null,
@@ -914,6 +1018,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Valida os dados da atualização e decide se a conclusão exige a etapa de êxito.
     async function salvarAtualizacao() {
         if (!processoSelecionado) {
             return;
@@ -931,6 +1036,7 @@ export default function ProcessosLista1({ api }) {
 
         if (data) {
             const textoData = String(data).trim();
+            // A expressão regular exige o desenho DD/MM/AAAA antes da verificação da data real.
             const regexData = /^\d{2}\/\d{2}\/\d{4}$/;
 
             if (!regexData.test(textoData)) {
@@ -939,6 +1045,7 @@ export default function ProcessosLista1({ api }) {
             }
 
             const [dia, mes, ano] = textoData.split('/').map(Number);
+            // No JavaScript, os meses do objeto Date são numerados de 0 a 11, por isso subtraímos 1.
             const dataObjeto = new Date(ano, mes - 1, dia);
             const dataValida = (
                 dataObjeto.getFullYear() === ano &&
@@ -986,12 +1093,14 @@ export default function ProcessosLista1({ api }) {
 
         setVerificandoExito(true);
 
+        // Se houver êxito configurado, a conclusão precisa passar pelo formulário financeiro.
         const temExito = await verificarTemExito(processoSelecionado.id);
 
         setVerificandoExito(false);
         setTemExitoProcesso(temExito);
 
         if (temExito) {
+            // Guarda a atualização ainda não enviada para concluí-la junto com o pagamento de êxito.
             setAtualizacaoPendente({
                 id_atualizacao: editandoAtualizacao ? editandoAtualizacao.id : null,
                 titulo: titulo.trim(),
@@ -1019,6 +1128,7 @@ export default function ProcessosLista1({ api }) {
         await salvarAtualizacaoDireta(1);
     }
 
+    // Solicita a exclusão de uma atualização e recarrega o histórico.
     async function excluirAtualizacao(idAtualizacao) {
         if (!processoSelecionado) {
             return;
@@ -1069,6 +1179,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Valida os honorários e envia a conclusão do processo junto dos dados financeiros.
     async function salvarExito() {
         if (!processoExito || !atualizacaoPendente) {
             return;
@@ -1081,6 +1192,7 @@ export default function ProcessosLista1({ api }) {
             return;
         }
 
+        // Acumula os nomes de campos obrigatórios não preenchidos e mostra um aviso único.
         const camposFaltando = [];
 
         if (!dadosExito.tipo_pagamento) {
@@ -1158,6 +1270,7 @@ export default function ProcessosLista1({ api }) {
         setSalvandoExito(true);
 
         try {
+            // payload é o objeto com os dados a enviar à API.
             const payload = {
                 atualizacao: {
                     id_atualizacao: atualizacaoPendente.id_atualizacao || null,
@@ -1180,6 +1293,7 @@ export default function ProcessosLista1({ api }) {
                 }
             };
 
+            // A rota /concluir recebe a atualização e os honorários na mesma solicitação.
             const response = await fetch(`${API_URL}/processo/${processoExito.id}/concluir`, {
                 method: 'POST',
                 credentials: 'include',
@@ -1218,6 +1332,7 @@ export default function ProcessosLista1({ api }) {
             setConcluido('');
             setData('');
 
+            // Após o sucesso, esvazia o formulário financeiro para não reaproveitar dados antigos.
             setDadosExito({
                 tipo_pagamento: '',
                 valor_exito: '',
@@ -1248,6 +1363,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Fecha a etapa financeira e restaura o formulário de atualização pendente.
     function cancelarExito() {
         setModalExitoAberto(false);
         setProcessoExito(null);
@@ -1277,15 +1393,18 @@ export default function ProcessosLista1({ api }) {
         setAtualizacaoPendente(null);
     }
 
+    // Abre os detalhes do processo escolhido e carrega suas informações relacionadas.
     function abrirModal(processo) {
         limparTodasMensagens();
 
+        // Copia os dados do processo e prepara o número/data para exibição nos campos editáveis.
         const dadosNormalizados = {
             ...processo,
             numero_processo: formatarNumeroParaExibicao(processo.numero_processo || processo.numero),
             data_inicio: processo.data_inicio ? formatarDataEdit(processo.data_inicio) : ''
         };
 
+        // Registra qual linha foi escolhida e faz a interface abrir os detalhes correspondentes.
         setProcessoSelecionado(processo);
         setDadosEditados(dadosNormalizados);
         setDadosParteContraria({});
@@ -1301,6 +1420,7 @@ export default function ProcessosLista1({ api }) {
         verificarTemExito(processo.id).then(setTemExitoProcesso);
     }
 
+    // Fecha os detalhes e restaura os estados para a próxima abertura começar limpa.
     function fecharModal() {
         setModalAberto(false);
         setProcessoSelecionado(null);
@@ -1345,7 +1465,9 @@ export default function ProcessosLista1({ api }) {
         setGerandoDocumento(false);
     }
 
+    // Atualiza os campos do processo e aplica máscaras apenas quando necessário.
     function handleEditChange(e) {
+        // Desestrutura o evento do input para identificar qual campo mudou e seu novo valor.
         const { name, value } = e.target;
 
         let valorFormatado = value;
@@ -1364,15 +1486,18 @@ export default function ProcessosLista1({ api }) {
 
         setDadosEditados(prev => ({
             ...prev,
+            // A chave entre colchetes atualiza dinamicamente apenas o campo cujo nome veio do input.
             [name]: valorFormatado
         }));
     }
 
+    // Trata as entradas da parte contrária de acordo com o campo alterado.
     function handleParteChange(e) {
         const { name, value } = e.target;
 
         let v = value;
 
+        // Aplica regras diferentes conforme o tipo de campo: CPF, CNPJ, CEP, telefone etc.
         switch (name) {
             case 'nome':
             case 'razao_social':
@@ -1422,12 +1547,14 @@ export default function ProcessosLista1({ api }) {
         setDadosParteContraria(prev => ({ ...prev, [name]: v }));
     }
 
+    // Consulta o ViaCEP e preenche automaticamente os dados de endereço disponíveis.
     async function buscarCepParte(cepInformado) {
         const n = apenasNumeros(cepInformado);
         if (n.length !== 8) return;
 
         setBuscandoCepParte(true);
         try {
+            // Requisição ao serviço ViaCEP: retorna logradouro, bairro, cidade e UF quando disponíveis.
             const r = await fetch(`https://viacep.com.br/ws/${n}/json/`);
             if (!r.ok) throw new Error('Falha na consulta');
             const d = await r.json();
@@ -1450,6 +1577,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Valida as alterações e envia os dados do processo e da parte contrária à API.
     async function handleSalvarEdicao() {
         if (!processoSelecionado) return;
 
@@ -1517,6 +1645,7 @@ export default function ProcessosLista1({ api }) {
             }
         }
 
+        // Valida a parte contrária como pessoa física (CPF) ou jurídica (CNPJ), mas não ambos.
         const cpfParte = apenasNumeros(dadosParteContraria.cpf);
         const cnpjParte = apenasNumeros(dadosParteContraria.cnpj);
 
@@ -1575,6 +1704,7 @@ export default function ProcessosLista1({ api }) {
         }
 
         try {
+            // Primeiro prepara e envia os dados do processo; depois envia a parte contrária separadamente.
             const payload = {
                 numero_processo: dadosEditados.numero_processo || '',
                 tipo_processo: dadosEditados.tipo_processo,
@@ -1635,6 +1765,7 @@ export default function ProcessosLista1({ api }) {
                 email: dadosParteContraria.email
             };
 
+            // Segunda requisição: atualiza a parte contrária apenas depois do sucesso da primeira.
             const responseParte = await fetch(`${API_URL}/processo/${processoSelecionado.id}/parte_contraria`, {
                 method: 'PUT',
                 credentials: 'include',
@@ -1660,6 +1791,7 @@ export default function ProcessosLista1({ api }) {
 
             mostrarMensagemModal('Informações atualizadas com sucesso!', 'sucesso');
 
+            // Usa o estado anterior (prev) e map para atualizar somente a linha correspondente.
             setProcessos(prev =>
                 prev.map(p =>
                     p.id === processoSelecionado.id
@@ -1679,6 +1811,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Sai do modo edição e recupera os dados anteriores.
     function cancelarEdicao() {
         setEditando(false);
 
@@ -1693,16 +1826,19 @@ export default function ProcessosLista1({ api }) {
         setTipoMensagemModal('');
     }
 
+    // Abre a confirmação de inativação para um processo específico.
     function abrirModalInativar(processo) {
         setProcessoInativar(processo);
         setModalInativarAberto(true);
     }
 
+    // Fecha a confirmação sem executar mudanças.
     function fecharModalInativar() {
         setModalInativarAberto(false);
         setProcessoInativar(null);
     }
 
+    // Solicita que a API marque o processo como inativo.
     async function handleInativar() {
         if (!processoInativar) return;
 
@@ -1750,6 +1886,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Solicita que a API reative o processo.
     async function handleAtivar(processo) {
         const token = localStorage.getItem('token');
         if (!token) { deslogar(); return; }
@@ -1790,10 +1927,12 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Abre a página de cadastro de um novo processo.
     function irParaCadastroProcesso() {
         navigate('/cadastro_processo');
     }
 
+    // Prepara um formulário vazio para registrar um novo acontecimento no processo.
     function abrirNovaAtualizacao() {
         setMensagemModal('');
         setTipoMensagemModal('');
@@ -1809,6 +1948,7 @@ export default function ProcessosLista1({ api }) {
         setNovaAtualizacao(true);
     }
 
+    // Preenche o formulário com uma atualização existente para permitir sua edição.
     function editarAtualizacao(atualizacao) {
         setMensagemModal('');
         setTipoMensagemModal('');
@@ -1824,6 +1964,7 @@ export default function ProcessosLista1({ api }) {
         setNovaAtualizacao(true);
     }
 
+    // Fecha o formulário e limpa o estado de edição.
     function fecharNovaAtualizacao() {
         setNovaAtualizacao(false);
         setEditandoAtualizacao(null);
@@ -1832,6 +1973,7 @@ export default function ProcessosLista1({ api }) {
         setTipoMensagemAtualizacao('');
     }
 
+    // Exibe a aba de documentos e busca os modelos disponíveis para o processo.
     function abrirAbaDocumentos() {
 
         setOpcao(
@@ -1849,6 +1991,7 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // Solicita à API um documento Word preenchido com os dados do processo e baixa o resultado.
     async function gerarDocumentoModelo() {
 
         if (!processoSelecionado) {
@@ -1962,6 +2105,7 @@ export default function ProcessosLista1({ api }) {
             }
 
 
+            // Recebe o Word gerado como dados binários para disponibilizar o download.
             const arquivo =
                 await response.blob();
 
@@ -1971,7 +2115,8 @@ export default function ProcessosLista1({ api }) {
                     arquivo
                 );
 
-
+            // 1. Busca o objeto do modelo selecionado dentro da lista de modelos cadastrados
+            // find procura na lista o modelo cujo ID corresponde ao selecionado.
             const modelo =
                 modelosDocumento.find(
 
@@ -1988,7 +2133,7 @@ export default function ProcessosLista1({ api }) {
                 ||
                 'documento';
 
-
+            // 2. Define o identificador do processo buscando a propriedade disponível mais relevante
             const numeroProcesso =
                 processoSelecionado.numero_processo
                 ||
@@ -1996,7 +2141,9 @@ export default function ProcessosLista1({ api }) {
                 ||
                 processoSelecionado.id;
 
-
+            // .normalize('NFD') junto com o .replace(/[\u0300-\u036f]/g, '') remove todos os acentos
+            // (ex: "Procuração" vira "Procuracao").
+            // O segundo .replace garante que espaços ou caracteres inválidos virem '_'.
             const nomeSeguroModelo =
                 String(
                     nomeModelo
@@ -2021,7 +2168,8 @@ export default function ProcessosLista1({ api }) {
                         '_'
                     );
 
-
+            // 3. Cria o link temporário no DOM e dispara o download (ex: 'Contrato_Honorarios_0001234_56_2026.docx')
+            // O link HTML temporário aponta para o arquivo criado em memória e aciona o download.
             const link =
                 document.createElement(
                     'a'
@@ -2047,6 +2195,7 @@ export default function ProcessosLista1({ api }) {
             link.remove();
 
 
+            // 4. Libera a memória RAM do navegador deletando a URL do Blob
             window.URL.revokeObjectURL(
                 url
             );
@@ -2080,14 +2229,17 @@ export default function ProcessosLista1({ api }) {
         }
     }
 
+    // filter mantém só os processos que atendem simultaneamente aos três filtros da tela.
     const processosFiltrados = processos.filter(processo => {
         const numeroMatch = (processo.numero || '').toLowerCase().includes(filtroNumero.toLowerCase());
         const statusMatch = filtroStatus === 'todos' || processo.status === filtroStatus;
         const tipoMatch = filtroTipo === 'todos' || normalizarTexto(processo.tipo_processo) === normalizarTexto(filtroTipo);
 
+        // O operador && exige que número, status e tipo satisfaçam os critérios.
         return numeroMatch && statusMatch && tipoMatch;
     });
 
+    // Altera o texto do botão conforme a ação: verificar, avançar, atualizar ou salvar.
     const textoBotaoAtualizacao = () => {
         if (verificandoExito) {
             return 'Verificando...';
@@ -2104,18 +2256,23 @@ export default function ProcessosLista1({ api }) {
         return 'Salvar';
     };
 
+    // Converte a presença de CNPJ em true/false para escolher o formulário de pessoa jurídica ou física.
     const ehPartePJ = !!(dadosParteContraria.cnpj && dadosParteContraria.cnpj.length > 0);
 
     return (
         <div className={css.paginaCompleta}>
+            {/* Cabeçalho comum às páginas do sistema; recebe o endereço da API. */}
             <Header api={API_URL} />
 
+            {/* Organiza a página em menu lateral e área principal. */}
             <div className={css.layoutDashboard}>
+                {/* A classe do menu muda quando ele é recolhido; isso ajusta o layout. */}
                 <div className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ''}`}>
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
 
                 <div className={css.conteudoPrincipal}>
+                    {/* Título da página e atalho para cadastrar um novo processo. */}
                     <div className={css.topoSaudacao}>
                         <h1 className={css.tituloPagina}>Meus Processos</h1>
 
@@ -2129,12 +2286,14 @@ export default function ProcessosLista1({ api }) {
                         </button>
                     </div>
 
+                    {/* Mostra avisos gerais apenas quando há mensagem e o modal de detalhes está fechado. */}
                     {mensagem && !modalAberto && (
                         <div className={`${css.mensagemContainer} ${tipoMensagem === 'sucesso' ? css.sucesso : css.erro}`}>
                             {mensagem}
                         </div>
                     )}
 
+                    {/* Filtros controlados: value vem do estado e onChange grava o que a pessoa escolhe. */}
                     <div className={css.areaFiltros}>
                         <div className={css.buscaContainer}>
                             <input
@@ -2190,6 +2349,7 @@ export default function ProcessosLista1({ api }) {
                         </div>
                     </div>
 
+                    {/* Mostra carregamento, lista vazia, filtro sem resultados ou a tabela completa. */}
                     <div className={css.tabelaContainer}>
                         {carregando ? (
                             <p>Carregando processos...</p>
@@ -2211,6 +2371,7 @@ export default function ProcessosLista1({ api }) {
                                 </thead>
 
                                 <tbody>
+                                {/* map cria uma linha para cada processo; key ajuda o React a identificar cada item. */}
                                 {processosFiltrados.map(processo => (
                                     <tr key={processo.id}>
                                         <td>
@@ -2254,6 +2415,7 @@ export default function ProcessosLista1({ api }) {
                                                 Ver
                                             </button>
 
+                                            {/* Operador ternário: oferece Ativar para inativos e Inativar para os demais. */}
                                             {processo.status === 'inativo' ? (
                                                 <button
                                                     className={css.botaoAtivar}
@@ -2281,6 +2443,7 @@ export default function ProcessosLista1({ api }) {
                 </div>
             </div>
 
+            {/* Modal de detalhes só aparece quando existe um processo selecionado e a abertura foi solicitada. */}
             {modalAberto && processoSelecionado && (
                 <div
                     className={css.modalOverlay}
@@ -2291,6 +2454,7 @@ export default function ProcessosLista1({ api }) {
                     }}
                 >
                     <div className={css.modalContainer}>
+                        {/* Cabeçalho do modal com identificação do processo e botão para fechar. */}
                         <div className={css.modalHeader}>
                             <h2 className={css.modalTitulo}>
                                 Processo {processoSelecionado.numero}
@@ -2308,6 +2472,7 @@ export default function ProcessosLista1({ api }) {
                                 </div>
                             )}
 
+                            {/* Abas internas; setOpcao escolhe qual conteúdo será renderizado abaixo. */}
                             <div className={css.secaoTitulo}>
 
                                 <a
@@ -2366,6 +2531,7 @@ export default function ProcessosLista1({ api }) {
 
                             </div>
 
+                            {/* Aba Informações: permite consultar e, no modo de edição, alterar dados do processo. */}
                             {opcao === "info" && (
                                 <form className={css.formulario} onSubmit={(e) => e.preventDefault()}>
                                     <div className={css.documentosCabecalho}>
@@ -2376,6 +2542,7 @@ export default function ProcessosLista1({ api }) {
                                         <div className={css.campoMetade}>
                                             <label className={css.label}>Nº do processo</label>
 
+                                            {/* Em modo de edição exibe um campo editável; caso contrário, um campo somente de leitura. */}
                                             {editando ? (
                                                 <input
                                                     type="text"
@@ -2594,8 +2761,10 @@ export default function ProcessosLista1({ api }) {
                                         </div>
                                     </div>
 
+                                    {/* Dados da parte contrária vinculada ao processo. */}
                                     <h3 className={css.subtituloSecao}>Parte Contrária</h3>
 
+                                    {/* Com CNPJ usa o formulário de pessoa jurídica; sem CNPJ exibe o de pessoa física. */}
                                     {ehPartePJ ? (
                                         <div className={css.linha}>
                                             <div className={css.campoMetade}>
@@ -3037,6 +3206,7 @@ export default function ProcessosLista1({ api }) {
                                         <p className={css.obsCampos}>* Campos editáveis</p>
                                     </div>
 
+                                    {/* Botões mudam conforme o modo: salvar/cancelar edição ou gerar PDF/editar. */}
                                     <div className={css.botaoContainer}>
                                         {editando ? (
                                             <>
@@ -3080,10 +3250,12 @@ export default function ProcessosLista1({ api }) {
                                 </form>
                             )}
 
+                            {/* Aba Atualizações: mostra acontecimentos registrados e ações para editar ou excluir. */}
                             {opcao === "atualizacao" && (
                                 <div>
                                     <div className={css.topoAtualizacao}>
                                         <div className={css.listaAtualizacao}>
+                                            {/* Escolhe entre aviso de carregamento, mensagem de lista vazia e histórico em cards. */}
                                             {carregandoAtualizacoes ? (
                                                 <p>Carregando atualizações...</p>
                                             ) : atualizacoes.length === 0 ? (
@@ -3148,6 +3320,7 @@ export default function ProcessosLista1({ api }) {
                                     </div>
                                 </div>
                             )}
+                            {/* Aba Documentos: permite escolher o tipo e o modelo Word para gerar um arquivo preenchido. */}
                             {opcao === "documentos" && (
 
                                 <div
@@ -3173,6 +3346,7 @@ export default function ProcessosLista1({ api }) {
                                     </div>
 
 
+                                    {/* Enquanto os modelos são buscados, mostra o estado de carregamento. */}
                                     {carregandoModelosDocumento ? (
 
                                         <div
@@ -3241,6 +3415,7 @@ export default function ProcessosLista1({ api }) {
                                                     </option>
 
 
+                                                    {/* Cria automaticamente as opções de tipo a partir dos modelos disponíveis. */}
                                                     {tiposDocumentoDisponiveis.map(
                                                         tipo => (
 
@@ -3316,6 +3491,7 @@ export default function ProcessosLista1({ api }) {
                                                     </option>
 
 
+                                                    {/* Após escolher um tipo, lista apenas os modelos pertencentes a ele. */}
                                                     {modelosDocumentoFiltrados.map(
                                                         modelo => (
 
@@ -3496,6 +3672,7 @@ export default function ProcessosLista1({ api }) {
                 </div>
             )}
 
+            {/* Segundo modal: formulário para adicionar ou editar uma atualização no histórico. */}
             {novaAtualizacao && (
                 <div className={css.modalOverlaySegunda}>
                     <div className={css.modalContainerSegunda}>
@@ -3601,6 +3778,7 @@ export default function ProcessosLista1({ api }) {
                 </div>
             )}
 
+            {/* Etapa de êxito: só aparece quando a conclusão precisa de dados financeiros. */}
             {modalExitoAberto && processoExito && (
                 <div className={css.modalOverlaySegunda}>
                     <div className={css.modalContainerSegunda}>
@@ -3654,6 +3832,7 @@ export default function ProcessosLista1({ api }) {
                                             </select>
                                         </div>
 
+                                        {/* Exibe quantidade e valor do salário quando essa modalidade é escolhida. */}
                                         {dadosExito.tipo_pagamento === 'SALARIOS_BENEFICIO' && (
                                             <>
                                                 <div className={css.campoMetade}>
@@ -3683,6 +3862,7 @@ export default function ProcessosLista1({ api }) {
                                             </>
                                         )}
 
+                                        {/* Exibe percentual e valor da causa para a modalidade percentual. */}
                                         {dadosExito.tipo_pagamento === 'PERCENTUAL' && (
                                             <>
                                                 <div className={css.campoMetade}>
@@ -3742,6 +3922,7 @@ export default function ProcessosLista1({ api }) {
                                             </select>
                                         </div>
 
+                                        {/* O campo de entrada aparece apenas se a distribuição inclui uma entrada. */}
                                         {dadosExito.distribuicao === 'ENTRADA_PARCELAS' && (
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>Valor da entrada *</label>
@@ -3756,6 +3937,7 @@ export default function ProcessosLista1({ api }) {
                                             </div>
                                         )}
 
+                                        {/* A quantidade de parcelas só é solicitada nas formas parceladas. */}
                                         {(dadosExito.distribuicao === 'PARCELADO' || dadosExito.distribuicao === 'ENTRADA_PARCELAS') && (
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>Nº de parcelas *</label>
@@ -3771,6 +3953,7 @@ export default function ProcessosLista1({ api }) {
                                             </div>
                                         )}
 
+                                        {/* Datas de vencimento e forma de pagamento não são solicitadas quando o valor é retido na fonte. */}
                                         {dadosExito.distribuicao !== 'RETIDO_FONTE' && (
                                             <>
                                                 <div className={css.campoMetade}>
@@ -3863,6 +4046,7 @@ export default function ProcessosLista1({ api }) {
                 </div>
             )}
 
+            {/* Modal de confirmação: impede inativação por um clique acidental na listagem. */}
             {modalInativarAberto && processoInativar && (
                 <div
                     className={css.modalOverlay}
@@ -3912,6 +4096,7 @@ export default function ProcessosLista1({ api }) {
                 </div>
             )}
 
+            {/* Rodapé compartilhado com o restante do sistema. */}
             <Footer />
         </div>
     );
