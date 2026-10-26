@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import css from "./DashboardFinanceiroEscritorio1.module.css";
 import Header from "../Header/Header.jsx";
@@ -19,7 +19,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://192.168.0.132:5000";
+    const API_URL = api || "http://10.92.11.21:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");
@@ -43,6 +43,8 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const [lancamentoParaBaixar, setLancamentoParaBaixar] = useState(null);
     const [baixandoId, setBaixandoId] = useState(null);
 
+    const mensagemRef = useRef(null);
+
     const [resumo, setResumo] = useState({
         receita_recebida: 0,
         receita_a_receber: 0,
@@ -57,6 +59,12 @@ function DashboardFinanceiroEscritorio1({ api }) {
         percentual_recebido: 0,
         situacao: "Atenção"
     });
+
+    useEffect(() => {
+        if (mensagem && mensagemRef.current) {
+            mensagemRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+        }
+    }, [mensagem]);
 
     useEffect(() => {
         function aplicarEstadoMenu(e) {
@@ -395,7 +403,10 @@ function DashboardFinanceiroEscritorio1({ api }) {
                     </div>
 
                     {mensagem && (
-                        <div className={`${css.mensagemContainer} ${tipoMensagem === 'sucesso' ? css.sucesso : css.erro}`}>
+                        <div
+                            ref={mensagemRef}
+                            className={`${css.mensagemContainer} ${tipoMensagem === 'sucesso' ? css.sucesso : css.erro}`}
+                        >
                             {mensagem}
                         </div>
                     )}
