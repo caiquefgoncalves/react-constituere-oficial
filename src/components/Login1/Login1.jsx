@@ -12,7 +12,7 @@ export default function Login1({ api }) {
 
     const [carregando, setCarregando] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.132:5000';
+    const API_URL = api || 'http://10.92.11.21:5000';
 
     const [mensagem, setMensagem] = useState(() => {
         return localStorage.getItem("erroMensagem") || "";
@@ -92,6 +92,11 @@ export default function Login1({ api }) {
                     else if (dados.tipo === 2) navigate('/dashboard_cliente');
                     else navigate('/');
                 }, 2000);
+
+            } else if (resposta.status === 403 && dados.bloqueado_web) {
+                setMensagem(dados.error || 'Acesso pelo site desativado. Utilize o aplicativo.');
+                setTipoMensagem('erro');
+                setCarregando(false);
             } else {
                 setMensagem(dados.error || 'Erro ao fazer login. Verifique CPF e senha.');
                 setTipoMensagem('erro');
