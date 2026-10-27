@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header.jsx';
 import Footer from '../Footer/Footer.jsx';
@@ -8,440 +8,55 @@ import css from './LogsAuditoria1.module.css';
 function separarDataHora(data) {
     if (!data) return { data: '-', hora: '-' };
     const valor = new Date(data);
+    if (Number.isNaN(valor.getTime())) return { data: '-', hora: '-' };
     return {
         data: valor.toLocaleDateString('pt-BR'),
         hora: valor.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
     };
 }
 
-const CAMPOS_SIGILOSOS = ['senha', 'confirmar_senha', 'token', 'authorization', 'acess_token'];
-
-const rotulos = {
-    id_cliente: 'Cliente',
-    id_advogado: 'Advogado',
-    id_advogado_2: 'Advogado Parceiro',
-    id_escritorio: 'Escritório',
-    assunto: 'Assunto',
-    cliente: 'Cliente',
-    data: 'Data',
-    horario: 'Horário',
-    duracao: 'Duração',
-    motivo: 'Motivo',
-    status: 'Status',
-    processo: 'Processo',
-    parte_contraria: 'Parte Contrária',
-    honorarios: 'Honorários',
-    numero_processo: 'Número do Processo',
-    tipo_processo: 'Tipo de Processo',
-    area: 'Área',
-    comarca: 'Comarca',
-    vara: 'Vara',
-    instancia: 'Instância',
-    data_inicio: 'Data de Início',
-    nome: 'Nome',
-    email: 'E-mail',
-    telefone: 'Telefone',
-    valor: 'Valor',
-    forma_pagamento: 'Forma de Pagamento',
-    vencimento: 'Vencimento',
-    dados: 'Dados Enviados',
-    cpf: 'CPF',
-    cnpj: 'CNPJ',
-    rg: 'RG',
-    orgao_expedidor: 'Órgão Expedidor',
-    nacionalidade: 'Nacionalidade',
-    estado_civil: 'Estado Civil',
-    data_nascimento: 'Data de Nascimento',
-    sexo: 'Sexo',
-    carteira_trabalho: 'Carteira de Trabalho',
-    serie_carteira: 'Série da Carteira',
-    pis: 'PIS',
-    titulo_eleitor: 'Título de Eleitor',
-    zona: 'Zona',
-    secao: 'Seção',
-    endereco: 'Endereço',
-    numero: 'Número',
-    complemento: 'Complemento',
-    bairro: 'Bairro',
-    cidade: 'Cidade',
-    estado: 'Estado',
-    cep: 'CEP',
-    descricao: 'Descrição',
-    observacoes: 'Observações',
-    observacao: 'Observação',
-    categoria: 'Categoria',
-    tipo: 'Tipo',
-    prioridade: 'Prioridade',
-    titulo: 'Título',
-    conteudo: 'Conteúdo',
-    mensagem: 'Mensagem'
-};
-
-const valoresCorrigidos = {
-    'A VISTA': 'À vista',
-    'AVISTA': 'À vista',
-    'A_VISTA': 'À vista',
-    'PIX': 'Pix',
-    'CARTAO': 'Cartão',
-    'CARTAO CREDITO': 'Cartão de Crédito',
-    'CARTAO DEBITO': 'Cartão de Débito',
-    'BOLETO': 'Boleto',
-    'DINHEIRO': 'Dinheiro',
-    'TRANSFERENCIA': 'Transferência',
-    'TED': 'TED',
-    'DOC': 'DOC',
-    'CHEQUE': 'Cheque',
-    'A PAGAR': 'A pagar',
-    'A RECEBER': 'A receber',
-    'PAGA': 'Paga',
-    'PAGO': 'Pago',
-    'PENDENTE': 'Pendente',
-    'ATRASADA': 'Atrasada',
-    'ATRASADO': 'Atrasado',
-    'CANCELADA': 'Cancelada',
-    'CANCELADO': 'Cancelado',
-    'FISICA': 'Física',
-    'JURIDICA': 'Jurídica',
-    'MASCULINO': 'Masculino',
-    'FEMININO': 'Feminino',
-    'OUTRO': 'Outro',
-    'SOLTEIRO': 'Solteiro',
-    'CASADO': 'Casado',
-    'DIVORCIADO': 'Divorciado',
-    'VIUVO': 'Viúvo',
-    'PROPRIETARIO': 'Proprietário',
-    'ADVOGADO': 'Advogado',
-    'SECRETARIO': 'Secretário',
-    'ESTAGIARIO': 'Estagiário',
-    'ATIVO': 'Ativo',
-    'INATIVO': 'Inativo'
-};
-
-const titulosSecao = {
-    dados: 'Dados Enviados',
-    processo: 'Processo',
-    parte_contraria: 'Parte Contrária',
-    cliente: 'Cliente',
-    agendamento: 'Agendamento',
-    advogado: 'Advogado',
-    honorarios: 'Honorários'
-};
-
-function tituloAmigavel(chave) {
-    if (rotulos[chave]) return rotulos[chave];
-    return String(chave)
-        .replaceAll('_', ' ')
-        .replace(/\b\w/g, letra => letra.toUpperCase());
-}
-
-function corrigirValorTexto(texto) {
-    if (!texto) return texto;
-    const chave = String(texto).trim().toUpperCase();
-    if (valoresCorrigidos[chave]) return valoresCorrigidos[chave];
-    return texto;
-}
-
-function removerDadosInternos(valor) {
-    if (Array.isArray(valor)) return valor.map(removerDadosInternos);
-    if (!valor || typeof valor !== 'object') return valor;
-
-    return Object.fromEntries(
-        Object.entries(valor)
-            .filter(([chave]) => {
-                const normalizada = String(chave).toLowerCase();
-                return !(
-                    normalizada === 'id'
-                    || normalizada.startsWith('id_')
-                    || ['id_evento', 'metodo', 'rota', 'parametros_rota'].includes(normalizada)
-                );
-            })
-            .map(([chave, item]) => [chave, removerDadosInternos(item)])
-    );
-}
-
-function dadosLegiveis(detalhes) {
-    try {
-        const conteudo = JSON.parse(detalhes || '{}');
-        const dados = conteudo.dados && typeof conteudo.dados === 'object'
-            ? conteudo.dados
-            : conteudo;
-        return removerDadosInternos(dados);
-    } catch {
-        return { observacao: detalhes || 'Nenhuma informação adicional.' };
-    }
-}
-
-function apenasDigitos(valor) {
-    return String(valor || '').replace(/\D/g, '');
-}
-
-function formatarCpf(valor) {
-    const d = apenasDigitos(valor);
-    if (d.length !== 11) return String(valor);
-    return `${d.slice(0, 3)}.${d.slice(3, 6)}.${d.slice(6, 9)}-${d.slice(9)}`;
-}
-
-function formatarCnpj(valor) {
-    const d = apenasDigitos(valor);
-    if (d.length !== 14) return String(valor);
-    return `${d.slice(0, 2)}.${d.slice(2, 5)}.${d.slice(5, 8)}/${d.slice(8, 12)}-${d.slice(12)}`;
-}
-
-function formatarCep(valor) {
-    const d = apenasDigitos(valor);
-    if (d.length !== 8) return String(valor);
-    return `${d.slice(0, 5)}-${d.slice(5)}`;
-}
-
-function formatarTelefone(valor) {
-    const d = apenasDigitos(valor);
-    if (d.length === 11) return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-    if (d.length === 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-    return String(valor);
-}
-
-function formatarMoeda(valor) {
-    const texto = String(valor).trim();
-    if (texto.startsWith('R$')) return texto;
-    const numero = typeof valor === 'number'
-        ? valor
-        : Number(texto.replace(/\./g, '').replace(',', '.'));
-    if (isNaN(numero)) return texto;
-    return numero.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-function formatarData(valor) {
-    if (!valor) return '-';
-    const texto = String(valor).trim();
-
-    const isoMatch = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
-    if (isoMatch) return `${isoMatch[3]}/${isoMatch[2]}/${isoMatch[1]}`;
-
-    const brMatch = texto.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
-    if (brMatch) return texto;
-
-    const d = apenasDigitos(texto);
-    if (d.length === 8) {
-        return `${d.slice(0, 2)}/${d.slice(2, 4)}/${d.slice(4)}`;
-    }
-
-    return texto;
-}
-
-function ehCampoSigiloso(campo) {
-    if (!campo) return false;
-    return CAMPOS_SIGILOSOS.includes(String(campo).toLowerCase());
-}
-
-function valorLegivel(valor, campo = '') {
-    if (valor === null || valor === undefined || valor === '') return '-';
-    if (valor === true) return 'Sim';
-    if (valor === false) return 'Não';
-
-    if (ehCampoSigiloso(campo)) return '••••••••';
-
-    const chave = String(campo).toLowerCase();
-    const texto = String(valor);
-
-    if (chave === 'ativo') {
-        if (texto === '1' || texto.toLowerCase() === 'true') return 'Ativado';
-        if (texto === '0' || texto.toLowerCase() === 'false') return 'Desativado';
-    }
-
-    if (chave.includes('cpf')) return formatarCpf(texto);
-    if (chave.includes('cnpj')) return formatarCnpj(texto);
-    if (chave.includes('cep')) return formatarCep(texto);
-    if (chave.includes('telefone') || chave.includes('celular')) return formatarTelefone(texto);
-    if (chave.includes('valor') || chave.includes('honorario') || chave.includes('salario')) return formatarMoeda(texto);
-    if (chave.includes('data')) return formatarData(texto);
-
-    return corrigirValorTexto(texto);
-}
-
-function ehObjeto(valor) {
-    return valor && typeof valor === 'object' && !Array.isArray(valor);
-}
-
-function SecaoDetalhes({ titulo, dados, aninhado = false }) {
-    if (!ehObjeto(dados)) return null;
-
-    const entradas = Object.entries(dados).filter(([, v]) => v !== null && v !== undefined && v !== '');
-
-    if (entradas.length === 0) return null;
-
-    return (
-        <section className={aninhado ? css.subSecaoDetalhes : css.secaoDetalhes}>
-            <h3 className={css.tituloSecao}>{titulo}:</h3>
-            <div className={css.cardDetalhe}>
-                {entradas.map(([chave, valor]) => (
-                    ehObjeto(valor) ? (
-                        <SecaoDetalhes
-                            key={chave}
-                            titulo={tituloAmigavel(chave)}
-                            dados={valor}
-                            aninhado
-                        />
-                    ) : (
-                        <div className={css.linhaDetalhe} key={chave}>
-                            <strong>{tituloAmigavel(chave)}:</strong>
-                            <span>{valorLegivel(valor, chave)}</span>
-                        </div>
-                    )
-                ))}
-            </div>
-        </section>
-    );
-}
-
-function DetalhesDoLog({ dados }) {
-    if (!ehObjeto(dados) || Object.keys(dados).length === 0) {
-        return (
-            <p className={css.semInformacoes}>
-                Nenhuma informação adicional foi registrada nesta ação.
-            </p>
-        );
-    }
-
-    const secoesConhecidas = ['processo', 'parte_contraria', 'cliente', 'agendamento', 'advogado', 'honorarios'];
-    const chaves = Object.keys(dados);
-
-    const secoes = chaves.filter(chave => secoesConhecidas.includes(chave) && ehObjeto(dados[chave]));
-    const camposSimples = chaves.filter(chave => !secoesConhecidas.includes(chave) || !ehObjeto(dados[chave]));
-
-    const dadosSimples = {};
-    camposSimples.forEach(chave => { dadosSimples[chave] = dados[chave]; });
-
-    const semSecoes = secoes.length === 0;
-    const semSimples = Object.keys(dadosSimples).length === 0;
-
-    if (semSecoes && semSimples) {
-        return (
-            <p className={css.semInformacoes}>
-                Nenhuma informação adicional foi registrada nesta ação.
-            </p>
-        );
-    }
-
-    return (
-        <div className={css.detalhesWrapper}>
-            {secoes.map(chave => (
-                <SecaoDetalhes
-                    key={chave}
-                    titulo={titulosSecao[chave] || tituloAmigavel(chave)}
-                    dados={dados[chave]}
-                />
-            ))}
-
-            {!semSimples && (
-                <SecaoDetalhes
-                    titulo={semSecoes ? 'Informações' : 'Informações Gerais'}
-                    dados={dadosSimples}
-                />
-            )}
-        </div>
-    );
-}
-
-function temAlteracaoAntesDepois(log) {
-    if (!log) return false;
-    if (log.acao !== 'EDITAR' && log.acao !== 'ATIVAR' && log.acao !== 'INATIVAR') return false;
-    if (!log.campo || log.campo.toUpperCase() === 'REGISTRO') return false;
-    const campoNormalizado = String(log.campo).toLowerCase();
-    if (campoNormalizado === 'id' || campoNormalizado.startsWith('id_')) return false;
-    if (ehCampoSigiloso(log.campo)) return false;
-    if ((log.valor_antigo === null || log.valor_antigo === undefined || log.valor_antigo === '') &&
-        (log.valor_novo === null || log.valor_novo === undefined || log.valor_novo === '')) {
-        return false;
-    }
-    return true;
-}
-
-function BlocoAlteracao({ log }) {
-    if (Array.isArray(log?.alteracoes)) {
-        const alteracoes = log.alteracoes.filter(alteracao => temAlteracaoAntesDepois({ ...log, ...alteracao }));
-        return (
-            <section className={css.secaoAlteracao}>
-                {alteracoes.map(alteracao => (
-                    <div key={alteracao.campo}>
-                        <h3 className={css.tituloSecao}>Alteração em {tituloAmigavel(alteracao.campo)}:</h3>
-                        <div className={css.alteracaoGrid}>
-                            <div className={`${css.alteracaoCard} ${css.alteracaoAntes}`}>
-                                <span className={css.alteracaoLabel}>Antes</span>
-                                <p className={css.alteracaoValor}>{valorLegivel(alteracao.valor_antigo, alteracao.campo)}</p>
-                            </div>
-                            <div className={`${css.alteracaoCard} ${css.alteracaoDepois}`}>
-                                <span className={css.alteracaoLabel}>Depois</span>
-                                <p className={css.alteracaoValor}>{valorLegivel(alteracao.valor_novo, alteracao.campo)}</p>
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </section>
-        );
-    }
-
-    if (!temAlteracaoAntesDepois(log)) return null;
-
-    const campoLegivel = tituloAmigavel(log.campo);
-
-    return (
-        <section className={css.secaoAlteracao}>
-            <h3 className={css.tituloSecao}>Alteração em {campoLegivel}:</h3>
-            <div className={css.alteracaoGrid}>
-                <div className={`${css.alteracaoCard} ${css.alteracaoAntes}`}>
-                    <span className={css.alteracaoLabel}>Antes</span>
-                    <p className={css.alteracaoValor}>
-                        {valorLegivel(log.valor_antigo, log.campo)}
-                    </p>
-                </div>
-                <div className={`${css.alteracaoCard} ${css.alteracaoDepois}`}>
-                    <span className={css.alteracaoLabel}>Depois</span>
-                    <p className={css.alteracaoValor}>
-                        {valorLegivel(log.valor_novo, log.campo)}
-                    </p>
-                </div>
-            </div>
-        </section>
-    );
-}
-
 function classeAcao(acao) {
     const base = css.tagAcao;
-    if (acao === 'CRIAR') return `${base} ${css.tagCriar}`;
-    if (acao === 'EDITAR') return `${base} ${css.tagEditar}`;
-    if (acao === 'EXCLUIR') return `${base} ${css.tagExcluir}`;
-    if (acao === 'CONFIRMAR' || acao === 'CONCLUIR' || acao === 'ATIVAR' || acao === 'PROMOVER') return `${base} ${css.tagSucesso}`;
-    if (acao === 'RECUSAR' || acao === 'CANCELAR' || acao === 'INATIVAR' || acao === 'REBAIXAR') return `${base} ${css.tagAlerta}`;
+    if (acao === 'CRIAR' || acao === 'INSERT') return `${base} ${css.tagCriar}`;
+    if (acao === 'EDITAR' || acao === 'UPDATE') return `${base} ${css.tagEditar}`;
+    if (acao === 'EXCLUIR' || acao === 'DELETE') return `${base} ${css.tagExcluir}`;
     return base;
 }
 
-function extrairLista(resposta) {
-    if (Array.isArray(resposta)) return resposta;
-    if (resposta && Array.isArray(resposta.logs)) return resposta.logs;
-    return [];
+function traduzirAcao(acao) {
+    if (acao === 'INSERT' || acao === 'CRIAR') return 'cadastrou';
+    if (acao === 'UPDATE' || acao === 'EDITAR') return 'atualizou';
+    if (acao === 'DELETE' || acao === 'EXCLUIR') return 'excluiu';
+    return 'modificou';
+}
+
+function formatarCampo(campo) {
+    const termos = {
+        'EMAIL': 'E-mail', 'CPF': 'CPF', 'CNPJ': 'CNPJ', 'TELEFONE': 'Telefone',
+        'NOME': 'Nome', 'RG': 'RG', 'CEP': 'CEP', 'LOGRADOURO': 'Rua/Logradouro',
+        'NUMERO': 'Número', 'BAIRRO': 'Bairro', 'CIDADE': 'Cidade', 'ESTADO': 'Estado',
+        'SENHA': 'Senha', 'ATIVO': 'Status do Cadastro', 'TIPO': 'Tipo de Pessoa'
+    };
+    const campoLimpo = String(campo || '').toUpperCase();
+    if (termos[campoLimpo]) return termos[campoLimpo];
+    return String(campo || '').replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, letra => letra.toUpperCase());
 }
 
 export default function LogsAuditoria1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const API_URL = api || 'http://192.168.0.131:5000';
 
     const [logs, setLogs] = useState([]);
     const [carregando, setCarregando] = useState(true);
     const [erro, setErro] = useState('');
     const [detalheAberto, setDetalheAberto] = useState(null);
     const [menuColapsado, setMenuColapsado] = useState(false);
+    const [idEscritorio, setIdEscritorio] = useState(null);
 
     const [dataInicio, setDataInicio] = useState('');
     const [dataFim, setDataFim] = useState('');
-    const [advogado, setAdvogado] = useState('');
-
-    const [idEscritorio, setIdEscritorio] = useState(null);
-    const [escritorios, setEscritorios] = useState([]);
-    const [advogados, setAdvogados] = useState([]);
-
-    const [paginaLogs, setPaginaLogs] = useState(1);
-    const [totalPaginasLogs, setTotalPaginasLogs] = useState(1);
-    const [porPaginaLogs] = useState(6);
+    const [inicioAplicado, setInicioAplicado] = useState('');
+    const [fimAplicado, setFimAplicado] = useState('');
 
     useEffect(() => {
         const aplicarEstadoMenu = evento => setMenuColapsado(evento?.detail?.colapsado ?? false);
@@ -450,172 +65,107 @@ export default function LogsAuditoria1({ api }) {
         return () => window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
     }, []);
 
-    const carregarLogs = useCallback(async (idEsc, page, filtros) => {
+    const carregarLogs = useCallback(async (idEsc) => {
         const token = localStorage.getItem('token');
-        if (!token || !idEsc) return;
+        if (!token) { navigate('/login'); return; }
 
-        const params = new URLSearchParams();
-        params.set('limite', 500);
-        params.set('page', page);
-        params.set('por_pagina', porPaginaLogs);
-        if (filtros.dataInicio) params.set('data_inicio', filtros.dataInicio);
-        if (filtros.dataFim) params.set('data_fim', filtros.dataFim);
-        if (filtros.advogado) params.set('advogado', filtros.advogado);
+        setCarregando(true);
+        setErro('');
 
-        const resposta = await fetch(
-            `${API_URL}/escritorio/${idEsc}/logs?${params.toString()}`,
-            {
+        try {
+            const resposta = await fetch(`${API_URL}/escritorio/${idEsc}/logs`, {
                 credentials: 'include',
                 headers: { 'X-Access-Token': token }
-            }
-        );
-        const dados = await resposta.json();
-        if (!resposta.ok) throw new Error(dados.error || 'Não foi possível carregar o Log.');
+            });
+            const dados = await resposta.json();
 
-        const lista = extrairLista(dados);
+            if (!resposta.ok) throw new Error(dados.error || 'Não foi possível carregar os logs.');
+            setLogs(Array.isArray(dados.logs) ? dados.logs : []);
 
-        setLogs(lista);
-        setTotalPaginasLogs(dados?.total_paginas || 1);
-        setPaginaLogs(dados?.pagina || 1);
-
-        return lista;
-    }, [API_URL, porPaginaLogs]);
-
-    const carregarAdvogados = useCallback(async (idEsc) => {
-        const token = localStorage.getItem('token');
-        if (!token || !idEsc) return;
-
-        const params = new URLSearchParams();
-        params.set('limite', 500);
-        params.set('page', 1);
-        params.set('por_pagina', 500);
-
-        const resposta = await fetch(
-            `${API_URL}/escritorio/${idEsc}/logs?${params.toString()}`,
-            {
-                credentials: 'include',
-                headers: { 'X-Access-Token': token }
-            }
-        );
-        const dados = await resposta.json();
-        if (!resposta.ok) throw new Error(dados.error || 'Nao foi possivel carregar o Log.');
-
-        const nomes = [...new Set(extrairLista(dados).map(log => log.nome_usuario).filter(Boolean))]
-            .sort((a, b) => a.localeCompare(b, 'pt-BR'));
-        setAdvogados(nomes);
-    }, [API_URL]);
+        } catch (error) {
+            setErro(error.message || 'Erro ao consultar os registros.');
+            setLogs([]);
+        } finally {
+            setCarregando(false);
+        }
+    }, [API_URL, navigate]);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (!token) { navigate('/login'); return; }
 
-        async function carregar() {
+        async function carregarEscritorio() {
+            setCarregando(true);
+            setErro('');
             try {
-                const headers = { 'X-Access-Token': token };
-
-                const respostaEscritorios = await fetch(`${API_URL}/meus_escritorios`, {
+                const resposta = await fetch(`${API_URL}/meu_escritorio`, {
                     credentials: 'include',
-                    headers
+                    headers: { 'X-Access-Token': token }
                 });
-                const dadosEscritorios = await respostaEscritorios.json();
-                const escritoriosDisponiveis = (dadosEscritorios.escritorios || []).filter(item => (
-                    item.ativo && String(item.status || '').toUpperCase() === 'PROPRIETARIO'
-                ));
+                const dados = await resposta.json();
+                if (!resposta.ok) throw new Error(dados.error || 'Não foi possível consultar o escritório.');
 
-                if (!respostaEscritorios.ok || escritoriosDisponiveis.length === 0) {
-                    navigate('/dashboard_advogado');
-                    return;
-                }
+                const id = dados.escritorio?.id;
+                if (!id) throw new Error('Nenhum escritório foi encontrado.');
 
-                const escritorioSelecionado = escritoriosDisponiveis[0];
-                setEscritorios(escritoriosDisponiveis);
-                setIdEscritorio(escritorioSelecionado.id);
-
-                await carregarAdvogados(escritorioSelecionado.id);
-                await carregarLogs(escritorioSelecionado.id, 1, {
-                    dataInicio: '',
-                    dataFim: '',
-                    advogado: ''
-                });
-            } catch (e) {
-                setErro(e.message || 'Não foi possível carregar o Log.');
-            } finally {
+                setIdEscritorio(id);
+                await carregarLogs(id);
+            } catch (error) {
+                setErro(error.message || 'Erro ao carregar o escritório.');
                 setCarregando(false);
             }
         }
+        carregarEscritorio();
+    }, [API_URL, navigate, carregarLogs]);
 
-        carregar();
-    }, [API_URL, navigate, carregarLogs, carregarAdvogados]);
-
-    async function trocarEscritorio(evento) {
-        const novoIdEscritorio = Number(evento.target.value);
-        if (!novoIdEscritorio || novoIdEscritorio === idEscritorio) return;
-
-        setCarregando(true);
-        setErro('');
-        setDetalheAberto(null);
-        setIdEscritorio(novoIdEscritorio);
-        setDataInicio('');
-        setDataFim('');
-        setAdvogado('');
-        setPaginaLogs(1);
-
-        try {
-            await carregarAdvogados(novoIdEscritorio);
-            await carregarLogs(novoIdEscritorio, 1, {
-                dataInicio: '',
-                dataFim: '',
-                advogado: ''
-            });
-        } catch (e) {
-            setErro(e.message || 'Nao foi possivel carregar o Log.');
-        } finally {
-            setCarregando(false);
-        }
-    }
+    const logsFiltrados = useMemo(() => {
+        return logs.filter(log => {
+            if (!log.data_hora) return !inicioAplicado && !fimAplicado;
+            const dataLog = log.data_hora.split('T')[0];
+            if (inicioAplicado && dataLog < inicioAplicado) return false;
+            if (fimAplicado && dataLog > fimAplicado) return false;
+            return true;
+        });
+    }, [logs, inicioAplicado, fimAplicado]);
 
     function aplicarFiltros() {
-        if (!idEscritorio) return;
-        setPaginaLogs(1);
-        carregarLogs(idEscritorio, 1, { dataInicio, dataFim, advogado });
+        if (dataInicio && dataFim && dataInicio > dataFim) {
+            setErro('A data inicial não pode ser posterior à data final.');
+            return;
+        }
+        setErro('');
+        setInicioAplicado(dataInicio);
+        setFimAplicado(dataFim);
     }
 
     function limparFiltros() {
         setDataInicio('');
         setDataFim('');
-        setAdvogado('');
-        if (!idEscritorio) return;
-        setPaginaLogs(1);
-        carregarLogs(idEscritorio, 1, { dataInicio: '', dataFim: '', advogado: '' });
+        setInicioAplicado('');
+        setFimAplicado('');
+        setErro('');
     }
 
-    function irParaPagina(novaPagina) {
-        if (!idEscritorio) return;
-        if (novaPagina < 1 || novaPagina > totalPaginasLogs) return;
-        carregarLogs(idEscritorio, novaPagina, { dataInicio, dataFim, advogado });
+    function atualizarLogs() {
+        if (idEscritorio) carregarLogs(idEscritorio);
     }
 
     async function baixarPdf() {
         const token = localStorage.getItem('token');
         if (!token || !idEscritorio) return;
-        const parametros = new URLSearchParams();
-        if (dataInicio) parametros.set('data_inicio', dataInicio);
-        if (dataFim) parametros.set('data_fim', dataFim);
-        if (advogado) parametros.set('advogado', advogado);
 
         try {
-            const resposta = await fetch(
-                `${API_URL}/escritorio/${idEscritorio}/logs/pdf?${parametros}`,
-                {
-                    credentials: 'include',
-                    headers: { 'X-Access-Token': token }
-                }
-            );
+            const resposta = await fetch(`${API_URL}/escritorio/${idEscritorio}/logs/pdf`, {
+                credentials: 'include',
+                headers: { 'X-Access-Token': token }
+            });
+
             if (!resposta.ok) throw new Error('Não foi possível gerar o PDF.');
+
             const arquivo = URL.createObjectURL(await resposta.blob());
             const link = document.createElement('a');
             link.href = arquivo;
-            link.download = 'log-escritorio.pdf';
+            link.download = 'historico-alteracoes.pdf';
             link.click();
             URL.revokeObjectURL(arquivo);
         } catch (e) {
@@ -635,164 +185,73 @@ export default function LogsAuditoria1({ api }) {
                 <main className={css.conteudoPrincipal}>
                     <div className={css.topoPagina}>
                         <div>
-                            <h1 className={css.tituloPagina}>Log de Auditoria</h1>
-                            <p className={css.subtituloPagina}>
-                                Acompanhe todas as ações realizadas pelos advogados do escritório.
-                            </p>
+                            <h1 className={css.tituloPagina}>Histórico de Alterações</h1>
+                            <p className={css.subtituloPagina}>Acompanhe quem alterou os cadastros do escritório e o que foi modificado.</p>
                         </div>
                     </div>
 
-                    {carregando && <p className={css.estado}>Carregando log...</p>}
+                    <div className={css.areaFiltros}>
+                        <label>Data inicial<input type="date" value={dataInicio} onChange={e => setDataInicio(e.target.value)} /></label>
+                        <label>Data final<input type="date" min={dataInicio || undefined} value={dataFim} onChange={e => setDataFim(e.target.value)} /></label>
+
+                        <button className={css.botaoFiltrar} type="button" onClick={aplicarFiltros}>Filtrar</button>
+                        <button className={css.botaoLimpar} type="button" onClick={limparFiltros}>Limpar filtros</button>
+
+                        <button className={css.botaoFiltrar} type="button" onClick={atualizarLogs} disabled={carregando || !idEscritorio}>
+                            Atualizar
+                        </button>
+
+                        <button className={css.botaoLimpar} type="button" onClick={baixarPdf} disabled={carregando || !idEscritorio}>
+                            Baixar PDF
+                        </button>
+                    </div>
+
+                    {carregando && <p className={css.estado}>Carregando histórico...</p>}
                     {erro && <p className={`${css.estado} ${css.erro}`}>{erro}</p>}
 
-                    {!carregando && !erro && (
-                        <>
-                            <div className={css.areaFiltros}>
-                                {escritorios.length > 1 && (
-                                    <label>
-                                        Escritorio
-                                        <select value={idEscritorio || ''} onChange={trocarEscritorio}>
-                                            {escritorios.map(item => (
-                                                <option key={item.id} value={item.id}>
-                                                    {item.nome_fantasia || item.razao_social || `Escritorio ${item.id}`}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </label>
-                                )}
-                                <label>
-                                    Data inicial
-                                    <input
-                                        type="date"
-                                        value={dataInicio}
-                                        onChange={e => setDataInicio(e.target.value)}
-                                    />
-                                </label>
-                                <label>
-                                    Data final
-                                    <input
-                                        type="date"
-                                        min={dataInicio || undefined}
-                                        value={dataFim}
-                                        onChange={e => setDataFim(e.target.value)}
-                                    />
-                                </label>
-                                <label>
-                                    Advogado
-                                    <select value={advogado} onChange={e => setAdvogado(e.target.value)}>
-                                        <option value="">Todos os advogados</option>
-                                        {advogados.map(nome => (
-                                            <option key={nome} value={nome}>{nome}</option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <button className={css.botaoFiltrar} type="button" onClick={aplicarFiltros}>
-                                    Filtrar
-                                </button>
-                                <button className={css.botaoLimpar} type="button" onClick={limparFiltros}>
-                                    Limpar filtros
-                                </button>
-                                <button className={css.botaoPdf} type="button" onClick={baixarPdf}>
-                                    Baixar PDF
-                                </button>
-                            </div>
+                    {!carregando && !erro && logsFiltrados.length === 0 && (
+                        <p className={css.estado}>Nenhuma alteração encontrada para este período.</p>
+                    )}
 
-                            {logs.length === 0 ? (
-                                <p className={css.estado}>Nenhum registro encontrado com estes filtros.</p>
-                            ) : (
-                                <>
-                                    <div className={css.cardsArea}>
-                                        {logs.map(log => {
-                                            const { data, hora } = separarDataHora(log.data_hora);
-                                            const mostrarAlteracao = temAlteracaoAntesDepois(log);
-                                            return (
-                                                <article className={css.card} key={log.id_log}>
-                                                    <header className={css.cardHeader}>
-                                                        <div className={css.cardUsuario}>
-                                                            <strong>{log.nome_usuario || 'Sistema'}</strong>
-                                                            {log.cargo && (
-                                                                <span className={css.cargo}>{log.cargo}</span>
-                                                            )}
-                                                        </div>
-                                                        <span className={classeAcao(log.acao)}>{log.acao}</span>
-                                                    </header>
+                    {!carregando && !erro && logsFiltrados.length > 0 && (
+                        <div className={css.cardsArea}>
+                            {logsFiltrados.map(log => {
+                                const { data, hora } = separarDataHora(log.data_hora);
+                                return (
+                                    <article className={css.card} key={log.id_log}>
+                                        {log.alerta_banco && (
+                                            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '8px', borderRadius: '4px', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '8px' }}>
+                                                ALTERAÇÃO DIRETA NO BANCO DE DADOS
+                                            </div>
+                                        )}
 
-                                                    <p className={css.cardResumo}>
-                                                        {log.descricao_humana || 'Ação registrada no sistema.'}
-                                                    </p>
+                                        <header className={css.cardHeader}>
+                                            <div className={css.cardUsuario}>
+                                                <strong style={{ color: log.alerta_banco ? '#991b1b' : '#0f172a' }}>{log.nome_usuario}</strong>
+                                                <span className={css.cargo}>{log.cargo || log.maquina}</span>
+                                            </div>
+                                            <span className={classeAcao(log.acao)}>
+                                                {log.acao === 'INSERT' ? 'Novo Cadastro' : log.acao === 'DELETE' ? 'Exclusão' : 'Atualização'}
+                                            </span>
+                                        </header>
 
-                                                    {mostrarAlteracao && (
-                                                        <div className={css.cardAlteracao}>
-                                                            <div className={css.cardAlteracaoLinha}>
-                                                                <span className={css.cardAlteracaoLabel}>Antes</span>
-                                                                <span className={css.cardAlteracaoAntes}>
-                                                                    {valorLegivel(log.valor_antigo, log.campo)}
-                                                                </span>
-                                                            </div>
-                                                            <div className={css.cardAlteracaoLinha}>
-                                                                <span className={css.cardAlteracaoLabel}>Depois</span>
-                                                                <span className={css.cardAlteracaoDepois}>
-                                                                    {valorLegivel(log.valor_novo, log.campo)}
-                                                                </span>
-                                                            </div>
-                                                        </div>
-                                                    )}
+                                        <p className={css.cardResumo} style={{ fontSize: '0.95rem', color: '#334155', marginTop: '8px' }}>
+                                            {log.nome_usuario} <strong>{traduzirAcao(log.acao)}</strong> o cadastro de <strong>{log.nome_registro_afetado}</strong>.
+                                        </p>
 
-                                                    <div className={css.cardMeta}>
-                                                        <div>
-                                                            <span>Data</span>
-                                                            <strong>{data}</strong>
-                                                        </div>
-                                                        <div>
-                                                            <span>Hora</span>
-                                                            <strong>{hora}</strong>
-                                                        </div>
-                                                        <div>
-                                                            <span>Ação</span>
-                                                            <strong>{log.acao || '-'}</strong>
-                                                        </div>
-                                                    </div>
+                                        <div className={css.cardMeta}>
+                                            <div><span>Data</span><strong>{data}</strong></div>
+                                            <div><span>Hora</span><strong>{hora}</strong></div>
+                                            <div><span>Meio</span><strong>{log.alerta_banco ? 'Banco de Dados' : 'Sistema'}</strong></div>
+                                        </div>
 
-                                                    <footer className={css.cardFooter}>
-                                                        <button
-                                                            type="button"
-                                                            className={css.botaoDetalhes}
-                                                            onClick={() => setDetalheAberto(log)}
-                                                        >
-                                                            Ver detalhes
-                                                        </button>
-                                                    </footer>
-                                                </article>
-                                            );
-                                        })}
-                                    </div>
-
-                                    <div className={css.paginacao}>
-                                        <button
-                                            type="button"
-                                            className={css.botaoPagina}
-                                            onClick={() => irParaPagina(paginaLogs - 1)}
-                                            disabled={paginaLogs <= 1}
-                                        >
-                                            Anterior
-                                        </button>
-
-                                        <span className={css.infoPagina}>
-                                            Página {paginaLogs} de {totalPaginasLogs}
-                                        </span>
-
-                                        <button
-                                            type="button"
-                                            className={css.botaoPagina}
-                                            onClick={() => irParaPagina(paginaLogs + 1)}
-                                            disabled={paginaLogs >= totalPaginasLogs}
-                                        >
-                                            Próxima
-                                        </button>
-                                    </div>
-                                </>
-                            )}
-                        </>
+                                        <footer className={css.cardFooter}>
+                                            <button type="button" className={css.botaoDetalhes} onClick={() => setDetalheAberto(log)}>Ver detalhes</button>
+                                        </footer>
+                                    </article>
+                                );
+                            })}
+                        </div>
                     )}
                 </main>
             </div>
@@ -800,33 +259,73 @@ export default function LogsAuditoria1({ api }) {
             {detalheAberto && (
                 <div className={css.fundoModal} onMouseDown={() => setDetalheAberto(null)}>
                     <section className={css.modal} onMouseDown={e => e.stopPropagation()}>
-                        <button
-                            type="button"
-                            className={css.fechar}
-                            aria-label="Fechar detalhes"
-                            onClick={() => setDetalheAberto(null)}
-                        >
-                            &times;
-                        </button>
+                        <button type="button" className={css.fechar} onClick={() => setDetalheAberto(null)}>&times;</button>
 
                         <h2>Detalhes da Ação</h2>
 
-                        <p className={css.resumoTexto}>
-                            {detalheAberto.descricao_humana || 'Ação registrada no sistema.'}
+                        {detalheAberto.alerta_banco && (
+                            <div style={{ background: '#fee2e2', color: '#991b1b', padding: '12px', borderRadius: '6px', fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '15px' }}>
+                                Esta alteração não foi feita pelo sistema. Alguém modificou o banco de dados diretamente.
+                            </div>
+                        )}
+
+                        <p className={css.resumoTexto} style={{ marginBottom: '1.5rem', fontSize: '1rem', color: '#334155' }}>
+                            <strong>{detalheAberto.nome_usuario}</strong> {traduzirAcao(detalheAberto.acao)} o cadastro de <strong>{detalheAberto.nome_registro_afetado}</strong>.
                         </p>
 
                         <div className={css.resumoAcao}>
-                            <div><span>Nome</span><strong>{detalheAberto.nome_usuario || 'Sistema'}</strong></div>
-                            <div><span>Cargo</span><strong>{detalheAberto.cargo || '-'}</strong></div>
-                            <div><span>Data</span><strong>{separarDataHora(detalheAberto.data_hora).data}</strong></div>
-                            <div><span>Hora</span><strong>{separarDataHora(detalheAberto.data_hora).hora}</strong></div>
-                            <div><span>Origem/IP</span><strong>{detalheAberto.ip_origem || '-'}</strong></div>
+                            <div>
+                                <span>Quem realizou</span>
+                                <strong style={{ color: detalheAberto.alerta_banco ? '#991b1b' : '#0f172a' }}>{detalheAberto.nome_usuario}</strong>
+                            </div>
+                            <div>
+                                <span>Quem foi alterado</span>
+                                <strong>{detalheAberto.nome_registro_afetado}</strong>
+                            </div>
+                            <div>
+                                <span>Origem</span>
+                                <strong>{detalheAberto.alerta_banco ? 'Banco de dados' : 'Sistema'}</strong>
+                            </div>
+                            <div>
+                                <span>Data e Hora</span>
+                                <strong>{separarDataHora(detalheAberto.data_hora).data} às {separarDataHora(detalheAberto.data_hora).hora}</strong>
+                            </div>
+                            <div>
+                                <span>Origem / IP</span>
+                                <strong>{detalheAberto.ip_origem} ({detalheAberto.maquina})</strong>
+                            </div>
                         </div>
 
-                        <BlocoAlteracao log={detalheAberto} />
-
-                        <h3 className={css.subtitulo}>Informações Adicionais</h3>
-                        <DetalhesDoLog dados={dadosLegiveis(detalheAberto.detalhes)} />
+                        {detalheAberto.mudancas?.length > 0 ? (
+                            <div className={css.secaoAlteracao}>
+                                <h3 className={css.tituloSecao}>O que mudou?</h3>
+                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.2rem', marginTop: '10px' }}>
+                                    {detalheAberto.mudancas.map((mudanca, index) => (
+                                        <div key={`${mudanca.campo}-${index}`} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                                            <strong style={{ color: '#1e293b', textTransform: 'capitalize', fontSize: '1rem' }}>
+                                                {formatarCampo(mudanca.campo)}
+                                            </strong>
+                                            <div className={css.alteracaoGrid}>
+                                                <div className={`${css.alteracaoCard} ${css.alteracaoAntes}`}>
+                                                    <span className={css.alteracaoLabel}>Antes</span>
+                                                    <p className={css.alteracaoValor}>{mudanca.antes}</p>
+                                                </div>
+                                                <div className={`${css.alteracaoCard} ${css.alteracaoDepois}`}>
+                                                    <span className={css.alteracaoLabel}>Depois</span>
+                                                    <p className={css.alteracaoValor}>{mudanca.depois}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        ) : (
+                            <p className={css.semInformacoes} style={{ marginTop: '1rem' }}>
+                                {String(detalheAberto.campo || '').toUpperCase().includes('SENHA')
+                                    ? 'A senha deste usuário foi modificada com sucesso.'
+                                    : 'Nenhuma informação detalhada foi registrada nesta alteração.'}
+                            </p>
+                        )}
                     </section>
                 </div>
             )}

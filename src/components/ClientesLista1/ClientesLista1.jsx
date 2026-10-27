@@ -43,7 +43,7 @@ export default function ClientesLista1({ api }) {
     const [ativando, setAtivando] = useState(false);
     const [menuColapsado, setMenuColapsado] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.21:5000';
+    const API_URL = api || ' http://192.168.0.131:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF',
@@ -1177,252 +1177,14 @@ export default function ClientesLista1({ api }) {
             return;
         }
 
-        const faltando = [];
-
         const tipo =
             clienteSelecionado.tipo;
 
         if (tipo === 'fisico') {
-            if (
-                !String(
-                    dadosEditados.nome ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Nome completo'
-                );
-            }
+            const cpfPreenchido =
+                String(dadosEditados.cpf || '').trim();
 
-            if (
-                !String(
-                    dadosEditados.cpf ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push('CPF');
-            }
-
-            if (
-                !String(
-                    dadosEditados.telefone ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Telefone'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.email ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'E-mail'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.cep ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push('CEP');
-            }
-
-            if (
-                !String(
-                    dadosEditados.logradouro ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Logradouro'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.numero ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Número'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.bairro ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Bairro'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.cidade ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Cidade'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.estado ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Estado'
-                );
-            }
-
-        } else {
-            if (
-                !String(
-                    dadosEditados.razao_social ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Razão social'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.nome_fantasia ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Nome fantasia'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.cnpj ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push('CNPJ');
-            }
-
-            if (
-                !String(
-                    dadosEditados.telefone ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Telefone'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.email ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'E-mail'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.cep ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push('CEP');
-            }
-
-            if (
-                !String(
-                    dadosEditados.logradouro ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Logradouro'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.numero ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Número'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.bairro ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Bairro'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.cidade ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Cidade'
-                );
-            }
-
-            if (
-                !String(
-                    dadosEditados.estado ||
-                    ''
-                ).trim()
-            ) {
-                faltando.push(
-                    'Estado'
-                );
-            }
-        }
-
-        if (faltando.length > 0) {
-            mostrarMensagem(
-                `Preencha os campos obrigatórios: ${faltando.join(', ')}.`,
-                'erro'
-            );
-
-            return;
-        }
-
-        if (tipo === 'fisico') {
-            if (
-                !validarCpf(
-                    dadosEditados.cpf
-                )
-            ) {
+            if (cpfPreenchido && !validarCpf(dadosEditados.cpf)) {
                 mostrarMensagem(
                     'CPF inválido. Verifique os números informados.',
                     'erro'
@@ -1454,11 +1216,10 @@ export default function ClientesLista1({ api }) {
         }
 
         if (tipo === 'juridico') {
-            if (
-                !validarCnpj(
-                    dadosEditados.cnpj
-                )
-            ) {
+            const cnpjPreenchido =
+                String(dadosEditados.cnpj || '').trim();
+
+            if (cnpjPreenchido && !validarCnpj(dadosEditados.cnpj)) {
                 mostrarMensagem(
                     'CNPJ inválido. Verifique os números informados.',
                     'erro'
@@ -1479,26 +1240,12 @@ export default function ClientesLista1({ api }) {
             if (repPreenchido) {
                 if (
                     !String(
-                        dadosRepresentante.nome ||
-                        ''
-                    ).trim()
-                ) {
-                    mostrarMensagem(
-                        'Nome do representante é obrigatório.',
-                        'erro'
-                    );
-
-                    return;
-                }
-
-                if (
-                    !String(
                         dadosRepresentante.cpf ||
                         ''
                     ).trim()
                 ) {
                     mostrarMensagem(
-                        'CPF do representante é obrigatório.',
+                        'CPF do representante é obrigatório quando o representante é informado.',
                         'erro'
                     );
 
@@ -1517,20 +1264,6 @@ export default function ClientesLista1({ api }) {
 
                     return;
                 }
-
-                if (
-                    !String(
-                        dadosRepresentante.sexo ||
-                        ''
-                    ).trim()
-                ) {
-                    mostrarMensagem(
-                        'Sexo do representante é obrigatório.',
-                        'erro'
-                    );
-
-                    return;
-                }
             }
         }
 
@@ -1539,7 +1272,7 @@ export default function ClientesLista1({ api }) {
                 dadosEditados.cep
             );
 
-        if (cepN.length !== 8) {
+        if (cepN.length > 0 && cepN.length !== 8) {
             mostrarMensagem(
                 'CEP incompleto. Digite os 8 números.',
                 'erro'
@@ -1554,8 +1287,11 @@ export default function ClientesLista1({ api }) {
             );
 
         if (
-            telN.length < 10 ||
-            telN.length > 11
+            telN.length > 0 &&
+            (
+                telN.length < 10 ||
+                telN.length > 11
+            )
         ) {
             mostrarMensagem(
                 'Telefone incompleto. Digite DDD + número.',
@@ -2539,7 +2275,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Razão social *
+                                                        Razão social
                                                     </label>
 
                                                     <input
@@ -2558,7 +2294,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Nome fantasia *
+                                                        Nome fantasia
                                                     </label>
 
                                                     <input
@@ -2577,7 +2313,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        CNPJ *
+                                                        CNPJ
                                                     </label>
 
                                                     <input
@@ -2597,7 +2333,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        CEP *
+                                                        CEP
                                                     </label>
 
                                                     <div className={css.campoComAviso}>
@@ -2625,7 +2361,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Logradouro *
+                                                        Logradouro
                                                     </label>
 
                                                     <input
@@ -2643,7 +2379,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Número *
+                                                        Número
                                                     </label>
 
                                                     <input
@@ -2679,7 +2415,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Bairro *
+                                                        Bairro
                                                     </label>
 
                                                     <input
@@ -2697,7 +2433,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Cidade *
+                                                        Cidade
                                                     </label>
 
                                                     <input
@@ -2715,7 +2451,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        UF *
+                                                        UF
                                                     </label>
 
                                                     <select
@@ -2745,7 +2481,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        Telefone *
+                                                        Telefone
                                                     </label>
 
                                                     <input
@@ -2764,7 +2500,7 @@ export default function ClientesLista1({ api }) {
 
                                                 <div className={css.campoMetade}>
                                                     <label className={css.label}>
-                                                        E-mail *
+                                                        E-mail
                                                     </label>
 
                                                     <input
@@ -2790,7 +2526,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Nome completo *
+                                                    Nome completo
                                                 </label>
 
                                                 <input
@@ -2809,7 +2545,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Data de nascimento *
+                                                    Data de nascimento
                                                 </label>
 
                                                 <input
@@ -2829,7 +2565,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    CPF *
+                                                    CPF
                                                 </label>
 
                                                 <input
@@ -2849,7 +2585,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Sexo *
+                                                    Sexo
                                                 </label>
 
                                                 <select
@@ -3035,7 +2771,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    CEP *
+                                                    CEP
                                                 </label>
 
                                                 <div className={css.campoComAviso}>
@@ -3063,7 +2799,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Logradouro *
+                                                    Logradouro
                                                 </label>
 
                                                 <input
@@ -3081,7 +2817,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Número *
+                                                    Número
                                                 </label>
 
                                                 <input
@@ -3117,7 +2853,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Bairro *
+                                                    Bairro
                                                 </label>
 
                                                 <input
@@ -3135,7 +2871,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Cidade *
+                                                    Cidade
                                                 </label>
 
                                                 <input
@@ -3153,7 +2889,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Estado *
+                                                    Estado
                                                 </label>
 
                                                 <select
@@ -3183,7 +2919,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    Telefone *
+                                                    Telefone
                                                 </label>
 
                                                 <input
@@ -3202,7 +2938,7 @@ export default function ClientesLista1({ api }) {
 
                                             <div className={css.campoMetade}>
                                                 <label className={css.label}>
-                                                    E-mail *
+                                                    E-mail
                                                 </label>
 
                                                 <input
@@ -3422,12 +3158,6 @@ export default function ClientesLista1({ api }) {
                                             </div>
                                         </>
                                     )}
-
-                                    <div className={css.campoInteiro}>
-                                        <p className={css.obsCampos}>
-                                            * Campos obrigatórios
-                                        </p>
-                                    </div>
 
                                     <div className={css.botaoContainer}>
 
