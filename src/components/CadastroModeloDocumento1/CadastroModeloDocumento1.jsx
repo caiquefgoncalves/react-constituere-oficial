@@ -48,7 +48,7 @@ export default function CadastroModeloDocumento1({ api }) {
     // Usa o endereço de API recebido por propriedade ou, se não vier
     // nenhum, o endereço local definido para o desenvolvimento.
     const API_URL =
-        api || ' http://192.168.0.131:5000';
+        api || 'http://10.92.11.36:5000';
 
 
 

@@ -12,7 +12,7 @@ export default function ProcessosLista1({ api }) {
     // Inicializa a navegação para outras rotas do React.
     const navigate = useNavigate();
     // Se não houver endereço recebido por parâmetro, utiliza o endereço de desenvolvimento.
-    const API_URL = api || 'http://192.168.0.131:5000';
+    const API_URL = api || 'http://10.92.11.36:5000';
 
     // ESTADOS DA LISTAGEM
     // useState mantém informações que mudam durante o uso; a função 'set...' atualiza a tela.
