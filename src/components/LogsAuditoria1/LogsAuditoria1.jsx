@@ -46,7 +46,10 @@ function formatarCampo(campo) {
         'NUM_PROCESSO': 'Número do Processo', 'TIPO_PROCESSO': 'Tipo de Processo',
         'AREA': 'Área', 'COMARCA': 'Comarca', 'VARA': 'Vara', 'INSTANCIA': 'Instância',
         'DATA_INICIO': 'Data de Início', 'STATUS': 'Status', 'LIDA': 'Status de Leitura',
-        'DESCRICAO': 'Descrição', 'NOME_ARQUIVO': 'Nome do Arquivo', 'DATA_ATUALIZACAO': 'Data de Atualização'
+        'DESCRICAO': 'Descrição', 'NOME_ARQUIVO': 'Nome do Arquivo', 'DATA_ATUALIZACAO': 'Data de Atualização',
+        'PROFISSAO': 'Profissão', 'SEXO': 'Sexo', 'ORGAO_EXPEDIDOR': 'Órgão Expedidor',
+        'NACIONALIDADE': 'Nacionalidade', 'ESTADO_CIVIL': 'Estado Civil',
+        'DATA_CADASTRO': 'Data de Cadastro'
     };
     const campoLimpo = String(campo || '').toUpperCase();
     if (termos[campoLimpo]) return termos[campoLimpo];
@@ -148,7 +151,7 @@ function formatarValor(campo, valor) {
 
 export default function LogsAuditoria1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.36:5000';
+    const API_URL = api || 'http://192.168.0.132:5000';
 
     const [logs, setLogs] = useState([]);
     const [carregando, setCarregando] = useState(true);
