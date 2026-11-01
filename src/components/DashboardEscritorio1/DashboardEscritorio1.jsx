@@ -48,7 +48,7 @@ export default function DashboardEscritorio1({ api }) {
 
     const [cargoUsuario, setCargoUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.36:5000';
+    const API_URL = api || 'http://192.168.0.135:5000';
 
     useEffect(() => {
         function atualizarQuantidadeItens() {
@@ -185,7 +185,7 @@ export default function DashboardEscritorio1({ api }) {
         async function buscarAdvogadosAtivos() {
             try {
                 const response = await fetch(
-                    `${API_URL}/escritorio/${id}/advogados`,
+                    `${API_URL}/listar_advogados?id_escritorio=${id}`,
                     {
                         method: 'GET',
                         credentials: 'include',
@@ -198,9 +198,18 @@ export default function DashboardEscritorio1({ api }) {
                 if (response.ok) {
                     const data = await response.json();
 
-                    setTotalAdvogadosAtivos(
-                        data.total_ativos || data.advogados?.length || 0
-                    );
+                    const advogados = Array.isArray(data.advogados)
+                        ? data.advogados
+                        : [];
+
+                    const totalAtivos = advogados.filter(advogado =>
+                        advogado.escritorios?.some(escritorio =>
+                            Number(escritorio.id) === Number(id) &&
+                            escritorio.ativo
+                        )
+                    ).length;
+
+                    setTotalAdvogadosAtivos(totalAtivos + 1);
                 }
             } catch (error) {
                 console.error('Erro ao buscar advogados ativos:', error);
