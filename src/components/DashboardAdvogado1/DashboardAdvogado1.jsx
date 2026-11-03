@@ -33,7 +33,7 @@ export default function DashboardAdvogado1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-    const API_URL = api || 'http://192.168.0.135:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
 
     function limparSessaoERedirecionar() {
         localStorage.removeItem('nome');

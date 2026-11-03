@@ -4,7 +4,7 @@ import css from './MenuLateralAdvogado.module.css';
 
 export default function MenuLateralAdvogado({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://192.168.0.132:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
     const [podeVerLog, setPodeVerLog] = useState(false);
     const [colapsado, setColapsado] = useState(() => {
         try {

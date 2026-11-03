@@ -529,9 +529,6 @@
     flex-wrap: wrap;
 }
 
-
-
-
 .botaoFiltroTipo {
     padding: 0.5rem 1rem;
     border: 1px solid #d6dce3;
@@ -953,7 +950,6 @@
     background-color: #ffe5e5;
 }
 
-/* --- MODAIS --- */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -1108,8 +1104,6 @@
         opacity: 1;
     }
 }
-
-/* --- RESPONSIVIDADE --- */
 
 @media (max-width: 1000px) {
     .conteudoPrincipal {

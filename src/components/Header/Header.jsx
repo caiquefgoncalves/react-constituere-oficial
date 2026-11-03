@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import css from './Header.module.css';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -6,12 +7,41 @@ import { io } from 'socket.io-client';
 
 function corrigirTextoCorrompido(texto) {
     if (typeof texto !== 'string' || !/[ÃÂ]/.test(texto)) return texto;
+
     try {
-        const bytes = Uint8Array.from(texto, caractere => caractere.charCodeAt(0));
+        const bytes = Uint8Array.from(
+            texto,
+            caractere => caractere.charCodeAt(0)
+        );
+
         return new TextDecoder('utf-8').decode(bytes);
     } catch {
         return texto;
     }
+}
+
+function decodificarPayloadToken(token) {
+    const parte = token.split('.')[1];
+
+    if (!parte) {
+        throw new Error('Token inválido');
+    }
+
+    const base64 = parte
+        .replace(/-/g, '+')
+        .replace(/_/g, '/');
+
+    const base64Completo = base64.padEnd(
+        Math.ceil(base64.length / 4) * 4,
+        '='
+    );
+
+    const bytes = Uint8Array.from(
+        atob(base64Completo),
+        caractere => caractere.charCodeAt(0)
+    );
+
+    return JSON.parse(new TextDecoder().decode(bytes));
 }
 
 export default function Header({ api, fotoPerfil }) {
@@ -26,25 +56,22 @@ export default function Header({ api, fotoPerfil }) {
     const [notificacoes, setNotificacoes] = useState([]);
     const [carregandoNotificacoes, setCarregandoNotificacoes] = useState(false);
 
-    const API_URL = api || 'http://192.168.0.135:5000';
+    const API_URL = api || 'http://10.92.11.24:5000';
 
     useEffect(() => {
         const tokenLocal = localStorage.getItem('token');
 
         if (tokenLocal) {
             try {
-                const payload = JSON.parse(
-                    atob(tokenLocal.split('.')[1])
-                );
+                const payload = decodificarPayloadToken(tokenLocal);
 
                 setToken(tokenLocal);
                 setTipoUsuario(payload.tipo);
-                setIdUsuario(payload.id_usuarios);
-            } catch (error) {
-                console.error(
-                    'Erro ao decodificar token:',
-                    error
+                setIdUsuario(
+                    payload.id_usuarios || localStorage.getItem('id_usuario')
                 );
+            } catch (error) {
+                console.error('Erro ao decodificar token:', error);
 
                 setToken(null);
                 setTipoUsuario(null);
@@ -65,41 +92,58 @@ export default function Header({ api, fotoPerfil }) {
         buscarNotificacoes();
 
         const socket = io(API_URL, {
-            transports: ['polling']
+            transports: ['polling'],
+            withCredentials: true,
+            auth: { token }
         });
 
         socket.on('connect', () => {
+            console.log('[HEADER SOCKET] Conectado:', socket.id);
+
             socket.emit('entrar_usuario', {
                 id_usuario: idUsuario
             });
+
+            buscarNotificacoes();
         });
 
-        socket.on(
-            'nova_notificacao',
-            (novaNotificacao) => {
-                setNotificacoes((anteriores) => {
-                    const jaExiste = anteriores.some(
-                        (notificacao) =>
-                            notificacao.id === novaNotificacao.id
+        socket.on('entrou_sala', (data) => {
+            console.log('[HEADER SOCKET] Entrou na sala:', data.sala);
+        });
+
+        socket.on('nova_notificacao', (novaNotificacao) => {
+            console.log('[HEADER SOCKET] Nova notificação recebida:', novaNotificacao);
+
+            setNotificacoes((anteriores) => {
+                const idNova = String(
+                    novaNotificacao.id ?? novaNotificacao.id_notificacao
+                );
+
+                const jaExiste = anteriores.some((notificacao) => {
+                    const idExistente = String(
+                        notificacao.id ?? notificacao.id_notificacao
                     );
 
-                    if (jaExiste) {
-                        return anteriores;
-                    }
-
-                    console.log("Nova notificação recebida no socket:", novaNotificacao);
-
-                    return [
-                        novaNotificacao,
-                        ...anteriores
-                    ];
+                    return idExistente === idNova;
                 });
-            }
-        );
+
+                if (jaExiste) {
+                    return anteriores;
+                }
+
+                return [
+                    {
+                        ...novaNotificacao,
+                        lida: novaNotificacao.lida ?? false
+                    },
+                    ...anteriores
+                ];
+            });
+        });
 
         socket.on('connect_error', (erro) => {
             console.error(
-                'Erro ao conectar ao Socket.IO:',
+                '[HEADER SOCKET] Erro ao conectar:',
                 erro
             );
         });
@@ -111,9 +155,12 @@ export default function Header({ api, fotoPerfil }) {
 
             socket.off('nova_notificacao');
             socket.off('connect_error');
+            socket.off('connect');
+            socket.off('entrou_sala');
+
             socket.disconnect();
         };
-    }, [token, idUsuario, API_URL, location.pathname]);
+    }, [token, idUsuario, API_URL]);
 
     async function buscarNotificacoes() {
         if (!token) {
@@ -138,16 +185,33 @@ export default function Header({ api, fotoPerfil }) {
 
             if (!response.ok) {
                 console.error(
-                    dados.error ||
-                    'Erro ao buscar notificações'
+                    dados.error || 'Erro ao buscar notificações'
                 );
 
                 return;
             }
 
-            setNotificacoes(
-                dados.notificacoes || []
-            );
+            setNotificacoes((anteriores) => {
+                const mapa = new Map();
+
+                anteriores.forEach((notificacao) => {
+                    const chave = String(
+                        notificacao.id ?? notificacao.id_notificacao
+                    );
+
+                    mapa.set(chave, notificacao);
+                });
+
+                (dados.notificacoes || []).forEach((notificacao) => {
+                    const chave = String(
+                        notificacao.id ?? notificacao.id_notificacao
+                    );
+
+                    mapa.set(chave, notificacao);
+                });
+
+                return Array.from(mapa.values());
+            });
 
         } catch (error) {
             console.error(
@@ -772,8 +836,7 @@ export default function Header({ api, fotoPerfil }) {
                                     className={css.fotoPerfil}
                                     onError={(e) => {
                                         e.target.onerror = null;
-                                        e.target.src =
-                                            '/perfil-padrao.png';
+                                        e.target.src = '/perfil-padrao.png';
                                     }}
                                 />
                             </button>

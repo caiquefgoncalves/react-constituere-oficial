@@ -28,7 +28,7 @@ export default function DocumentosGerados1({
 
 
     const API_URL =
-        api || 'http://192.168.0.135:5000';
+        api || 'http://10.92.11.24:5000';
 
 
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
+import { io } from "socket.io-client";
 import css from "./DashboardFinanceiroEscritorio1.module.css";
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
@@ -19,7 +20,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://192.168.0.135:5000";
+    const API_URL = api || "http://10.92.11.24:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");
@@ -115,11 +116,24 @@ function DashboardFinanceiroEscritorio1({ api }) {
         if (id) buscarEscritorio();
     }, [API_URL, id]);
 
-    async function buscarDados() {
+    async function buscarDados(silencioso = false) {
         const token = localStorage.getItem("token");
         if (!token || !id) return;
 
-        setCarregandoResumo(true);
+        if (periodo === "personalizado") {
+            if (!dataInicial || !dataFinal) {
+                setMensagem("Informe a data inicial e a data final.");
+                setTipoMensagem("erro");
+                return;
+            }
+            if (dataFinal < dataInicial) {
+                setMensagem("Período inválido");
+                setTipoMensagem("erro");
+                return;
+            }
+        }
+
+        if (!silencioso) setCarregandoResumo(true);
 
         try {
             let query = `periodo=${periodo}&tipo=${tipoLancamento}`;
@@ -141,33 +155,68 @@ function DashboardFinanceiroEscritorio1({ api }) {
                 })
             ]);
 
-            if (respLanc.ok) {
-                const dataLanc = await respLanc.json();
-                setLancamentos(dataLanc.lancamentos || []);
-                setPaginaLancamentos(1);
+            const dataLanc = await respLanc.json().catch(() => ({}));
+            const dataResumo = await respResumo.json().catch(() => ({}));
+
+            if (!respLanc.ok) {
+                if (dataLanc.error) {
+                    setMensagem(dataLanc.error);
+                    setTipoMensagem("erro");
+                }
+                return;
             }
 
-
-            if (respResumo.ok) {
-                const dataResumo = await respResumo.json();
-
+            if (!respResumo.ok) {
                 if (dataResumo.error) {
                     setMensagem(dataResumo.error);
                     setTipoMensagem("erro");
-                } else {
-                    setResumo(dataResumo);
                 }
+                return;
             }
+
+            setMensagem("");
+            setTipoMensagem("");
+            setLancamentos(dataLanc.lancamentos || []);
+            setPaginaLancamentos(1);
+            setResumo(dataResumo);
         } catch (error) {
             console.error("Erro ao buscar dados financeiros:", error);
+            setMensagem("Erro ao buscar dados financeiros.");
+            setTipoMensagem("erro");
         } finally {
-            setCarregandoResumo(false);
+            if (!silencioso) setCarregandoResumo(false);
         }
     }
 
     useEffect(() => {
+        if (periodo === "personalizado") return;
         buscarDados();
     }, [API_URL, id, periodo, tipoLancamento]);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const idUsuario = localStorage.getItem("id_usuario");
+        if (!token || !idUsuario) return;
+
+        const socket = io(API_URL, {
+            transports: ["polling"],
+            withCredentials: true,
+            auth: { token }
+        });
+
+        socket.on("connect", () => {
+            socket.emit("entrar_usuario", { id_usuario: idUsuario });
+        });
+
+        socket.on("nova_notificacao", () => {
+            buscarDados(true);
+        });
+
+        return () => {
+            socket.emit("sair_usuario", { id_usuario: idUsuario });
+            socket.disconnect();
+        };
+    }, [API_URL]);
 
     function abrirModal() {
         setModalAberto(true);
@@ -554,7 +603,14 @@ function DashboardFinanceiroEscritorio1({ api }) {
                         <div className={css.filtroControles}>
                             <div className={css.campoFiltro}>
                                 <label>Período</label>
-                                <select value={periodo} onChange={(e) => setPeriodo(e.target.value)}>
+                                <select
+                                    value={periodo}
+                                    onChange={(e) => {
+                                        setPeriodo(e.target.value);
+                                        setMensagem("");
+                                        setTipoMensagem("");
+                                    }}
+                                >
                                     <option value="mes">Este mês</option>
                                     <option value="mesAnterior">Mês anterior</option>
                                     <option value="30dias">Últimos 30 dias</option>
@@ -585,7 +641,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                     <button
                                         type="button"
                                         className={css.botaoFiltroTipo}
-                                        onClick={buscarDados}
+                                        onClick={() => buscarDados()}
                                     >
                                         Buscar
                                     </button>
