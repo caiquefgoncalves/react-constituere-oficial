@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { io } from 'socket.io-client';
 import css from './AgendamentosLista1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
@@ -92,7 +93,7 @@ export default function AgendamentosLista1({ api }) {
         setMotivo('');
     }
 
-    async function buscarAgendamentos() {
+    async function buscarAgendamentos(silencioso = false) {
         const token = localStorage.getItem('token');
 
         if (!token) {
@@ -100,33 +101,21 @@ export default function AgendamentosLista1({ api }) {
             return;
         }
 
-        setCarregando(true);
+        if (!silencioso) setCarregando(true);
 
         try {
             const params = new URLSearchParams();
 
             if (dataInicio) {
-                params.append(
-                    'data_inicio',
-                    dataInicio
-                );
+                params.append('data_inicio', dataInicio);
             }
 
             if (dataFim) {
-                params.append(
-                    'data_fim',
-                    dataFim
-                );
+                params.append('data_fim', dataFim);
             }
 
-            if (
-                filtroStatus &&
-                filtroStatus !== 'todos'
-            ) {
-                params.append(
-                    'status',
-                    filtroStatus
-                );
+            if (filtroStatus && filtroStatus !== 'todos') {
+                params.append('status', filtroStatus);
             }
 
             const url =
@@ -182,7 +171,7 @@ export default function AgendamentosLista1({ api }) {
             );
 
         } finally {
-            setCarregando(false);
+            if (!silencioso) setCarregando(false);
         }
     }
 
@@ -202,6 +191,37 @@ export default function AgendamentosLista1({ api }) {
         dataFim,
         filtroStatus
     ]);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        const idUsuario = localStorage.getItem('id_usuario');
+        if (!token || !idUsuario) return;
+
+        const socket = io(API_URL, {
+            transports: ['polling'],
+            withCredentials: true,
+            auth: { token }
+        });
+
+        socket.on('connect', () => {
+            socket.emit('entrar_usuario', { id_usuario: idUsuario });
+        });
+
+        socket.on('nova_notificacao', () => {
+            buscarAgendamentos(true);
+        });
+
+        socket.on('atualizar_dados', (payload) => {
+            if (payload?.entidade === 'agendamento') {
+                buscarAgendamentos(true);
+            }
+        });
+
+        return () => {
+            socket.emit('sair_usuario', { id_usuario: idUsuario });
+            socket.disconnect();
+        };
+    }, [API_URL]);
 
     async function confirmarAgendamento(
         agendamento
@@ -725,6 +745,10 @@ export default function AgendamentosLista1({ api }) {
                                         agendamento.status ===
                                         'cancelado';
 
+                                    const recusado =
+                                        agendamento.status ===
+                                        'recusado';
+
                                     return (
                                         <div
                                             key={
@@ -825,7 +849,7 @@ export default function AgendamentosLista1({ api }) {
                                                         }
                                                     </span>
 
-                                                    {!cancelado && (
+                                                    {!cancelado && !recusado && (
                                                         <span
                                                             className={
                                                                 css.confirmacoes
