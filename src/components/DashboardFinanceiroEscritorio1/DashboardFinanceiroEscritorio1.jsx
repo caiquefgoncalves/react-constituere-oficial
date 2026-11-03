@@ -147,9 +147,16 @@ function DashboardFinanceiroEscritorio1({ api }) {
                 setPaginaLancamentos(1);
             }
 
+
             if (respResumo.ok) {
                 const dataResumo = await respResumo.json();
-                setResumo(dataResumo);
+
+                if (dataResumo.error) {
+                    setMensagem(dataResumo.error);
+                    setTipoMensagem("erro");
+                } else {
+                    setResumo(dataResumo);
+                }
             }
         } catch (error) {
             console.error("Erro ao buscar dados financeiros:", error);
@@ -160,7 +167,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
 
     useEffect(() => {
         buscarDados();
-    }, [API_URL, id, periodo, dataInicial, dataFinal, tipoLancamento]);
+    }, [API_URL, id, periodo, tipoLancamento]);
 
     function abrirModal() {
         setModalAberto(true);
@@ -557,7 +564,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                             </div>
 
                             {periodo === "personalizado" && (
-                                <>
+                                <div className={css.centraliza}>
                                     <div className={css.campoFiltro}>
                                         <label>Data inicial</label>
                                         <input
@@ -575,7 +582,14 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                             onChange={(e) => setDataFinal(e.target.value)}
                                         />
                                     </div>
-                                </>
+                                    <button
+                                        type="button"
+                                        className={css.botaoFiltroTipo}
+                                        onClick={buscarDados}
+                                    >
+                                        Buscar
+                                    </button>
+                                </div>
                             )}
                         </div>
                     </section>

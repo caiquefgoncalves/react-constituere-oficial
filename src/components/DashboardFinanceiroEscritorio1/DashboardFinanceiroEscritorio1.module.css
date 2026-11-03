@@ -8,6 +8,12 @@
     background-color: #ffffff;
 }
 
+.centraliza {
+    display: flex;
+    align-items: flex-end;
+    gap: 1rem;
+}
+
 .layoutDashboard {
     display: flex;
     flex: 1;
