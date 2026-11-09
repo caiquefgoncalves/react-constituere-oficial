@@ -30,8 +30,7 @@ import LogsAuditoria from "./pages/LogsAuditoria.jsx";
 import DashboardFinanceiroEscritorio from "./pages/DashboardFinanceiroEscritorio.jsx";
 import Chats from "./pages/Chats.jsx";
 
-
-const API_URL = import.meta.env.VITE_API_URL || 'http://192.168.0.134:5000';
+const API_URL = import.meta.env.VITE_API_URL || 'http://10.92.11.19:5000';
 
 function App() {
     const [chatVeritasAberto, setChatVeritasAberto] = useState(false);
@@ -58,7 +57,7 @@ function App() {
                 <Route path="/cadastro_cliente_fisico" element={<CadastroClienteFisico api={API_URL} />} />
                 <Route path="/cadastro_cliente_juridico" element={<CadastroClienteJuridico api={API_URL} />} />
                 <Route path="/cadastro-representante/:idCliente?" element={<CadastroRepresentante api={API_URL} />} />
-                <Route path="/editar_perfil_escritorio" element={<EditarPerfilEscritorio api={API_URL} />} />
+                <Route path="/editar_escritorio/:id" element={<EditarPerfilEscritorio api={API_URL} />} />
                 <Route path="/advogados" element={<AdvogadosLista api={API_URL} />} />
                 <Route path="/cadastro_processo" element={<CadastroProcesso api={API_URL} />} />
                 <Route path="/processos" element={<ProcessosLista api={API_URL} />} />
@@ -70,21 +69,10 @@ function App() {
                 <Route path="/agendar" element={<Agendar api={API_URL} />} />
                 <Route path="/reagendar" element={<Reagendar api={API_URL} />} />
                 <Route path="/log" element={<LogsAuditoria api={API_URL} />} />
-                <Route
-                    path="/escritorio/:id/modelos_documentos"
-                    element={<ModelosDocumentos api={API_URL} />}
-                />
-                <Route
-                    path="/escritorio/:id/cadastro_modelo_documento"
-                    element={<CadastroModeloDocumento api={API_URL} />}
-                />
-                <Route
-                    path="/documentos"
-                    element={<DocumentosGerados api={API_URL} />}
-                />
-
+                <Route path="/escritorio/:id/modelos_documentos" element={<ModelosDocumentos api={API_URL} />} />
+                <Route path="/escritorio/:id/cadastro_modelo_documento" element={<CadastroModeloDocumento api={API_URL} />} />
+                <Route path="/documentos" element={<DocumentosGerados api={API_URL} />} />
                 <Route path="/chats" element={<Chats api={API_URL} />} />
-
             </Routes>
 
             <ChatVeritas
@@ -92,9 +80,8 @@ function App() {
                 onFechar={() => setChatVeritasAberto(false)}
                 api={API_URL}
             />
-
         </Router>
-    )
+    );
 }
 
 export default App;
