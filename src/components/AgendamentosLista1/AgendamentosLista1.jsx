@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function AgendamentosLista1({ api }) {
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.19:5000';
     const navigate = useNavigate();
 
     const [agendamentos, setAgendamentos] = useState([]);
@@ -17,6 +17,9 @@ export default function AgendamentosLista1({ api }) {
     const [dataInicio, setDataInicio] = useState('');
     const [dataFim, setDataFim] = useState('');
     const [filtroStatus, setFiltroStatus] = useState('todos');
+
+    const [mensagemFiltro, setMensagemFiltro] = useState('');
+    const [tipoMensagemFiltro, setTipoMensagemFiltro] = useState('');
 
     const [modalTipo, setModalTipo] = useState('');
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState(null);
@@ -36,17 +39,61 @@ export default function AgendamentosLista1({ api }) {
         navigate('/login');
     }
 
+    function limparMensagemFiltro() {
+        if (window.timeoutMensagemFiltro) {
+            clearTimeout(window.timeoutMensagemFiltro);
+        }
+        setMensagemFiltro('');
+        setTipoMensagemFiltro('');
+    }
+
+    function exibirMensagemFiltro(texto, tipo = 'erro') {
+        setMensagemFiltro(texto);
+        setTipoMensagemFiltro(tipo);
+
+        if (window.timeoutMensagemFiltro) {
+            clearTimeout(window.timeoutMensagemFiltro);
+        }
+
+        window.timeoutMensagemFiltro = setTimeout(() => {
+            setMensagemFiltro('');
+            setTipoMensagemFiltro('');
+        }, 6000);
+    }
+
     async function baixarRelatorioAgendamentos() {
         const token = localStorage.getItem('token');
         if (!token) return deslogar();
+
+        if (dataInicio && dataFim && dataInicio > dataFim) {
+            exibirMensagemFiltro('A data inicial não pode ser maior que a data final.');
+            return;
+        }
+
         const params = new URLSearchParams();
         if (dataInicio) params.set('data_inicio', dataInicio);
         if (dataFim) params.set('data_fim', dataFim);
         if (filtroStatus && filtroStatus !== 'todos') params.set('status', filtroStatus);
+
         const resposta = await fetch(`${API_URL}/agendamentos/relatorio?${params}`, {
-            credentials: 'include', headers: { 'X-Access-Token': token }
+            credentials: 'include',
+            headers: { 'X-Access-Token': token }
         });
-        if (!resposta.ok) return;
+
+        if (!resposta.ok) {
+            let dados = {};
+            try {
+                dados = await resposta.json();
+            } catch {
+                dados = {};
+            }
+
+            if (dados.error) {
+                exibirMensagemFiltro(dados.error);
+            }
+            return;
+        }
+
         const url = URL.createObjectURL(await resposta.blob());
         const link = document.createElement('a');
         link.href = url;
@@ -101,6 +148,13 @@ export default function AgendamentosLista1({ api }) {
             return;
         }
 
+        if (dataInicio && dataFim && dataInicio > dataFim) {
+            exibirMensagemFiltro('A data inicial não pode ser maior que a data final.');
+            setAgendamentos([]);
+            if (!silencioso) setCarregando(false);
+            return;
+        }
+
         if (!silencioso) setCarregando(true);
 
         try {
@@ -151,8 +205,14 @@ export default function AgendamentosLista1({ api }) {
             }
 
             if (!resposta.ok) {
+                if (dados.error) {
+                    exibirMensagemFiltro(dados.error);
+                }
+                setAgendamentos([]);
                 return;
             }
+
+            limparMensagemFiltro();
 
             const lista = dados.agendamentos || [];
 
@@ -169,6 +229,7 @@ export default function AgendamentosLista1({ api }) {
                 'Erro ao buscar agendamentos:',
                 erro
             );
+            exibirMensagemFiltro('Erro de conexão ao buscar agendamentos.');
 
         } finally {
             if (!silencioso) setCarregando(false);
@@ -585,6 +646,19 @@ export default function AgendamentosLista1({ api }) {
                         </button>
 
                     </div>
+
+                    {mensagemFiltro && (
+                        <div
+                            className={`${css.mensagemFiltroContainer} ${
+                                tipoMensagemFiltro === 'sucesso'
+                                    ? css.mensagemFiltroSucesso
+                                    : css.mensagemFiltroErro
+                            }`}
+                            role="alert"
+                        >
+                            {mensagemFiltro}
+                        </div>
+                    )}
 
                     <div
                         className={

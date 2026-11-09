@@ -48,7 +48,7 @@ export default function DashboardEscritorio1({ api }) {
 
     const [cargoUsuario, setCargoUsuario] = useState(null);
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.19:5000';
 
     useEffect(() => {
         function atualizarQuantidadeItens() {
@@ -377,7 +377,13 @@ export default function DashboardEscritorio1({ api }) {
     }
 
     function irParaEditarPerfil() {
-        navigate('/editar_perfil_escritorio');
+        if (!id || !Number.isInteger(Number(id)) || Number(id) <= 0) {
+            setMensagem('Não foi possível identificar o escritório selecionado.');
+            setTipoMensagem('erro');
+            return;
+        }
+
+        navigate(`/editar_escritorio/${id}`);
     }
 
     function irParaNovoCliente() {
@@ -413,7 +419,7 @@ export default function DashboardEscritorio1({ api }) {
     }
 
     function irParaEditarEscritorio() {
-        navigate('/editar_perfil_escritorio');
+        irParaEditarPerfil();
     }
 
     function irParaAgendamentos() {

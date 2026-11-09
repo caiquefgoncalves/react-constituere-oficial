@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import css from "./DashboardFinanceiroEscritorio1.module.css";
+import cssModal from "../AdicionarLancamento1/AdicionarLancamento1.module.css";
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
 import MenuLateralAdvogado from "../MenuLateralAdvogado/MenuLateralAdvogado.jsx";
@@ -16,11 +17,42 @@ function capitalizarFrase(texto) {
     return valor.replace(/\b\w/g, letra => letra.toUpperCase());
 }
 
+function mascaraValor(valor) {
+    let v = String(valor || "").replace(/\D/g, "");
+
+    if (v.length > 13) {
+        v = v.slice(0, 13);
+    }
+
+    if (v.length === 0) {
+        return "";
+    }
+
+    if (v.length <= 2) {
+        return `R$ ${v}`;
+    }
+
+    const inteiro = v.slice(0, -2);
+    const decimal = v.slice(-2);
+    const inteiroFormatado = inteiro.replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+
+    return `R$ ${inteiroFormatado},${decimal}`;
+}
+
+function valorParaNumero(valorMascarado) {
+    if (!valorMascarado) return 0;
+
+    const n = String(valorMascarado).replace(/\D/g, "");
+    if (!n) return 0;
+
+    return parseInt(n, 10) / 100;
+}
+
 function DashboardFinanceiroEscritorio1({ api }) {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const API_URL = api || "http://10.92.11.24:5000";
+    const API_URL = api || "http://10.92.11.19:5000";
 
     const [menuColapsado, setMenuColapsado] = useState(false);
     const [periodo, setPeriodo] = useState("mes");
@@ -44,6 +76,18 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const [lancamentoParaBaixar, setLancamentoParaBaixar] = useState(null);
     const [baixandoId, setBaixandoId] = useState(null);
 
+    const [modalEdicaoAberto, setModalEdicaoAberto] = useState(false);
+    const [lancamentoEditando, setLancamentoEditando] = useState(null);
+    const [salvandoEdicao, setSalvandoEdicao] = useState(false);
+    const [erroEdicao, setErroEdicao] = useState("");
+    const [sucessoEdicao, setSucessoEdicao] = useState("");
+    const [formularioEdicao, setFormularioEdicao] = useState({
+        tipo: "receita",
+        descricao: "",
+        valor: "",
+        data: ""
+    });
+
     const mensagemRef = useRef(null);
 
     const [resumo, setResumo] = useState({
@@ -52,6 +96,9 @@ function DashboardFinanceiroEscritorio1({ api }) {
         receita_pendente: 0,
         receita_atrasada: 0,
         total_receitas: 0,
+        despesa_paga: 0,
+        despesa_pendente: 0,
+        despesa_atrasada: 0,
         despesas: 0,
         saldo: 0,
         lucro: 0,
@@ -122,13 +169,17 @@ function DashboardFinanceiroEscritorio1({ api }) {
 
         if (periodo === "personalizado") {
             if (!dataInicial || !dataFinal) {
-                setMensagem("Informe a data inicial e a data final.");
-                setTipoMensagem("erro");
+                if (!silencioso) {
+                    setMensagem("Informe a data inicial e a data final.");
+                    setTipoMensagem("erro");
+                }
                 return;
             }
             if (dataFinal < dataInicial) {
-                setMensagem("Período inválido");
-                setTipoMensagem("erro");
+                if (!silencioso) {
+                    setMensagem("Período inválido");
+                    setTipoMensagem("erro");
+                }
                 return;
             }
         }
@@ -159,7 +210,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
             const dataResumo = await respResumo.json().catch(() => ({}));
 
             if (!respLanc.ok) {
-                if (dataLanc.error) {
+                if (dataLanc.error && !silencioso) {
                     setMensagem(dataLanc.error);
                     setTipoMensagem("erro");
                 }
@@ -167,7 +218,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
             }
 
             if (!respResumo.ok) {
-                if (dataResumo.error) {
+                if (dataResumo.error && !silencioso) {
                     setMensagem(dataResumo.error);
                     setTipoMensagem("erro");
                 }
@@ -181,8 +232,10 @@ function DashboardFinanceiroEscritorio1({ api }) {
             setResumo(dataResumo);
         } catch (error) {
             console.error("Erro ao buscar dados financeiros:", error);
-            setMensagem("Erro ao buscar dados financeiros.");
-            setTipoMensagem("erro");
+            if (!silencioso) {
+                setMensagem("Erro ao buscar dados financeiros.");
+                setTipoMensagem("erro");
+            }
         } finally {
             if (!silencioso) setCarregandoResumo(false);
         }
@@ -236,7 +289,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     }
 
     function fecharModalBaixa() {
-        if (baixandoId) return;
+        if (baixandoId !== null) return;
         setModalBaixaAberto(false);
         setLancamentoParaBaixar(null);
     }
@@ -255,25 +308,151 @@ function DashboardFinanceiroEscritorio1({ api }) {
                 headers: { "X-Access-Token": token }
             });
 
-            const data = await response.json();
+            const data = await response.json().catch(() => ({}));
 
             if (response.ok) {
+                setModalBaixaAberto(false);
+                setLancamentoParaBaixar(null);
                 setMensagem("Baixa realizada com sucesso!");
                 setTipoMensagem("sucesso");
-                fecharModalBaixa();
                 buscarDados();
                 setTimeout(() => setMensagem(""), 3000);
             } else {
                 setMensagem(data.error || "Erro ao dar baixa.");
                 setTipoMensagem("erro");
-                fecharModalBaixa();
             }
         } catch (error) {
             setMensagem("Erro de conexão.");
             setTipoMensagem("erro");
-            fecharModalBaixa();
         } finally {
             setBaixandoId(null);
+        }
+    }
+
+    function abrirModalEdicao(lancamento) {
+        const valor = Number(lancamento?.valor);
+        const centavos = Number.isFinite(valor) && valor > 0
+            ? String(Math.round(valor * 100))
+            : "";
+
+        setLancamentoEditando(lancamento);
+        setFormularioEdicao({
+            tipo: lancamento?.tipo === "despesa" ? "despesa" : "receita",
+            descricao: lancamento?.descricao || "",
+            valor: centavos ? mascaraValor(centavos) : "",
+            data: lancamento?.data || ""
+        });
+        setErroEdicao("");
+        setSucessoEdicao("");
+        setModalEdicaoAberto(true);
+    }
+
+    function fecharModalEdicao() {
+        if (salvandoEdicao) return;
+        setModalEdicaoAberto(false);
+        setLancamentoEditando(null);
+        setErroEdicao("");
+    }
+
+    function alterarCampoEdicao(campo, valor) {
+        let novoValor = valor;
+        setSucessoEdicao("");
+
+        if (campo === "valor") {
+            novoValor = mascaraValor(valor);
+        }
+
+        if (campo === "descricao") {
+            novoValor = String(valor).slice(0, 254);
+        }
+
+        setFormularioEdicao(atual => ({
+            ...atual,
+            [campo]: novoValor
+        }));
+    }
+
+    async function salvarEdicaoLancamento(event) {
+        event.preventDefault();
+        setErroEdicao("");
+        setSucessoEdicao("");
+
+        const descricao = formularioEdicao.descricao.trim();
+        const valor = valorParaNumero(formularioEdicao.valor);
+
+        if (!descricao || descricao.length > 254) {
+            setErroEdicao("A descrição deve ter de 1 a 254 caracteres.");
+            return;
+        }
+
+        if (!Number.isFinite(valor) || valor <= 0) {
+            setErroEdicao("Informe um valor válido maior que zero.");
+            return;
+        }
+
+        if (!formularioEdicao.data) {
+            setErroEdicao("Informe a data do lançamento.");
+            return;
+        }
+
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setErroEdicao("Sua sessão expirou. Faça login novamente.");
+            return;
+        }
+
+        if (!id || !lancamentoEditando?.id_real || lancamentoEditando.origem !== "manual") {
+            setErroEdicao("Não foi possível identificar um lançamento manual para edição.");
+            return;
+        }
+
+        const dados = {
+            descricao,
+            valor: valor.toFixed(2),
+            data: formularioEdicao.data
+        };
+
+        if (formularioEdicao.tipo !== lancamentoEditando.tipo) {
+            dados.tipo = formularioEdicao.tipo;
+        }
+
+        setSalvandoEdicao(true);
+
+        try {
+            const response = await fetch(
+                `${API_URL}/escritorio/${id}/financeiro/lancamentos/${lancamentoEditando.id_real}`,
+                {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-Access-Token": token
+                    },
+                    body: JSON.stringify(dados)
+                }
+            );
+
+            const resultado = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                setErroEdicao(resultado.error || "Não foi possível atualizar o lançamento.");
+                return;
+            }
+
+            setLancamentoEditando(atual => atual ? ({
+                ...atual,
+                tipo: formularioEdicao.tipo,
+                descricao,
+                valor,
+                data: formularioEdicao.data
+            }) : atual);
+            await buscarDados(true);
+            setSucessoEdicao("Lançamento atualizado com sucesso!");
+        } catch (error) {
+            console.error("Erro ao editar lançamento:", error);
+            setErroEdicao("Erro de conexão ao atualizar o lançamento.");
+        } finally {
+            setSalvandoEdicao(false);
         }
     }
 
@@ -342,15 +521,15 @@ function DashboardFinanceiroEscritorio1({ api }) {
     const alturaDespesas = (despesas / maiorValor) * 100;
 
     const lancamentosFiltrados = lancamentos.filter(lanc => {
-        if (filtroStatusLista === 'todos') return true;
-        if (filtroStatusLista === 'a_receber') {
-            return lanc.status === 'A pagar' || lanc.status === 'Atrasado';
+        if (filtroStatusLista === "todos") return true;
+        if (filtroStatusLista === "a_receber") {
+            return ["A receber", "A pagar", "Atrasado"].includes(lanc.status);
         }
-        if (filtroStatusLista === 'recebido') {
-            return lanc.status === 'Recebido';
+        if (filtroStatusLista === "recebido") {
+            return lanc.status === "Recebido";
         }
-        if (filtroStatusLista === 'atrasado') {
-            return lanc.status === 'Atrasado';
+        if (filtroStatusLista === "atrasado") {
+            return lanc.status === "Atrasado";
         }
         return true;
     });
@@ -381,9 +560,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
     }
 
     function classeCardSituacao(nome) {
-        return `${css.situacaoCard} ${
-            situacao === nome ? css.situacaoCardAtiva : ""
-        }`;
+        return `${css.situacaoCard} ${situacao === nome ? css.situacaoCardAtiva : ""}`;
     }
 
     function classeStatusBadge(status) {
@@ -402,9 +579,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
 
             <div className={css.layoutDashboard}>
                 <div
-                    className={`${css.menuLateralContainer} ${
-                        menuColapsado ? css.menuLateralColapsado : ""
-                    }`}
+                    className={`${css.menuLateralContainer} ${menuColapsado ? css.menuLateralColapsado : ""}`}
                 >
                     <MenuLateralAdvogado api={API_URL} />
                 </div>
@@ -461,7 +636,7 @@ function DashboardFinanceiroEscritorio1({ api }) {
                     {mensagem && (
                         <div
                             ref={mensagemRef}
-                            className={`${css.mensagemContainer} ${tipoMensagem === 'sucesso' ? css.sucesso : css.erro}`}
+                            className={`${css.mensagemContainer} ${tipoMensagem === "sucesso" ? css.sucesso : css.erro}`}
                         >
                             {mensagem}
                         </div>
@@ -472,37 +647,21 @@ function DashboardFinanceiroEscritorio1({ api }) {
                             <p className={css.subtituloSaude}>INDICADOR DA SAÚDE FINANCEIRA</p>
                             <h2>{situacao}</h2>
                             <p>
-                                {situacao === "Boa" &&
-                                    "O escritório apresenta saldo positivo e uma boa proporção de receitas recebidas."}
-                                {situacao === "Atenção" &&
-                                    "É importante acompanhar as receitas a receber e as despesas do escritório."}
-                                {situacao === "Crítica" &&
-                                    "As despesas estão comprometendo o resultado financeiro do escritório."}
+                                {situacao === "Boa" && "O escritório apresenta saldo positivo e uma boa proporção de receitas recebidas."}
+                                {situacao === "Atenção" && "É importante acompanhar as receitas a receber e as despesas do escritório."}
+                                {situacao === "Crítica" && "As despesas estão comprometendo o resultado financeiro do escritório."}
                             </p>
                         </div>
 
                         <div className={css.percentualContainer}>
-                            <div
-                                className={css.percentual}
-                                style={{ "--pct": `${percentualArredondado}%` }}
-                            >
+                            <div className={css.percentual} style={{ "--pct": `${percentualArredondado}%` }}>
                                 <span>{percentualArredondado}%</span>
                             </div>
-                            <span className={css.percentualLabel}>
-                                das receitas recebidas
-                            </span>
+                            <span className={css.percentualLabel}>das receitas recebidas</span>
                         </div>
                     </section>
 
-                    <section
-                        className={`${css.blocoResultado} ${
-                            resultado === "lucro"
-                                ? css.blocoLucro
-                                : resultado === "prejuizo"
-                                    ? css.blocoPrejuizo
-                                    : css.blocoNeutro
-                        }`}
-                    >
+                    <section className={`${css.blocoResultado} ${resultado === "lucro" ? css.blocoLucro : resultado === "prejuizo" ? css.blocoPrejuizo : css.blocoNeutro}`}>
                         <div className={css.resultadoIcone}>
                             {resultado === "lucro" && "▲"}
                             {resultado === "prejuizo" && "▼"}
@@ -514,40 +673,26 @@ function DashboardFinanceiroEscritorio1({ api }) {
                             {resultado === "lucro" && (
                                 <>
                                     <h2>Você teve lucro</h2>
-                                    <p>
-                                        O escritório fechou o período com um resultado positivo de{" "}
-                                        <strong>{dinheiro(lucro)}</strong>.
-                                    </p>
+                                    <p>O escritório fechou o período com um resultado positivo de <strong>{dinheiro(lucro)}</strong>.</p>
                                 </>
                             )}
                             {resultado === "prejuizo" && (
                                 <>
                                     <h2>Você teve prejuízo</h2>
-                                    <p>
-                                        O escritório fechou o período com um resultado negativo de{" "}
-                                        <strong>{dinheiro(prejuizo)}</strong>.
-                                    </p>
+                                    <p>O escritório fechou o período com um resultado negativo de <strong>{dinheiro(prejuizo)}</strong>.</p>
                                 </>
                             )}
                             {resultado === "neutro" && (
                                 <>
                                     <h2>Resultado neutro</h2>
-                                    <p>
-                                        O escritório não teve lucro nem prejuízo neste período.
-                                    </p>
+                                    <p>O escritório não teve lucro nem prejuízo neste período.</p>
                                 </>
                             )}
                         </div>
 
                         <div className={css.resultadoValor}>
-                            <span className={css.resultadoValorLabel}>
-                                {resultado === "prejuizo" ? "Prejuízo" : "Lucro"}
-                            </span>
-                            <span className={css.resultadoValorNumero}>
-                                {resultado === "prejuizo"
-                                    ? dinheiro(prejuizo)
-                                    : dinheiro(lucro)}
-                            </span>
+                            <span className={css.resultadoValorLabel}>{resultado === "prejuizo" ? "Prejuízo" : "Lucro"}</span>
+                            <span className={css.resultadoValorNumero}>{resultado === "prejuizo" ? dinheiro(prejuizo) : dinheiro(lucro)}</span>
                         </div>
                     </section>
 
@@ -561,32 +706,26 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                 <span>Total de receitas previstas</span>
                                 <strong>{dinheiro(totalReceitas)}</strong>
                             </div>
-
                             <div className={css.linha}>
                                 <span>Receita recebida</span>
                                 <strong className={css.valorRecebido}>{dinheiro(receitaRecebida)}</strong>
                             </div>
-
                             <div className={css.linha}>
                                 <span>Receita a receber (pendente)</span>
                                 <strong className={css.valorPendente}>{dinheiro(receitaPendente)}</strong>
                             </div>
-
                             <div className={css.linha}>
                                 <span>Receita atrasada</span>
                                 <strong className={css.valorAtraso}>{dinheiro(receitaAtrasada)}</strong>
                             </div>
-
                             <div className={css.linha}>
                                 <span>Total a receber</span>
                                 <strong className={css.valorAReceber}>{dinheiro(receitaAReceber)}</strong>
                             </div>
-
                             <div className={css.linha}>
                                 <span>Despesas</span>
                                 <strong>{dinheiro(despesas)}</strong>
                             </div>
-
                             <div className={css.linhaFinal}>
                                 <span>Saldo atual</span>
                                 <strong>{dinheiro(saldo)}</strong>
@@ -623,26 +762,13 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                 <div className={css.centraliza}>
                                     <div className={css.campoFiltro}>
                                         <label>Data inicial</label>
-                                        <input
-                                            type="date"
-                                            value={dataInicial}
-                                            onChange={(e) => setDataInicial(e.target.value)}
-                                        />
+                                        <input type="date" value={dataInicial} onChange={(e) => setDataInicial(e.target.value)} />
                                     </div>
-
                                     <div className={css.campoFiltro}>
                                         <label>Data final</label>
-                                        <input
-                                            type="date"
-                                            value={dataFinal}
-                                            onChange={(e) => setDataFinal(e.target.value)}
-                                        />
+                                        <input type="date" value={dataFinal} onChange={(e) => setDataFinal(e.target.value)} />
                                     </div>
-                                    <button
-                                        type="button"
-                                        className={css.botaoFiltroTipo}
-                                        onClick={() => buscarDados()}
-                                    >
+                                    <button type="button" className={css.botaoFiltroTipo} onClick={() => buscarDados()}>
                                         Buscar
                                     </button>
                                 </div>
@@ -668,32 +794,21 @@ function DashboardFinanceiroEscritorio1({ api }) {
                             <div className={css.coluna}>
                                 <span className={css.valor}>{dinheiro(receitaRecebida)}</span>
                                 <div className={css.areaBarra}>
-                                    <div
-                                        className={`${css.barra} ${css.barraRecebida}`}
-                                        style={{ height: `${alturaRecebida}%` }}
-                                    />
+                                    <div className={`${css.barra} ${css.barraRecebida}`} style={{ height: `${alturaRecebida}%` }} />
                                 </div>
                                 <span className={css.label}>Recebido</span>
                             </div>
-
                             <div className={css.coluna}>
                                 <span className={css.valor}>{dinheiro(receitaAReceber)}</span>
                                 <div className={css.areaBarra}>
-                                    <div
-                                        className={`${css.barra} ${css.barraAReceber}`}
-                                        style={{ height: `${alturaAReceber}%` }}
-                                    />
+                                    <div className={`${css.barra} ${css.barraAReceber}`} style={{ height: `${alturaAReceber}%` }} />
                                 </div>
                                 <span className={css.label}>A receber</span>
                             </div>
-
                             <div className={css.coluna}>
                                 <span className={css.valor}>{dinheiro(despesas)}</span>
                                 <div className={css.areaBarra}>
-                                    <div
-                                        className={`${css.barra} ${css.barraDespesas}`}
-                                        style={{ height: `${alturaDespesas}%` }}
-                                    />
+                                    <div className={`${css.barra} ${css.barraDespesas}`} style={{ height: `${alturaDespesas}%` }} />
                                 </div>
                                 <span className={css.label}>Despesas</span>
                             </div>
@@ -704,12 +819,10 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                 <span className={css.totalLabel}>Recebido</span>
                                 <span className={css.totalValor}>{dinheiro(receitaRecebida)}</span>
                             </div>
-
                             <div className={css.totalItem}>
                                 <span className={css.totalLabel}>A Receber</span>
                                 <span className={css.totalValor}>{dinheiro(receitaAReceber)}</span>
                             </div>
-
                             <div className={css.totalItem}>
                                 <span className={css.totalLabel}>Despesas</span>
                                 <span className={css.totalValor}>{dinheiro(despesas)}</span>
@@ -733,7 +846,6 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                     <p>Saldo positivo e pelo menos 70% das receitas previstas já recebidas.</p>
                                 </div>
                             </div>
-
                             <div className={classeCardSituacao("Atenção")}>
                                 <span className={css.ponto} />
                                 <div>
@@ -741,7 +853,6 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                     <p>O escritório possui saldo positivo, mas precisa acompanhar os valores.</p>
                                 </div>
                             </div>
-
                             <div className={classeCardSituacao("Crítica")}>
                                 <span className={css.ponto} />
                                 <div>
@@ -760,34 +871,10 @@ function DashboardFinanceiroEscritorio1({ api }) {
                             </div>
 
                             <div className={css.filtrosLancamentos}>
-                                <button
-                                    type="button"
-                                    className={`${css.botaoFiltroTipo} ${tipoLancamento === "todos" ? css.botaoFiltroAtivo : ""}`}
-                                    onClick={() => setTipoLancamento("todos")}
-                                >
-                                    Todos
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`${css.botaoFiltroTipo} ${tipoLancamento === "receita" ? css.botaoFiltroAtivo : ""}`}
-                                    onClick={() => setTipoLancamento("receita")}
-                                >
-                                    Receitas
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`${css.botaoFiltroTipo} ${tipoLancamento === "despesa" ? css.botaoFiltroAtivo : ""}`}
-                                    onClick={() => setTipoLancamento("despesa")}
-                                >
-                                    Despesas
-                                </button>
-                                <button
-                                    type="button"
-                                    className={`${css.botaoFiltroTipo} ${filtroStatusLista === "a_receber" ? css.botaoFiltroAtivo : ""}`}
-                                    onClick={() => setFiltroStatusLista(filtroStatusLista === "a_receber" ? "todos" : "a_receber")}
-                                >
-                                    A receber / A pagar
-                                </button>
+                                <button type="button" className={`${css.botaoFiltroTipo} ${tipoLancamento === "todos" ? css.botaoFiltroAtivo : ""}`} onClick={() => setTipoLancamento("todos")}>Todos</button>
+                                <button type="button" className={`${css.botaoFiltroTipo} ${tipoLancamento === "receita" ? css.botaoFiltroAtivo : ""}`} onClick={() => setTipoLancamento("receita")}>Receitas</button>
+                                <button type="button" className={`${css.botaoFiltroTipo} ${tipoLancamento === "despesa" ? css.botaoFiltroAtivo : ""}`} onClick={() => setTipoLancamento("despesa")}>Despesas</button>
+                                <button type="button" className={`${css.botaoFiltroTipo} ${filtroStatusLista === "a_receber" ? css.botaoFiltroAtivo : ""}`} onClick={() => setFiltroStatusLista(filtroStatusLista === "a_receber" ? "todos" : "a_receber")}>A receber / A pagar</button>
                             </div>
                         </div>
 
@@ -813,44 +900,50 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                         {lancamentosPaginados.map((lanc) => (
                                             <tr key={lanc.id}>
                                                 <td data-label="Tipo">
-                                                    <span
-                                                        className={`${css.badgeStatus} ${
-                                                            lanc.tipo === "receita"
-                                                                ? css.badgeReceita
-                                                                : css.badgeDespesa
-                                                        }`}
-                                                    >
-                                                        {lanc.tipo === "receita" ? "Receita" : "Despesa"}
-                                                    </span>
+                                                        <span className={`${css.badgeStatus} ${lanc.tipo === "receita" ? css.badgeReceita : css.badgeDespesa}`}>
+                                                            {lanc.tipo === "receita" ? "Receita" : "Despesa"}
+                                                        </span>
                                                 </td>
                                                 <td data-label="Descrição">{capitalizarFrase(lanc.descricao)}</td>
                                                 <td data-label="Data">{formatarData(lanc.data)}</td>
                                                 <td data-label="Status">
                                                     {lanc.status && (
                                                         <span className={`${css.badgeStatusInfo} ${classeStatusBadge(lanc.status)}`}>
-                                                            {lanc.status}
-                                                        </span>
+                                                                {lanc.status}
+                                                            </span>
                                                     )}
                                                 </td>
-                                                <td
-                                                    data-label="Valor"
-                                                    className={
-                                                        lanc.tipo === "receita"
-                                                            ? css.valorReceitaCelula
-                                                            : css.valorDespesaCelula
-                                                    }
-                                                >
+                                                <td data-label="Valor" className={lanc.tipo === "receita" ? css.valorReceitaCelula : css.valorDespesaCelula}>
                                                     {dinheiro(lanc.valor)}
                                                 </td>
                                                 <td data-label="Ações" className={css.colunaAcoes}>
-                                                    {lanc.status !== 'Recebido' ? (
-                                                        <button
-                                                            className={css.botaoDarBaixa}
-                                                            onClick={() => abrirModalBaixa(lanc)}
-                                                        >
-                                                            Dar Baixa
-                                                        </button>
-                                                    ) : null}
+                                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", flexWrap: "wrap" }}>
+                                                        {lanc.origem === "manual" && (
+                                                            <button
+                                                                type="button"
+                                                                onClick={() => abrirModalEdicao(lanc)}
+                                                                title="Editar lançamento"
+                                                                style={{
+                                                                    backgroundColor: "#ffbf00",
+                                                                    color: "#FFFFFf",
+                                                                    border: "none",
+                                                                    borderRadius: "20px",
+                                                                    padding: "0.4rem 1.2rem",
+                                                                    fontSize: "0.75rem",
+                                                                    fontWeight: "600",
+                                                                    cursor: "pointer"
+                                                                }}
+                                                            >
+                                                                Editar
+                                                            </button>
+                                                        )}
+
+                                                        {lanc.status !== "Recebido" && (
+                                                            <button type="button" className={css.botaoDarBaixa} onClick={() => abrirModalBaixa(lanc)}>
+                                                                Dar Baixa
+                                                            </button>
+                                                        )}
+                                                    </div>
                                                 </td>
                                             </tr>
                                         ))}
@@ -858,27 +951,9 @@ function DashboardFinanceiroEscritorio1({ api }) {
                                     </table>
 
                                     <div className={css.paginacao}>
-                                        <button
-                                            type="button"
-                                            className={css.botaoPagina}
-                                            onClick={() => irParaPagina(paginaLancamentos - 1)}
-                                            disabled={paginaLancamentos <= 1}
-                                        >
-                                            Anterior
-                                        </button>
-
-                                        <span className={css.infoPagina}>
-                                            Página {paginaLancamentos} de {totalPaginas}
-                                        </span>
-
-                                        <button
-                                            type="button"
-                                            className={css.botaoPagina}
-                                            onClick={() => irParaPagina(paginaLancamentos + 1)}
-                                            disabled={paginaLancamentos >= totalPaginas}
-                                        >
-                                            Próxima
-                                        </button>
+                                        <button type="button" className={css.botaoPagina} onClick={() => irParaPagina(paginaLancamentos - 1)} disabled={paginaLancamentos <= 1}>Anterior</button>
+                                        <span className={css.infoPagina}>Página {paginaLancamentos} de {totalPaginas}</span>
+                                        <button type="button" className={css.botaoPagina} onClick={() => irParaPagina(paginaLancamentos + 1)} disabled={paginaLancamentos >= totalPaginas}>Próxima</button>
                                     </div>
                                 </>
                             )}
@@ -898,36 +973,166 @@ function DashboardFinanceiroEscritorio1({ api }) {
             {modalBaixaAberto && lancamentoParaBaixar && (
                 <div className={css.modalOverlay} onClick={fecharModalBaixa}>
                     <div className={css.modalBaixaContainer} onClick={(e) => e.stopPropagation()}>
-                        <button
-                            className={css.modalFecharIconeLeft}
-                            onClick={fecharModalBaixa}
-                            disabled={baixandoId !== null}
-                        >
-                            ✕
-                        </button>
-
+                        <button className={css.modalFecharIconeLeft} onClick={fecharModalBaixa} disabled={baixandoId !== null}>✕</button>
                         <h2 className={css.tituloBaixa}>Confirmar pagamento</h2>
                         <p className={css.subtituloBaixa}>
-                            Deseja confirmar o pagamento de{' '}
-                            <strong>{dinheiro(lancamentoParaBaixar.valor)}</strong> referente a{' '}
-                            <strong>{capitalizarFrase(lancamentoParaBaixar.descricao)}</strong>?
+                            Deseja confirmar o pagamento de <strong>{dinheiro(lancamentoParaBaixar.valor)}</strong> referente a <strong>{capitalizarFrase(lancamentoParaBaixar.descricao)}</strong>?
                         </p>
-
                         <div className={css.botoesBaixa}>
-                            <button
-                                className={css.btnCancelarBaixa}
-                                onClick={fecharModalBaixa}
-                                disabled={baixandoId !== null}
-                            >
-                                Cancelar
+                            <button className={css.btnCancelarBaixa} onClick={fecharModalBaixa} disabled={baixandoId !== null}>Cancelar</button>
+                            <button className={css.btnConfirmarBaixa} onClick={confirmarBaixa} disabled={baixandoId !== null}>
+                                {baixandoId !== null ? "Confirmando..." : "Confirmar"}
                             </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {modalEdicaoAberto && lancamentoEditando && (
+                <div
+                    className={cssModal.modalOverlay}
+                    onClick={(e) => {
+                        if (e.target === e.currentTarget && !salvandoEdicao) {
+                            fecharModalEdicao();
+                        }
+                    }}
+                >
+                    <div className={cssModal.modalContainer}>
+                        <div className={cssModal.modalHeader}>
+                            <h2 className={cssModal.modalTitulo}>
+                                Editar Lançamento
+                            </h2>
+
                             <button
-                                className={css.btnConfirmarBaixa}
-                                onClick={confirmarBaixa}
-                                disabled={baixandoId !== null}
+                                className={cssModal.modalFechar}
+                                onClick={fecharModalEdicao}
+                                type="button"
+                                aria-label="Fechar"
+                                disabled={salvandoEdicao}
                             >
-                                {baixandoId !== null ? 'Confirmando...' : 'Confirmar'}
+                                ✕
                             </button>
+                        </div>
+
+                        <div className={cssModal.modalBody}>
+                            {sucessoEdicao && (
+                                <div className={`${cssModal.mensagemContainer} ${cssModal.sucesso}`}>
+                                    {sucessoEdicao}
+                                </div>
+                            )}
+
+                            {erroEdicao && (
+                                <div className={`${cssModal.mensagemContainer} ${cssModal.erro}`}>
+                                    {erroEdicao}
+                                </div>
+                            )}
+
+                            <form className={cssModal.formulario} onSubmit={salvarEdicaoLancamento}>
+                                <div className={cssModal.linha}>
+                                    <div className={cssModal.campoMetade}>
+                                        <label className={cssModal.label} htmlFor="editar-tipo">
+                                            Tipo *
+                                        </label>
+
+                                        <select
+                                            id="editar-tipo"
+                                            name="tipo"
+                                            className={cssModal.input}
+                                            value={formularioEdicao.tipo}
+                                            onChange={(e) => alterarCampoEdicao("tipo", e.target.value)}
+                                            disabled={salvandoEdicao}
+                                            required
+                                        >
+                                            <option value="despesa">Despesa</option>
+                                            <option value="receita">Receita</option>
+                                        </select>
+                                    </div>
+
+                                    <div className={cssModal.campoMetade}>
+                                        <label className={cssModal.label} htmlFor="editar-data">
+                                            Data *
+                                        </label>
+
+                                        <input
+                                            id="editar-data"
+                                            name="data"
+                                            type="date"
+                                            className={cssModal.input}
+                                            value={formularioEdicao.data}
+                                            onChange={(e) => alterarCampoEdicao("data", e.target.value)}
+                                            disabled={salvandoEdicao}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={cssModal.linha}>
+                                    <div className={cssModal.campoInteiro}>
+                                        <label className={cssModal.label} htmlFor="editar-descricao">
+                                            Descrição *
+                                        </label>
+
+                                        <input
+                                            id="editar-descricao"
+                                            name="descricao"
+                                            type="text"
+                                            className={cssModal.input}
+                                            placeholder="Ex.: Custas processuais"
+                                            value={formularioEdicao.descricao}
+                                            onChange={(e) => alterarCampoEdicao("descricao", e.target.value)}
+                                            maxLength={254}
+                                            disabled={salvandoEdicao}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={cssModal.linha}>
+                                    <div className={cssModal.campoInteiro}>
+                                        <label className={cssModal.label} htmlFor="editar-valor">
+                                            Valor *
+                                        </label>
+
+                                        <input
+                                            id="editar-valor"
+                                            name="valor"
+                                            type="text"
+                                            inputMode="numeric"
+                                            className={cssModal.input}
+                                            placeholder="R$ 0,00"
+                                            value={formularioEdicao.valor}
+                                            onChange={(e) => alterarCampoEdicao("valor", e.target.value)}
+                                            disabled={salvandoEdicao}
+                                            required
+                                        />
+                                    </div>
+                                </div>
+
+                                <div className={cssModal.campoInteiro}>
+                                    <p className={cssModal.obsCampos}>
+                                        * Campos obrigatórios
+                                    </p>
+                                </div>
+
+                                <div className={cssModal.botaoContainer}>
+                                    <button
+                                        className={cssModal.botaoCadastro}
+                                        type="submit"
+                                        disabled={salvandoEdicao}
+                                    >
+                                        {salvandoEdicao ? "Salvando..." : "Salvar alterações"}
+                                    </button>
+
+                                    <button
+                                        className={cssModal.botaoCancelar}
+                                        type="button"
+                                        onClick={fecharModalEdicao}
+                                        disabled={salvandoEdicao}
+                                    >
+                                        Cancelar
+                                    </button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                 </div>

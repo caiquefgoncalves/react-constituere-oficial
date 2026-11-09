@@ -33,7 +33,20 @@ export default function DashboardAdvogado1({ api }) {
     const [agendamentos, setAgendamentos] = useState([]);
     const [carregandoAgendamentos, setCarregandoAgendamentos] = useState(true);
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.19:5000';
+
+    function capitalizarNome(texto) {
+        if (!texto) return '';
+        const minusculas = ['de', 'da', 'do', 'das', 'dos', 'e'];
+        return texto
+            .toLowerCase()
+            .split(' ')
+            .map((palavra, index) => {
+                if (index > 0 && minusculas.includes(palavra)) return palavra;
+                return palavra.charAt(0).toUpperCase() + palavra.slice(1);
+            })
+            .join(' ');
+    }
 
     function limparSessaoERedirecionar() {
         localStorage.removeItem('nome');
@@ -435,7 +448,7 @@ export default function DashboardAdvogado1({ api }) {
 
                                             <div className={css.cardEscritorioInfo}>
                                                 <h3 className={css.nomeEscritorio}>
-                                                    {escritorio.nome_fantasia}
+                                                    {capitalizarNome(escritorio.nome_fantasia)}
                                                 </h3>
 
                                                 <span className={css.tipoEscritorio}>

@@ -2,10 +2,11 @@ import React, { useState, useRef, useEffect } from 'react';
 import css from './EditarPerfilEscritorio1.module.css';
 import Header from "../Header/Header.jsx";
 import Footer from "../Footer/Footer.jsx";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 export default function EditarPerfilEscritorio1({ api }) {
     const navigate = useNavigate();
+    const { id } = useParams();
     const topoRef = useRef(null);
 
     const [razaoSocial, setRazaoSocial] = useState('');
@@ -34,7 +35,7 @@ export default function EditarPerfilEscritorio1({ api }) {
     const [carregandoDados, setCarregandoDados] = useState(true);
     const [buscandoCep, setBuscandoCep] = useState(false);
 
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.19:5000';
 
     const ufs = [
         'AC', 'AL', 'AP', 'AM', 'BA', 'CE', 'DF', 'ES', 'GO', 'MA',
@@ -97,13 +98,11 @@ export default function EditarPerfilEscritorio1({ api }) {
     }
 
     function handleCnpj(e) {
-        const valor = e.target.value;
-        setCnpj(formatarCnpj(valor));
+        setCnpj(formatarCnpj(e.target.value));
     }
 
     function handleTelefone(e) {
-        const valor = e.target.value;
-        setTelefone(formatarTelefone(valor));
+        setTelefone(formatarTelefone(e.target.value));
     }
 
     function handleEmail(e) {
@@ -113,16 +112,9 @@ export default function EditarPerfilEscritorio1({ api }) {
 
     function handleCep(e) {
         const valor = e.target.value;
-        const cepFormatado = formatarCep(valor);
-        setCep(cepFormatado);
+        setCep(formatarCep(valor));
         const cepNumeros = apenasNumeros(valor);
         if (cepNumeros.length === 8) buscarCep(cepNumeros);
-        if (cepNumeros.length < 8) {
-            setLogradouro('');
-            setBairro('');
-            setCidade('');
-            setUf('');
-        }
     }
 
     async function buscarCep(cepInformado) {
@@ -134,10 +126,6 @@ export default function EditarPerfilEscritorio1({ api }) {
             if (!resposta.ok) throw new Error('Não foi possível consultar o CEP.');
             const dados = await resposta.json();
             if (dados.erro) {
-                setLogradouro('');
-                setBairro('');
-                setCidade('');
-                setUf('');
                 setMensagem('CEP não encontrado.');
                 setTipoMensagem('erro');
                 return;
@@ -164,7 +152,46 @@ export default function EditarPerfilEscritorio1({ api }) {
     }
 
     function voltar() {
-        navigate('/dashboard_advogado');
+        if (id) {
+            navigate(`/escritorio/${id}`);
+        } else {
+            navigate('/dashboard_advogado');
+        }
+    }
+
+    function preencherFormulario(escritorio) {
+        setIdEscritorio(escritorio.id);
+        setRazaoSocial(escritorio.razao_social || '');
+        setNomeFantasia(escritorio.nome_fantasia || '');
+        setRegistroOab(escritorio.registro_oab || '');
+        setUfOab(escritorio.uf_oab || '');
+        setTelefone(formatarTelefone(escritorio.telefone || ''));
+        setEmail(escritorio.email || '');
+        setCnpj(formatarCnpj(escritorio.cnpj || ''));
+        setCep(formatarCep(escritorio.cep || ''));
+        setLogradouro(escritorio.logradouro || '');
+        setNumero(escritorio.numero || '');
+        setComplemento(escritorio.complemento || '');
+        setBairro(escritorio.bairro || '');
+        setCidade(escritorio.cidade || '');
+        setUf(escritorio.estado || '');
+
+        setDadosOriginais({
+            razaoSocial: escritorio.razao_social || '',
+            nomeFantasia: escritorio.nome_fantasia || '',
+            registroOab: escritorio.registro_oab || '',
+            ufOab: escritorio.uf_oab || '',
+            telefone: escritorio.telefone || '',
+            email: escritorio.email || '',
+            cnpj: escritorio.cnpj || '',
+            cep: escritorio.cep || '',
+            logradouro: escritorio.logradouro || '',
+            numero: escritorio.numero || '',
+            complemento: escritorio.complemento || '',
+            bairro: escritorio.bairro || '',
+            cidade: escritorio.cidade || '',
+            uf: escritorio.estado || ''
+        });
     }
 
     useEffect(() => {
@@ -186,8 +213,13 @@ export default function EditarPerfilEscritorio1({ api }) {
                     return;
                 }
 
-                // Busca os dados do escritório do advogado logado
-                const resposta = await fetch(`${API_URL}/meu_escritorio`, {
+                if (!id || !Number.isInteger(Number(id)) || Number(id) <= 0) {
+                    setMensagem('ID do escritório inválido. Acesse a edição pela página do escritório selecionado.');
+                    setTipoMensagem('erro');
+                    return;
+                }
+
+                const resposta = await fetch(`${API_URL}/escritorio/${id}`, {
                     method: 'GET',
                     credentials: 'include',
                     headers: { 'X-Access-Token': token }
@@ -195,40 +227,14 @@ export default function EditarPerfilEscritorio1({ api }) {
 
                 if (resposta.ok) {
                     const dados = await resposta.json();
-                    const escritorio = dados.escritorio;
-                    setIdEscritorio(escritorio.id);
-
-                    setRazaoSocial(escritorio.razao_social || '');
-                    setNomeFantasia(escritorio.nome_fantasia || '');
-                    setRegistroOab(escritorio.registro_oab || '');
-                    setUfOab(escritorio.uf_oab || '');
-                    setTelefone(formatarTelefone(escritorio.telefone || ''));
-                    setEmail(escritorio.email || '');
-                    setCnpj(formatarCnpj(escritorio.cnpj || ''));
-                    setCep(formatarCep(escritorio.cep || ''));
-                    setLogradouro(escritorio.logradouro || '');
-                    setNumero(escritorio.numero || '');
-                    setComplemento(escritorio.complemento || '');
-                    setBairro(escritorio.bairro || '');
-                    setCidade(escritorio.cidade || '');
-                    setUf(escritorio.estado || '');
-
-                    setDadosOriginais({
-                        razaoSocial: escritorio.razao_social || '',
-                        nomeFantasia: escritorio.nome_fantasia || '',
-                        registroOab: escritorio.registro_oab || '',
-                        ufOab: escritorio.uf_oab || '',
-                        telefone: escritorio.telefone || '',
-                        email: escritorio.email || '',
-                        cnpj: escritorio.cnpj || '',
-                        cep: escritorio.cep || '',
-                        logradouro: escritorio.logradouro || '',
-                        numero: escritorio.numero || '',
-                        complemento: escritorio.complemento || '',
-                        bairro: escritorio.bairro || '',
-                        cidade: escritorio.cidade || '',
-                        uf: escritorio.estado || ''
-                    });
+                    if (dados.escritorio) {
+                        if (Number(dados.escritorio.id) !== Number(id)) {
+                            throw new Error('O servidor retornou dados de outro escritório.');
+                        }
+                        preencherFormulario(dados.escritorio);
+                    } else {
+                        throw new Error('Os dados do escritório não foram encontrados.');
+                    }
                 } else if (resposta.status === 401) {
                     localStorage.removeItem('nome');
                     localStorage.removeItem('tipo');
@@ -251,7 +257,7 @@ export default function EditarPerfilEscritorio1({ api }) {
             }
         }
         carregarDados();
-    }, [API_URL, navigate]);
+    }, [API_URL, navigate, id]);
 
     async function handleSalvar(e) {
         e.preventDefault();
@@ -261,23 +267,14 @@ export default function EditarPerfilEscritorio1({ api }) {
         setMensagem('');
         setTipoMensagem('');
 
-        let camposFaltando = [];
-        if (!razaoSocial.trim()) camposFaltando.push('Razão social');
-        if (!nomeFantasia.trim()) camposFaltando.push('Nome fantasia');
-        if (!registroOab.trim()) camposFaltando.push('Registro OAB');
-        if (!ufOab.trim()) camposFaltando.push('UF da OAB');
-        if (!telefone.trim()) camposFaltando.push('Telefone');
-        if (!email.trim()) camposFaltando.push('E-mail');
-        if (!cnpj.trim()) camposFaltando.push('CNPJ');
-        if (!cep.trim()) camposFaltando.push('CEP');
-        if (!logradouro.trim()) camposFaltando.push('Logradouro');
-        if (!numero.trim()) camposFaltando.push('Número');
-        if (!bairro.trim()) camposFaltando.push('Bairro');
-        if (!cidade.trim()) camposFaltando.push('Cidade');
-        if (!uf.trim()) camposFaltando.push('Estado');
-
-        if (camposFaltando.length > 0) {
-            setMensagem(`Preencha os campos obrigatórios: ${camposFaltando.join(', ')}.`);
+        if (
+            !id ||
+            !Number.isInteger(Number(id)) ||
+            Number(id) <= 0 ||
+            !idEscritorio ||
+            Number(idEscritorio) !== Number(id)
+        ) {
+            setMensagem('Escritório não identificado corretamente. Volte à página do escritório e tente novamente.');
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
@@ -287,8 +284,8 @@ export default function EditarPerfilEscritorio1({ api }) {
         }
 
         const cnpjNumeros = apenasNumeros(cnpj);
-        if (cnpjNumeros.length !== 14) {
-            setMensagem('CNPJ inválido. Digite os 14 números.');
+        if (cnpj.trim() && cnpjNumeros.length !== 14) {
+            setMensagem('CNPJ inválido. Digite os 14 números ou deixe o campo vazio.');
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
@@ -298,8 +295,8 @@ export default function EditarPerfilEscritorio1({ api }) {
         }
 
         const cepNumeros = apenasNumeros(cep);
-        if (cepNumeros.length !== 8) {
-            setMensagem('CEP inválido. Digite os 8 números.');
+        if (cep.trim() && cepNumeros.length !== 8) {
+            setMensagem('CEP inválido. Digite os 8 números ou deixe o campo vazio.');
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
@@ -309,8 +306,8 @@ export default function EditarPerfilEscritorio1({ api }) {
         }
 
         const telefoneNumeros = apenasNumeros(telefone);
-        if (telefoneNumeros.length < 10 || telefoneNumeros.length > 11) {
-            setMensagem('Telefone inválido.');
+        if (telefone.trim() && (telefoneNumeros.length < 10 || telefoneNumeros.length > 11)) {
+            setMensagem('Telefone inválido. Informe 10 ou 11 números ou deixe o campo vazio.');
             setTipoMensagem('erro');
             setCarregando(false);
             setExibirCarregamento(false);
@@ -319,21 +316,22 @@ export default function EditarPerfilEscritorio1({ api }) {
             return;
         }
 
+        const normalizarTexto = valor => String(valor ?? '').trim();
         const houveAlteracao = (
-            razaoSocial !== dadosOriginais.razaoSocial ||
-            nomeFantasia !== dadosOriginais.nomeFantasia ||
-            registroOab !== dadosOriginais.registroOab ||
-            ufOab !== dadosOriginais.ufOab ||
-            telefone !== dadosOriginais.telefone ||
-            email !== dadosOriginais.email ||
-            cnpj !== dadosOriginais.cnpj ||
-            cep !== dadosOriginais.cep ||
-            logradouro !== dadosOriginais.logradouro ||
-            numero !== dadosOriginais.numero ||
-            complemento !== dadosOriginais.complemento ||
-            bairro !== dadosOriginais.bairro ||
-            cidade !== dadosOriginais.cidade ||
-            uf !== dadosOriginais.uf ||
+            normalizarTexto(razaoSocial) !== normalizarTexto(dadosOriginais.razaoSocial) ||
+            normalizarTexto(nomeFantasia) !== normalizarTexto(dadosOriginais.nomeFantasia) ||
+            normalizarTexto(registroOab) !== normalizarTexto(dadosOriginais.registroOab) ||
+            normalizarTexto(ufOab) !== normalizarTexto(dadosOriginais.ufOab) ||
+            apenasNumeros(telefone) !== apenasNumeros(dadosOriginais.telefone || '') ||
+            normalizarTexto(email) !== normalizarTexto(dadosOriginais.email) ||
+            apenasNumeros(cnpj) !== apenasNumeros(dadosOriginais.cnpj || '') ||
+            apenasNumeros(cep) !== apenasNumeros(dadosOriginais.cep || '') ||
+            normalizarTexto(logradouro) !== normalizarTexto(dadosOriginais.logradouro) ||
+            normalizarTexto(numero) !== normalizarTexto(dadosOriginais.numero) ||
+            normalizarTexto(complemento) !== normalizarTexto(dadosOriginais.complemento) ||
+            normalizarTexto(bairro) !== normalizarTexto(dadosOriginais.bairro) ||
+            normalizarTexto(cidade) !== normalizarTexto(dadosOriginais.cidade) ||
+            normalizarTexto(uf) !== normalizarTexto(dadosOriginais.uf) ||
             fotoPerfil !== null
         );
 
@@ -344,11 +342,12 @@ export default function EditarPerfilEscritorio1({ api }) {
             setExibirCarregamento(false);
             if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
             agendarLimpezaMensagem();
-            setTimeout(() => navigate('/dashboard_advogado'), 2000);
+            setTimeout(() => navigate(`/escritorio/${id}`), 2000);
             return;
         }
 
         const formData = new FormData();
+        formData.append('id_escritorio', id);
         formData.append('razao_social', razaoSocial.trim());
         formData.append('nome_fantasia', nomeFantasia.trim());
         formData.append('registro_oab', registroOab.trim());
@@ -367,7 +366,7 @@ export default function EditarPerfilEscritorio1({ api }) {
 
         try {
             const token = localStorage.getItem('token');
-            const resposta = await fetch(`${API_URL}/editar_escritorio`, {
+            const resposta = await fetch(`${API_URL}/escritorio/${id}/editar`, {
                 method: 'PUT',
                 credentials: 'include',
                 headers: { 'X-Access-Token': token },
@@ -382,7 +381,7 @@ export default function EditarPerfilEscritorio1({ api }) {
                 setTipoMensagem('sucesso');
                 if (topoRef.current) topoRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 agendarLimpezaMensagem();
-                setTimeout(() => navigate('/dashboard_advogado'), 2000);
+                setTimeout(() => navigate(`/escritorio/${id}`), 2000);
             } else {
                 if (resposta.status === 401) {
                     localStorage.removeItem('nome');
@@ -457,45 +456,45 @@ export default function EditarPerfilEscritorio1({ api }) {
                 <form className={css.formulario} onSubmit={handleSalvar}>
                     <div className={css.linha}>
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Razão social *</label>
+                            <label className={css.label}>Razão social</label>
                             <input type="text" className={css.input} placeholder="Digite a razão social" value={razaoSocial} onChange={handleRazaoSocial} maxLength={254} tabIndex={1} name="razao_social" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Nome fantasia *</label>
+                            <label className={css.label}>Nome fantasia</label>
                             <input type="text" className={css.input} placeholder="Digite o nome fantasia" value={nomeFantasia} onChange={handleNomeFantasia} maxLength={254} tabIndex={2} name="nome_fantasia" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Registro na OAB *</label>
+                            <label className={css.label}>Registro na OAB</label>
                             <input type="text" className={css.input} placeholder="Digite a OAB" value={registroOab} onChange={(e) => setRegistroOab(e.target.value)} maxLength={30} tabIndex={3} name="registro_oab" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>UF da OAB *</label>
+                            <label className={css.label}>UF da OAB</label>
                             <select className={css.input} value={ufOab} onChange={(e) => setUfOab(e.target.value)} tabIndex={4} name="uf_oab">
-                                <option value="" disabled>Selecione a UF</option>
+                                <option value="">Selecione a UF</option>
                                 {ufs.map(estado => <option key={estado} value={estado}>{estado}</option>)}
                             </select>
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Telefone *</label>
+                            <label className={css.label}>Telefone</label>
                             <input type="text" className={css.input} placeholder="Digite seu telefone" value={telefone} onChange={handleTelefone} maxLength={15} tabIndex={5} name="telefone" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>E-mail *</label>
+                            <label className={css.label}>E-mail</label>
                             <input type="email" className={css.input} placeholder="Digite seu e-mail" value={email} onChange={handleEmail} maxLength={254} tabIndex={6} name="email" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>CNPJ *</label>
+                            <label className={css.label}>CNPJ</label>
                             <input type="text" className={css.input} placeholder="Digite o CNPJ" value={cnpj} onChange={handleCnpj} maxLength={18} tabIndex={7} name="cnpj" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>CEP *</label>
+                            <label className={css.label}>CEP</label>
                             <div style={{ position: 'relative' }}>
                                 <input type="text" className={css.input} value={cep} onChange={handleCep} placeholder="Digite seu CEP" maxLength={9} tabIndex={8} name="cep" />
                                 {buscandoCep && (
@@ -505,12 +504,12 @@ export default function EditarPerfilEscritorio1({ api }) {
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Logradouro *</label>
+                            <label className={css.label}>Logradouro</label>
                             <input type="text" className={css.input} placeholder="Digite seu logradouro" value={logradouro} onChange={(e) => setLogradouro(e.target.value)} maxLength={254} tabIndex={9} name="logradouro" />
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Número *</label>
+                            <label className={css.label}>Número</label>
                             <input type="text" className={css.input} placeholder="Digite seu número" value={numero} onChange={handleNumero} maxLength={20} tabIndex={10} name="numero" />
                         </div>
 
@@ -520,19 +519,19 @@ export default function EditarPerfilEscritorio1({ api }) {
                         </div>
 
                         <div className={css.campoMetade}>
-                            <label className={css.label}>Bairro *</label>
+                            <label className={css.label}>Bairro</label>
                             <input type="text" className={css.input} placeholder="Digite seu bairro" value={bairro} onChange={(e) => setBairro(e.target.value)} maxLength={100} tabIndex={12} name="bairro" />
                         </div>
 
                         <div className={css.campoMetade} style={{ gap: '1.5rem', marginBottom: 0 }}>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <label className={css.label}>Cidade *</label>
+                                <label className={css.label}>Cidade</label>
                                 <input type="text" className={css.input} placeholder="Digite sua cidade" value={cidade} onChange={(e) => setCidade(e.target.value)} maxLength={100} tabIndex={13} name="cidade" />
                             </div>
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                <label className={css.label}>Estado *</label>
+                                <label className={css.label}>Estado</label>
                                 <select className={css.input} value={uf} onChange={(e) => setUf(e.target.value)} tabIndex={14} name="estado">
-                                    <option value="" disabled>Selecione a UF</option>
+                                    <option value="">Selecione a UF</option>
                                     {ufs.map(estado => <option key={estado} value={estado}>{estado}</option>)}
                                 </select>
                             </div>
@@ -553,7 +552,7 @@ export default function EditarPerfilEscritorio1({ api }) {
                         </div>
 
                         <div className={css.campoInteiro} style={{ marginTop: '0.5rem' }}>
-                            <p className={css.obsCampos}>* Campos obrigatórios</p>
+                            <p className={css.obsCampos}>Todos os campos são opcionais.</p>
                         </div>
                     </div>
 

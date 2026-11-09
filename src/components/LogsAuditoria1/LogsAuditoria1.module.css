@@ -85,6 +85,37 @@
 
 .cardDetalhe { display: flex; flex-direction: column; gap: .5rem; padding: 1.2rem 1.4rem; background-color: #f5f8fd; border-left: 4px solid #0047ab; border-radius: 10px; box-sizing: border-box; }
 
+
+.mensagemFiltroContainer {
+    width: 100%;
+    padding: 12px 18px;
+    border-radius: 10px;
+    font-family: 'Clear Sans', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    box-sizing: border-box;
+    margin-bottom: 1rem;
+    animation: fadeInFiltro 0.25s ease;
+}
+
+.mensagemFiltroErro {
+    background-color: #fce8e6;
+    color: #a94442;
+    border: 1px solid #f5c6cb;
+}
+
+.mensagemFiltroSucesso {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+@keyframes fadeInFiltro {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+
 .linhaDetalhe { display: flex; align-items: flex-start; gap: .5rem; font-family: 'Clear Sans', sans-serif; font-size: .9rem; line-height: 1.45; color: #222; }
 .linhaDetalhe strong { font-weight: 700; color: #0047ab; min-width: 150px; flex-shrink: 0; }
 .linhaDetalhe span { color: #333; overflow-wrap: anywhere; }

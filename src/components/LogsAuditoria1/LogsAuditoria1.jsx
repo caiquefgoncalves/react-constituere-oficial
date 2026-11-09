@@ -1,5 +1,3 @@
-
-
 import { useEffect, useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Header from '../Header/Header.jsx';
@@ -61,41 +59,13 @@ function traduzirAcao(acao, tabelaAfetada) {
     const tabela = normalizarTabela(tabelaAfetada);
 
     const especiais = {
-        MENSAGENS: {
-            INSERT: 'enviou',
-            UPDATE: 'editou',
-            DELETE: 'excluiu'
-        },
-        CONVERSAS: {
-            INSERT: 'iniciou',
-            UPDATE: 'atualizou',
-            DELETE: 'excluiu'
-        },
-        ESCRITORIOS: {
-            INSERT: 'cadastrou',
-            UPDATE: 'atualizou',
-            DELETE: 'excluiu'
-        },
-        ATUALIZACOES: {
-            INSERT: 'registrou',
-            UPDATE: 'editou',
-            DELETE: 'excluiu'
-        },
-        AGENDAMENTOS: {
-            INSERT: 'marcou',
-            UPDATE: 'atualizou',
-            DELETE: 'excluiu'
-        },
-        ADVOGADO_ESCRITORIO: {
-            INSERT: 'vinculou',
-            UPDATE: 'alterou o vínculo de',
-            DELETE: 'removeu o vínculo de'
-        },
-        GOOGLE_CALENDAR: {
-            INSERT: 'conectou',
-            UPDATE: 'atualizou',
-            DELETE: 'desconectou'
-        }
+        MENSAGENS: { INSERT: 'enviou', UPDATE: 'editou', DELETE: 'excluiu' },
+        CONVERSAS: { INSERT: 'iniciou', UPDATE: 'atualizou', DELETE: 'excluiu' },
+        ESCRITORIOS: { INSERT: 'cadastrou', UPDATE: 'atualizou', DELETE: 'excluiu' },
+        ATUALIZACOES: { INSERT: 'registrou', UPDATE: 'editou', DELETE: 'excluiu' },
+        AGENDAMENTOS: { INSERT: 'marcou', UPDATE: 'atualizou', DELETE: 'excluiu' },
+        ADVOGADO_ESCRITORIO: { INSERT: 'vinculou', UPDATE: 'alterou o vínculo de', DELETE: 'removeu o vínculo de' },
+        GOOGLE_CALENDAR: { INSERT: 'conectou', UPDATE: 'atualizou', DELETE: 'desconectou' }
     };
 
     if (especiais[tabela]?.[acao]) {
@@ -113,46 +83,14 @@ function rotuloAcao(acao, tabelaAfetada) {
     const tabela = normalizarTabela(tabelaAfetada);
 
     const especiais = {
-        MENSAGENS: {
-            INSERT: 'Mensagem Enviada',
-            UPDATE: 'Mensagem Editada',
-            DELETE: 'Mensagem Excluída'
-        },
-        CONVERSAS: {
-            INSERT: 'Nova Conversa',
-            UPDATE: 'Conversa Atualizada',
-            DELETE: 'Conversa Excluída'
-        },
-        ESCRITORIOS: {
-            INSERT: 'Escritório Cadastrado',
-            UPDATE: 'Escritório Atualizado',
-            DELETE: 'Escritório Excluído'
-        },
-        ATUALIZACOES: {
-            INSERT: 'Atualização Registrada',
-            UPDATE: 'Atualização Editada',
-            DELETE: 'Atualização Excluída'
-        },
-        AGENDAMENTOS: {
-            INSERT: 'Agendamento Criado',
-            UPDATE: 'Agendamento Atualizado',
-            DELETE: 'Agendamento Excluído'
-        },
-        ADVOGADO_ESCRITORIO: {
-            INSERT: 'Advogado Vinculado',
-            UPDATE: 'Vínculo Atualizado',
-            DELETE: 'Vínculo Removido'
-        },
-        LANCAMENTOS_FINANCEIROS: {
-            INSERT: 'Novo Lançamento',
-            UPDATE: 'Lançamento Atualizado',
-            DELETE: 'Lançamento Excluído'
-        },
-        GOOGLE_CALENDAR: {
-            INSERT: 'Google Conectado',
-            UPDATE: 'Integração Atualizada',
-            DELETE: 'Google Desconectado'
-        }
+        MENSAGENS: { INSERT: 'Mensagem Enviada', UPDATE: 'Mensagem Editada', DELETE: 'Mensagem Excluída' },
+        CONVERSAS: { INSERT: 'Nova Conversa', UPDATE: 'Conversa Atualizada', DELETE: 'Conversa Excluída' },
+        ESCRITORIOS: { INSERT: 'Escritório Cadastrado', UPDATE: 'Escritório Atualizado', DELETE: 'Escritório Excluído' },
+        ATUALIZACOES: { INSERT: 'Atualização Registrada', UPDATE: 'Atualização Editada', DELETE: 'Atualização Excluída' },
+        AGENDAMENTOS: { INSERT: 'Agendamento Criado', UPDATE: 'Agendamento Atualizado', DELETE: 'Agendamento Excluído' },
+        ADVOGADO_ESCRITORIO: { INSERT: 'Advogado Vinculado', UPDATE: 'Vínculo Atualizado', DELETE: 'Vínculo Removido' },
+        LANCAMENTOS_FINANCEIROS: { INSERT: 'Novo Lançamento', UPDATE: 'Lançamento Atualizado', DELETE: 'Lançamento Excluído' },
+        GOOGLE_CALENDAR: { INSERT: 'Google Conectado', UPDATE: 'Integração Atualizada', DELETE: 'Google Desconectado' }
     };
 
     if (especiais[tabela]?.[acao]) {
@@ -199,29 +137,18 @@ function nomeRegistroExibicao(log, resumo = false) {
 
     if (tabela === 'MENSAGENS') {
         const conversa = nome.match(/\(\s*conversa com\s+(.+?)\s*\)/i);
-
         if (conversa) {
-            return resumo
-                ? `da conversa com ${conversa[1].trim()}`
-                : `Conversa com ${conversa[1].trim()}`;
+            return resumo ? `da conversa com ${conversa[1].trim()}` : `Conversa com ${conversa[1].trim()}`;
         }
-
         return resumo ? '' : 'Mensagem';
     }
 
     if (tabela === 'CONVERSAS') {
         const participantes = nome.match(/\((.+?)\)/);
-
         if (participantes) {
-            const pessoas = participantes[1]
-                .replace(/\s+x\s+/i, ' e ')
-                .trim();
-
-            return resumo
-                ? `entre ${pessoas}`
-                : `Conversa entre ${pessoas}`;
+            const pessoas = participantes[1].replace(/\s+x\s+/i, ' e ').trim();
+            return resumo ? `entre ${pessoas}` : `Conversa entre ${pessoas}`;
         }
-
         return resumo ? '' : 'Conversa';
     }
 
@@ -231,20 +158,12 @@ function nomeRegistroExibicao(log, resumo = false) {
         );
 
         const descricao = String(
-            mudanca?.depois && mudanca.depois !== '(Vazio)'
-                ? mudanca.depois
-                : mudanca?.antes || ''
+            mudanca?.depois && mudanca.depois !== '(Vazio)' ? mudanca.depois : mudanca?.antes || ''
         ).trim();
 
-        const identificacao = (
-            nome && nome !== 'Lançamento financeiro'
-                ? nome.replace(/^lançamento financeiro\s*:\s*/i, '')
-                : descricao
-        );
+        const identificacao = (nome && nome !== 'Lançamento financeiro' ? nome.replace(/^lançamento financeiro\s*:\s*/i, '') : descricao);
 
-        return identificacao
-            ? resumo ? `“${identificacao}”` : identificacao
-            : resumo ? '' : 'Lançamento financeiro';
+        return identificacao ? (resumo ? `“${identificacao}”` : identificacao) : (resumo ? '' : 'Lançamento financeiro');
     }
 
     if (tabela === 'GOOGLE_CALENDAR') {
@@ -252,11 +171,7 @@ function nomeRegistroExibicao(log, resumo = false) {
     }
 
     if (tabela === 'ATUALIZACOES' || tabela === 'AGENDAMENTOS') {
-        return nome
-            ? resumo ? `“${nome}”` : nome
-            : tabela === 'ATUALIZACOES'
-                ? 'Atualização de processo'
-                : 'Agendamento';
+        return nome ? (resumo ? `“${nome}”` : nome) : (tabela === 'ATUALIZACOES' ? 'Atualização de processo' : 'Agendamento');
     }
 
     if (tabela === 'ESCRITORIOS') {
@@ -293,61 +208,20 @@ function formatarCampo(campo, tabelaAfetada) {
 
     const especificos = {
         ESCRITORIOS: {
-            RAZAO_SOCIAL: 'Razão social',
-            NOME_FANTASIA: 'Nome fantasia',
-            REGISTRO_OAB: 'Registro OAB',
-            UF_OAB: 'UF da OAB',
-            TELEFONE: 'Telefone',
-            EMAIL: 'E-mail',
-            CNPJ: 'CNPJ',
-            CEP: 'CEP',
-            LOGRADOURO: 'Endereço',
-            NUMERO: 'Número',
-            COMPLEMENTO: 'Complemento',
-            BAIRRO: 'Bairro',
-            CIDADE: 'Cidade',
-            ESTADO: 'Estado',
-            CREDENCIAL: 'Senha do escritório'
+            RAZAO_SOCIAL: 'Razão social', NOME_FANTASIA: 'Nome fantasia', REGISTRO_OAB: 'Registro OAB', UF_OAB: 'UF da OAB',
+            TELEFONE: 'Telefone', EMAIL: 'E-mail', CNPJ: 'CNPJ', CEP: 'CEP', LOGRADOURO: 'Endereço', NUMERO: 'Número',
+            COMPLEMENTO: 'Complemento', BAIRRO: 'Bairro', CIDADE: 'Cidade', ESTADO: 'Estado', CREDENCIAL: 'Senha do escritório'
         },
-        ATUALIZACOES: {
-            TITULO: 'Título da atualização',
-            DESCRICAO: 'Descrição',
-            DATA: 'Data da atualização',
-            PROCESSO_CONCLUIDO: 'Processo concluído'
-        },
+        ATUALIZACOES: { TITULO: 'Título da atualização', DESCRICAO: 'Descrição', DATA: 'Data da atualização', PROCESSO_CONCLUIDO: 'Processo concluído' },
         AGENDAMENTOS: {
-            CLIENTE: 'Cliente',
-            ASSUNTO: 'Assunto',
-            DATA: 'Data do agendamento',
-            HORARIO: 'Horário',
-            DURACAO: 'Duração em minutos',
-            STATUS: 'Situação do agendamento',
-            MOTIVO: 'Motivo',
-            CONFIRMADO_ADVOGADO_1: 'Confirmação do primeiro advogado',
-            CONFIRMADO_ADVOGADO_2: 'Confirmação do segundo advogado',
-            RECUSADO_ADVOGADO_1: 'Recusa do primeiro advogado',
+            CLIENTE: 'Cliente', ASSUNTO: 'Assunto', DATA: 'Data do agendamento', HORARIO: 'Horário', DURACAO: 'Duração em minutos',
+            STATUS: 'Situação do agendamento', MOTIVO: 'Motivo', CONFIRMADO_ADVOGADO_1: 'Confirmação do primeiro advogado',
+            CONFIRMADO_ADVOGADO_2: 'Confirmação do segundo advogado', RECUSADO_ADVOGADO_1: 'Recusa do primeiro advogado',
             RECUSADO_ADVOGADO_2: 'Recusa do segundo advogado'
         },
-        ADVOGADO_ESCRITORIO: {
-            STATUS: 'Cargo no escritório',
-            ATIVO: 'Vínculo ativo'
-        },
-        LANCAMENTOS_FINANCEIROS: {
-            TIPO: 'Tipo de lançamento',
-            DESCRICAO: 'Descrição',
-            VALOR: 'Valor',
-            DATA: 'Data do lançamento',
-            STATUS: 'Situação do lançamento',
-            FORMA_PAGAMENTO: 'Forma de pagamento',
-            ATIVO: 'Lançamento ativo'
-        },
-        GOOGLE_CALENDAR: {
-            GOOGLE_EMAIL: 'Conta Google',
-            CONTA_GOOGLE: 'Conta Google',
-            CONEXAO: 'Conexão com Google',
-            CREDENCIAL: 'Credencial de acesso',
-            ATIVO: 'Integração ativa'
-        }
+        ADVOGADO_ESCRITORIO: { STATUS: 'Cargo no escritório', ATIVO: 'Vínculo ativo' },
+        LANCAMENTOS_FINANCEIROS: { TIPO: 'Tipo de lançamento', DESCRICAO: 'Descrição', VALOR: 'Valor', DATA: 'Data do lançamento', STATUS: 'Situação do lançamento', FORMA_PAGAMENTO: 'Forma de pagamento', ATIVO: 'Lançamento ativo' },
+        GOOGLE_CALENDAR: { GOOGLE_EMAIL: 'Conta Google', CONTA_GOOGLE: 'Conta Google', CONEXAO: 'Conexão com Google', CREDENCIAL: 'Credencial de acesso', ATIVO: 'Integração ativa' }
     };
 
     if (especificos[tabela]?.[chave]) {
@@ -355,103 +229,41 @@ function formatarCampo(campo, tabelaAfetada) {
     }
 
     const gerais = {
-        TIPO: 'Tipo de pessoa',
-        EMAIL: 'E-mail',
-        CPF: 'CPF',
-        CNPJ: 'CNPJ',
-        TELEFONE: 'Telefone',
-        NOME: 'Nome',
-        RG: 'RG',
-        CEP: 'CEP',
-        LOGRADOURO: 'Endereço',
-        NUMERO: 'Número',
-        BAIRRO: 'Bairro',
-        CIDADE: 'Cidade',
-        ESTADO: 'Estado',
-        ATIVO: 'Status',
-        NOME_COMPLETO: 'Nome completo',
-        NUM_PROCESSO: 'Número do processo',
-        TIPO_PROCESSO: 'Tipo de processo',
-        AREA: 'Área',
-        COMARCA: 'Comarca',
-        VARA: 'Vara',
-        INSTANCIA: 'Instância',
-        DATA_INICIO: 'Data de início',
-        STATUS: 'Status',
-        LIDA: 'Status de leitura',
-        DESCRICAO: 'Descrição',
-        NOME_ARQUIVO: 'Nome do arquivo',
-        DATA_ATUALIZACAO: 'Data de atualização',
-        PROFISSAO: 'Profissão',
-        SEXO: 'Sexo',
-        ORGAO_EXPEDIDOR: 'Órgão expedidor',
-        NACIONALIDADE: 'Nacionalidade',
-        ESTADO_CIVIL: 'Estado civil',
-        DATA_CADASTRO: 'Data de cadastro',
-        MENSAGEM: 'Mensagem',
-        ULTIMA_MENSAGEM: 'Última mensagem'
+        TIPO: 'Tipo de pessoa', EMAIL: 'E-mail', CPF: 'CPF', CNPJ: 'CNPJ', TELEFONE: 'Telefone', NOME: 'Nome', RG: 'RG',
+        CEP: 'CEP', LOGRADOURO: 'Endereço', NUMERO: 'Número', BAIRRO: 'Bairro', CIDADE: 'Cidade', ESTADO: 'Estado',
+        ATIVO: 'Status', NOME_COMPLETO: 'Nome completo', NUM_PROCESSO: 'Número do processo', TIPO_PROCESSO: 'Tipo de processo',
+        AREA: 'Área', COMARCA: 'Comarca', VARA: 'Vara', INSTANCIA: 'Instância', DATA_INICIO: 'Data de início', STATUS: 'Status',
+        LIDA: 'Status de leitura', DESCRICAO: 'Descrição', NOME_ARQUIVO: 'Nome do arquivo', DATA_ATUALIZACAO: 'Data de atualização',
+        PROFISSAO: 'Profissão', SEXO: 'Sexo', ORGAO_EXPEDIDOR: 'Órgão expedidor', NACIONALIDADE: 'Nacionalidade',
+        ESTADO_CIVIL: 'Estado civil', DATA_CADASTRO: 'Data de cadastro', MENSAGEM: 'Mensagem', ULTIMA_MENSAGEM: 'Última mensagem'
     };
 
-    return gerais[chave] ||
-        String(campo || '')
-            .replace(/_/g, ' ')
-            .toLowerCase()
-            .replace(/\b\w/g, letra => letra.toUpperCase());
+    return gerais[chave] || String(campo || '').replace(/_/g, ' ').toLowerCase().replace(/\b\w/g, letra => letra.toUpperCase());
 }
 
 function formatarValor(campo, valor, tabelaAfetada) {
     const chave = String(campo || '').trim().toUpperCase();
     const tabela = normalizarTabela(tabelaAfetada);
 
-    if (
-        valor === null ||
-        valor === undefined ||
-        valor === '' ||
-        valor === '(Vazio)' ||
-        String(valor).trim().toUpperCase() === 'NULL'
-    ) {
+    if (valor === null || valor === undefined || valor === '' || valor === '(Vazio)' || String(valor).trim().toUpperCase() === 'NULL') {
         return 'Não existia';
     }
 
     const texto = String(valor).trim();
 
-    if (tabela === 'ESCRITORIOS' && chave === 'CREDENCIAL') {
-        return texto;
-    }
-
-    if (tabela === 'ATUALIZACOES' && chave === 'PROCESSO_CONCLUIDO') {
-        return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase())
-            ? 'Sim'
-            : 'Não';
-    }
+    if (tabela === 'ESCRITORIOS' && chave === 'CREDENCIAL') return texto;
+    if (tabela === 'ATUALIZACOES' && chave === 'PROCESSO_CONCLUIDO') return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase()) ? 'Sim' : 'Não';
 
     if (tabela === 'AGENDAMENTOS') {
-        if (/^(CONFIRMADO|RECUSADO)_ADVOGADO_[12]$/.test(chave)) {
-            return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase())
-                ? 'Sim'
-                : 'Não';
-        }
-
+        if (/^(CONFIRMADO|RECUSADO)_ADVOGADO_[12]$/.test(chave)) return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase()) ? 'Sim' : 'Não';
         if (chave === 'STATUS') {
-            const status = {
-                a_confirmar: 'A confirmar',
-                confirmado: 'Confirmado',
-                recusado: 'Recusado',
-                cancelado: 'Cancelado'
-            };
-
-            return status[texto.toLowerCase()] ||
-                texto.replace(/_/g, ' ');
+            const status = { a_confirmar: 'A confirmar', confirmado: 'Confirmado', recusado: 'Recusado', cancelado: 'Cancelado' };
+            return status[texto.toLowerCase()] || texto.replace(/_/g, ' ');
         }
     }
 
     if (tabela === 'GOOGLE_CALENDAR') {
-        if (chave === 'ATIVO') {
-            return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase())
-                ? 'Conectado'
-                : 'Desconectado';
-        }
-
+        if (chave === 'ATIVO') return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase()) ? 'Conectado' : 'Desconectado';
         if (chave === 'CREDENCIAL') return texto;
     }
 
@@ -460,129 +272,57 @@ function formatarValor(campo, valor, tabelaAfetada) {
             if (texto.toLowerCase() === 'receita') return 'Receita';
             if (texto.toLowerCase() === 'despesa') return 'Despesa';
         }
-
         if (chave === 'STATUS') {
-            const status = {
-                recebida: 'Recebida',
-                recebido: 'Recebido',
-                pago: 'Pago',
-                paga: 'Paga',
-                a_pagar: 'A pagar',
-                a_receber: 'A receber',
-                pendente: 'Pendente',
-                atrasado: 'Atrasado',
-                atrasada: 'Atrasada'
-            };
-
+            const status = { recebida: 'Recebida', recebido: 'Recebido', pago: 'Pago', paga: 'Paga', a_pagar: 'A pagar', a_receber: 'A receber', pendente: 'Pendente', atrasado: 'Atrasado', atrasada: 'Atrasada' };
             return status[texto.toLowerCase()] || texto;
         }
     }
 
-    if (
-        chave === 'VALOR' ||
-        chave.startsWith('VALOR_') ||
-        chave.includes('SALARIO')
-    ) {
-        let numero = texto
-            .replace(/R\$\s?/g, '')
-            .replace(/\s/g, '');
-
+    if (chave === 'VALOR' || chave.startsWith('VALOR_') || chave.includes('SALARIO')) {
+        let numero = texto.replace(/R\$\s?/g, '').replace(/\s/g, '');
         if (numero.includes(',') && numero.includes('.')) {
-            numero = numero.lastIndexOf(',') > numero.lastIndexOf('.')
-                ? numero.replace(/\./g, '').replace(',', '.')
-                : numero.replace(/,/g, '');
+            numero = numero.lastIndexOf(',') > numero.lastIndexOf('.') ? numero.replace(/\./g, '').replace(',', '.') : numero.replace(/,/g, '');
         } else if (numero.includes(',')) {
             numero = numero.replace(',', '.');
         } else if (/^\d{1,3}(\.\d{3})+$/.test(numero)) {
             numero = numero.replace(/\./g, '');
         }
-
         const resultado = Number(numero);
-
         if (Number.isFinite(resultado)) {
-            return resultado.toLocaleString('pt-BR', {
-                style: 'currency',
-                currency: 'BRL'
-            });
+            return resultado.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
         }
     }
 
-    if (
-        chave === 'DATA' ||
-        chave.startsWith('DATA_') ||
-        chave.includes('NASCIMENTO')
-    ) {
+    if (chave === 'DATA' || chave.startsWith('DATA_') || chave.includes('NASCIMENTO')) {
         const iso = texto.match(/^(\d{4})-(\d{2})-(\d{2})/);
-
-        if (iso) {
-            return `${iso[3]}/${iso[2]}/${iso[1]}`;
-        }
+        if (iso) return `${iso[3]}/${iso[2]}/${iso[1]}`;
     }
 
-    if (chave === 'ATIVO') {
-        return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase())
-            ? 'Ativo'
-            : 'Inativo';
-    }
-
-    if (chave === 'LIDA') {
-        return ['1', 'TRUE'].includes(texto.toUpperCase())
-            ? 'Lido'
-            : 'Não lido';
-    }
+    if (chave === 'ATIVO') return ['1', 'TRUE', 'SIM'].includes(texto.toUpperCase()) ? 'Ativo' : 'Inativo';
+    if (chave === 'LIDA') return ['1', 'TRUE'].includes(texto.toUpperCase()) ? 'Lido' : 'Não lido';
 
     if (chave === 'TIPO' && tabela === 'USUARIOS') {
-        const tipos = {
-            '0': 'Advogado',
-            '1': 'Escritório',
-            '2': 'Cliente (Pessoa Física)',
-            '3': 'Cliente (Pessoa Jurídica)'
-        };
-
+        const tipos = { '0': 'Advogado', '1': 'Escritório', '2': 'Cliente (Pessoa Física)', '3': 'Cliente (Pessoa Jurídica)' };
         return tipos[texto] || texto;
     }
 
     if (chave === 'MENSAGEM' || chave === 'ULTIMA_MENSAGEM') {
-        return texto.length > 280
-            ? texto.slice(0, 280).trimEnd() + '…'
-            : texto;
+        return texto.length > 280 ? texto.slice(0, 280).trimEnd() + '…' : texto;
     }
 
     const traducoes = {
-        PROPRIETARIO: 'Proprietário',
-        PARCEIRO: 'Parceiro',
-        ASSOCIADO: 'Associado',
-        FISICA: 'Pessoa Física',
-        JURIDICA: 'Pessoa Jurídica',
-        PENDENTE: 'Pendente',
-        PAGA: 'Paga',
-        PAGO: 'Pago',
-        RECEBIDO: 'Recebido',
-        A_PAGAR: 'A pagar',
-        A_RECEBER: 'A receber'
+        PROPRIETARIO: 'Proprietário', PARCEIRO: 'Parceiro', ASSOCIADO: 'Associado', FISICA: 'Pessoa Física', JURIDICA: 'Pessoa Jurídica',
+        PENDENTE: 'Pendente', PAGA: 'Paga', PAGO: 'Pago', RECEBIDO: 'Recebido', A_PAGAR: 'A pagar', A_RECEBER: 'A receber'
     };
 
     return traducoes[texto.toUpperCase()] || texto;
 }
 
 function mudancasVisiveis(log) {
-    const protegidos = new Set([
-        'SENHA',
-        'REFRESH_TOKEN',
-        'ACCESS_TOKEN',
-        'CLIENT_SECRET',
-        'ID_TOKEN',
-        'TOKEN',
-        'GOOGLE_EVENT_ID'
-    ]);
+    const protegidos = new Set(['SENHA', 'REFRESH_TOKEN', 'ACCESS_TOKEN', 'CLIENT_SECRET', 'ID_TOKEN', 'TOKEN', 'GOOGLE_EVENT_ID']);
 
-    return (
-        Array.isArray(log.mudancas) ? log.mudancas : []
-    ).filter(mudanca => {
-        const campo = String(mudanca.campo || '')
-            .trim()
-            .toUpperCase();
-
+    return (Array.isArray(log.mudancas) ? log.mudancas : []).filter(mudanca => {
+        const campo = String(mudanca.campo || '').trim().toUpperCase();
         return !protegidos.has(campo) && !campo.startsWith('ID_');
     });
 }
@@ -597,14 +337,12 @@ function resumoAcao(log) {
         return `${autor} ${verbo} ${nomeRegistroExibicao(log)}.`;
     }
 
-    return `${autor} ${verbo} ${rotuloObjeto(log.tabela_afetada)}${
-        nome ? ` ${nome}` : ''
-    }.`;
+    return `${autor} ${verbo} ${rotuloObjeto(log.tabela_afetada)}${nome ? ` ${nome}` : ''}.`;
 }
 
 export default function LogsAuditoria1({ api }) {
     const navigate = useNavigate();
-    const API_URL = api || 'http://10.92.11.24:5000';
+    const API_URL = api || 'http://10.92.11.19:5000';
 
     const [logs, setLogs] = useState([]);
     const [carregando, setCarregando] = useState(true);
@@ -629,16 +367,10 @@ export default function LogsAuditoria1({ api }) {
             }
         });
 
-        window.addEventListener(
-            'menu-lateral-toggle',
-            aplicarEstadoMenu
-        );
+        window.addEventListener('menu-lateral-toggle', aplicarEstadoMenu);
 
         return () => {
-            window.removeEventListener(
-                'menu-lateral-toggle',
-                aplicarEstadoMenu
-            );
+            window.removeEventListener('menu-lateral-toggle', aplicarEstadoMenu);
         };
     }, []);
 
@@ -766,9 +498,7 @@ export default function LogsAuditoria1({ api }) {
 
     function aplicarFiltros() {
         if (dataInicio && dataFim && dataInicio > dataFim) {
-            setErro(
-                'A data inicial não pode ser posterior à data final.'
-            );
+            setErro('A data inicial não pode ser maior que a data final.');
             return;
         }
 
@@ -790,6 +520,11 @@ export default function LogsAuditoria1({ api }) {
 
         if (!token || !idEscritorio) return;
 
+        if (dataInicio && dataFim && dataInicio > dataFim) {
+            setErro('A data inicial não pode ser maior que a data final.');
+            return;
+        }
+
         try {
             const resposta = await fetch(
                 `${API_URL}/escritorio/${idEscritorio}/logs/pdf`,
@@ -802,7 +537,13 @@ export default function LogsAuditoria1({ api }) {
             );
 
             if (!resposta.ok) {
-                throw new Error('Não foi possível gerar o PDF.');
+                let dados = {};
+                try {
+                    dados = await resposta.json();
+                } catch {
+                    dados = {};
+                }
+                throw new Error(dados.error || 'Não foi possível gerar o PDF.');
             }
 
             const url = URL.createObjectURL(
@@ -846,6 +587,15 @@ export default function LogsAuditoria1({ api }) {
                             </p>
                         </div>
                     </div>
+
+                    {erro && (
+                        <div
+                            className={`${css.mensagemFiltroContainer} ${css.mensagemFiltroErro}`}
+                            role="alert"
+                        >
+                            {erro}
+                        </div>
+                    )}
 
                     <div className={css.areaFiltros}>
                         {escritorios.length > 1 && (
@@ -938,12 +688,6 @@ export default function LogsAuditoria1({ api }) {
                     {carregando && (
                         <p className={css.estado}>
                             Carregando histórico...
-                        </p>
-                    )}
-
-                    {erro && (
-                        <p className={`${css.estado} ${css.erro}`}>
-                            {erro}
                         </p>
                     )}
 
