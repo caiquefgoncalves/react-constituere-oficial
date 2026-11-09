@@ -225,8 +225,11 @@ function DashboardFinanceiroEscritorio1({ api }) {
                 return;
             }
 
-            setMensagem("");
-            setTipoMensagem("");
+            if (!silencioso) {
+                setMensagem("");
+                setTipoMensagem("");
+            }
+
             setLancamentos(dataLanc.lancamentos || []);
             setPaginaLancamentos(1);
             setResumo(dataResumo);
@@ -299,31 +302,51 @@ function DashboardFinanceiroEscritorio1({ api }) {
 
         setBaixandoId(lancamentoParaBaixar.id_real);
         setMensagem("");
+        setTipoMensagem("");
 
         try {
             const token = localStorage.getItem("token");
-            const response = await fetch(`${API_URL}/escritorio/${id}/financeiro/lancamentos/${lancamentoParaBaixar.id_real}/baixar`, {
-                method: "PUT",
-                credentials: "include",
-                headers: { "X-Access-Token": token }
-            });
+
+            const response = await fetch(
+                `${API_URL}/escritorio/${id}/financeiro/lancamentos/${lancamentoParaBaixar.id_real}/baixar`,
+                {
+                    method: "PUT",
+                    credentials: "include",
+                    headers: {
+                        "X-Access-Token": token
+                    }
+                }
+            );
 
             const data = await response.json().catch(() => ({}));
 
             if (response.ok) {
                 setModalBaixaAberto(false);
                 setLancamentoParaBaixar(null);
+
+                await buscarDados(true);
+
                 setMensagem("Baixa realizada com sucesso!");
                 setTipoMensagem("sucesso");
-                buscarDados();
-                setTimeout(() => setMensagem(""), 3000);
+
+                setTimeout(() => {
+                    setMensagem(atual =>
+                        atual === "Baixa realizada com sucesso!" ? "" : atual
+                    );
+                    setTipoMensagem(atual =>
+                        atual === "sucesso" ? "" : atual
+                    );
+                }, 6000);
+
             } else {
                 setMensagem(data.error || "Erro ao dar baixa.");
                 setTipoMensagem("erro");
             }
+
         } catch (error) {
             setMensagem("Erro de conexão.");
             setTipoMensagem("erro");
+
         } finally {
             setBaixandoId(null);
         }
